@@ -1,4 +1,4 @@
-// script.js (module) - Data Zone Ghana - COMPLETE WORKING VERSION
+// Data Zone Ghana - Complete JavaScript
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import {
   getAuth,
@@ -12,7 +12,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 /* =========================
-   CONFIGURATION
+   FIREBASE CONFIGURATION
    ========================= */
 const firebaseConfig = {
   apiKey: "AIzaSyABIZdC4eoS7Jo_35f7tGvFuRJ-Jqw4aEU",
@@ -28,8 +28,21 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
-// Use this temporary endpoint that I know works:
-let APPS_SCRIPT_ENDPOINT = "https://script.google.com/macros/s/AKfycbw26rpXi4k7OK2qME-LpairnejorXkHplsGYouEt83sLEnmptXqaPEf-mmmLhptgPQZ/exec";
+/* =========================
+   GOOGLE FORM CONFIGURATION
+   ========================= */
+// Google Form for order submissions (REPLACE WITH YOUR OWN FORM)
+const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSc4Y7Hc5J8QZ8oYQ7Xz9jK7L6T5rJ9vMpNqo0bVt7uRvXyQZw/formResponse";
+
+// Form field IDs (REPLACE WITH YOUR FORM FIELD IDs)
+const FORM_FIELDS = {
+  name: "entry.123456789",      // Replace with your form's name field ID
+  email: "entry.987654321",     // Replace with your form's email field ID
+  phone: "entry.555555555",     // Replace with your form's phone field ID
+  bundle: "entry.111111111",    // Replace with your form's bundle field ID
+  price: "entry.999999999",     // Replace with your form's price field ID
+  timestamp: "entry.888888888"  // Replace with your form's timestamp field ID
+};
 
 /* =========================
    PRODUCTS DATA
@@ -117,11 +130,11 @@ const DOM = {
   tabButtons: document.querySelectorAll(".tab-btn"),
   productsContainer: document.getElementById("products-container"),
   currentYear: document.getElementById("current-year"),
-  siteLogo: document.getElementById("siteLogo")
+  footerLinks: document.querySelectorAll(".footer-link")
 };
 
 /* =========================
-   GLOBAL STATE
+   APPLICATION STATE
    ========================= */
 let currentUser = null;
 let currentNetwork = "mtn";
@@ -132,6 +145,7 @@ let currentNetwork = "mtn";
 function showElement(el) {
   if (el) el.classList.remove("hidden");
 }
+
 function hideElement(el) {
   if (el) el.classList.add("hidden");
 }
@@ -158,17 +172,17 @@ function showToast(message, type = "success") {
 }
 
 function normalizePhone(phone) {
-  if (!phone) return phone;
-  let p = phone.trim().replace(/[\s\-()]/g, "");
+  if (!phone) return "";
+  let cleaned = phone.trim().replace(/[\s\-()]/g, "");
   
-  if (/^0[0-9]{9}$/.test(p)) return "+233" + p.slice(1);
-  if (/^233[0-9]{9}$/.test(p)) return "+" + p;
-  if (/^\+233[0-9]{9}$/.test(p)) return p;
-  return p;
+  if (/^0[0-9]{9}$/.test(cleaned)) return "+233" + cleaned.slice(1);
+  if (/^233[0-9]{9}$/.test(cleaned)) return "+" + cleaned;
+  if (/^\+233[0-9]{9}$/.test(cleaned)) return cleaned;
+  return cleaned;
 }
 
 /* =========================
-   AUTHENTICATION
+   AUTHENTICATION FUNCTIONS
    ========================= */
 async function signUpWithEmail() {
   const name = (DOM.authName?.value || "").trim();
@@ -183,7 +197,7 @@ async function signUpWithEmail() {
   try {
     const userCred = await createUserWithEmailAndPassword(auth, email, password);
     await updateProfile(userCred.user, { displayName: name });
-    showToast("Account created — welcome!");
+    showToast("Account created successfully!");
   } catch (err) {
     console.error("Signup error:", err);
     showToast(err.message || "Sign up failed", "error");
@@ -199,7 +213,7 @@ async function loginWithEmail() {
   
   try {
     await signInWithEmailAndPassword(auth, email, password);
-    showToast("Login successful");
+    showToast("Login successful!");
   } catch (err) {
     console.error("Login error:", err);
     showToast(err.message || "Login failed", "error");
@@ -217,7 +231,7 @@ async function loginWithGoogle() {
 
 function signOutUser() {
   signOut(auth)
-    .then(() => showToast("Signed out"))
+    .then(() => showToast("Signed out successfully"))
     .catch(err => {
       console.error("Signout error:", err);
       showToast("Sign out failed", "error");
@@ -229,7 +243,7 @@ onAuthStateChanged(auth, (user) => {
   if (user) {
     currentUser = {
       uid: user.uid,
-      name: user.displayName || user.email?.split("@")[0] || "User",
+      name: user.displayName || user.email?.split("@")[0] || "Customer",
       email: user.email || ""
     };
     
@@ -249,14 +263,8 @@ onAuthStateChanged(auth, (user) => {
   }
 });
 
-// Attach auth event listeners
-if (DOM.emailSignUpBtn) DOM.emailSignUpBtn.addEventListener("click", signUpWithEmail);
-if (DOM.emailLoginBtn) DOM.emailLoginBtn.addEventListener("click", loginWithEmail);
-if (DOM.googleSignInBtn) DOM.googleSignInBtn.addEventListener("click", loginWithGoogle);
-if (DOM.logoutBtn) DOM.logoutBtn.addEventListener("click", signOutUser);
-
 /* =========================
-   PRODUCTS DISPLAY
+   PRODUCT DISPLAY FUNCTIONS
    ========================= */
 function switchNetwork(network) {
   currentNetwork = network;
@@ -329,7 +337,7 @@ function createProductCard(bundle, networkData, index) {
 }
 
 /* =========================
-   PURCHASE MODAL
+   PURCHASE MODAL FUNCTIONS
    ========================= */
 function openPurchaseModal({ network, size, price }) {
   if (!currentUser) {
@@ -350,34 +358,38 @@ function openPurchaseModal({ network, size, price }) {
         </div>
         <form id="purchase-form" style="padding:20px;">
           <div class="form-group">
-            <label><i class="fas fa-user"></i> Buyer Name</label>
+            <label><i class="fas fa-user"></i> Your Name</label>
             <input id="modal-buyer-name" type="text" readonly value="${currentUser.name}">
           </div>
           <div class="form-group">
-            <label><i class="fas fa-envelope"></i> Buyer Email</label>
+            <label><i class="fas fa-envelope"></i> Your Email</label>
             <input id="modal-buyer-email" type="email" readonly value="${currentUser.email}">
           </div>
           <div class="form-group">
-            <label><i class="fas fa-phone"></i> Recipient Phone</label>
+            <label><i class="fas fa-phone"></i> Recipient Phone *</label>
             <input id="modal-phone" type="tel" placeholder="024XXXXXXX or +233XXXXXXXXX" required>
+            <small style="display:block; margin-top:4px; color:#718096;">Enter the phone number to receive data</small>
           </div>
           <div class="form-group">
-            <label><i class="fas fa-box"></i> Bundle</label>
+            <label><i class="fas fa-box"></i> Selected Bundle</label>
             <input id="modal-bundle" type="text" readonly value="${network} — ${size} — GH₵ ${price.toFixed(2)}">
           </div>
           <div style="display:flex;gap:12px;margin-top:20px;">
             <button id="modal-confirm-btn" type="button" class="btn-primary btn-full">
-              <i class="fas fa-save"></i> Confirm & Save
+              <i class="fas fa-paper-plane"></i> Submit Order
             </button>
             <button id="modal-cancel-btn" type="button" class="btn-outline btn-full">Cancel</button>
           </div>
+          <p style="margin-top:16px; font-size:0.9rem; color:#718096; text-align:center;">
+            <i class="fas fa-info-circle"></i> After submitting, make payment to the number shown above
+          </p>
         </form>
       </div>
     `;
     document.body.appendChild(modal);
     
     document.getElementById("modal-cancel-btn").addEventListener("click", closePurchaseModal);
-    document.getElementById("modal-confirm-btn").addEventListener("click", handlePurchaseConfirm);
+    document.getElementById("modal-confirm-btn").addEventListener("click", submitPurchaseToGoogleForm);
   }
   
   document.getElementById("modal-phone").value = "";
@@ -392,87 +404,95 @@ function closePurchaseModal() {
 }
 
 /* =========================
-   SAVE PURCHASE - SIMPLIFIED VERSION
+   GOOGLE FORM SUBMISSION
    ========================= */
-async function handlePurchaseConfirm() {
+function submitPurchaseToGoogleForm() {
   const phoneInput = document.getElementById("modal-phone");
   const bundleInput = document.getElementById("modal-bundle");
   
   if (!phoneInput || !bundleInput) {
-    showToast("System error. Please refresh the page.", "error");
+    showToast("System error. Please refresh page.", "error");
     return;
   }
   
   const phoneRaw = phoneInput.value.trim();
   if (!phoneRaw) {
     showToast("Please enter recipient phone number", "error");
+    phoneInput.focus();
     return;
   }
   
   const phone = normalizePhone(phoneRaw);
   const priceMatch = bundleInput.value.match(/GH₵\s*([0-9.]+)/);
   const price = priceMatch ? parseFloat(priceMatch[1]) : 0;
+  const timestamp = new Date().toISOString();
   
-  const payload = {
-    name: currentUser.name,
-    email: currentUser.email,
-    phone: phone,
-    bundle: bundleInput.value,
-    price: price,
-    timestamp: new Date().toISOString(),
-    source: "Data Zone Ghana Website"
-  };
+  // Create form data
+  const formData = new FormData();
   
-  const confirmBtn = document.getElementById("modal-confirm-btn");
-  const originalText = confirmBtn.innerHTML;
-  confirmBtn.disabled = true;
-  confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+  // Add all fields to form data (using your form field IDs)
+  formData.append(FORM_FIELDS.name, currentUser.name);
+  formData.append(FORM_FIELDS.email, currentUser.email);
+  formData.append(FORM_FIELDS.phone, phone);
+  formData.append(FORM_FIELDS.bundle, bundleInput.value);
+  formData.append(FORM_FIELDS.price, `GH₵${price.toFixed(2)}`);
+  formData.append(FORM_FIELDS.timestamp, timestamp);
   
-  // SIMPLE AND RELIABLE METHOD: Open form in new tab
-  submitViaForm(payload);
-  
-  showToast("Purchase submitted! Check your email for confirmation.", "success");
-  closePurchaseModal();
-  
-  // Reset button
-  setTimeout(() => {
-    confirmBtn.disabled = false;
-    confirmBtn.innerHTML = originalText;
-  }, 2000);
-}
-
-// RELIABLE METHOD: Always works with Apps Script
-function submitViaForm(payload) {
+  // Create and submit form
   const form = document.createElement("form");
   form.method = "POST";
-  form.action = APPS_SCRIPT_ENDPOINT || "https://script.google.com/macros/s/AKfycbwdbOENlGUoipQaqWGsVxfedB9aVth1t3rxSagt5_PBuj79EUh6tppX2x9IT13LhLIX/exec";
+  form.action = GOOGLE_FORM_URL;
   form.target = "_blank";
   form.style.display = "none";
   
-  // Add all data as hidden inputs
-  for (const key in payload) {
+  // Add all form data as hidden inputs
+  for (const [key, value] of formData.entries()) {
     const input = document.createElement("input");
     input.type = "hidden";
     input.name = key;
-    input.value = payload[key];
+    input.value = value;
     form.appendChild(input);
   }
   
+  // Create a confirmation message
+  const confirmBtn = document.getElementById("modal-confirm-btn");
+  const originalText = confirmBtn.innerHTML;
+  confirmBtn.disabled = true;
+  confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+  
+  // Submit form
   document.body.appendChild(form);
   form.submit();
-  setTimeout(() => form.remove(), 1000);
+  
+  // Show success message
+  setTimeout(() => {
+    showToast("Order submitted! Check your email for confirmation.", "success");
+    closePurchaseModal();
+    
+    // Show payment reminder
+    setTimeout(() => {
+      alert("IMPORTANT: Make payment to the appropriate number shown in the Payment Instructions section. Data will be delivered within 30 minutes of payment confirmation.");
+    }, 500);
+    
+    // Reset button
+    confirmBtn.disabled = false;
+    confirmBtn.innerHTML = originalText;
+    
+    // Remove form after submission
+    setTimeout(() => form.remove(), 1000);
+  }, 1000);
 }
 
 /* =========================
    INITIALIZATION
    ========================= */
 function init() {
-  // Set current year in footer
+  // Set current year
   if (DOM.currentYear) {
     DOM.currentYear.textContent = new Date().getFullYear();
   }
   
-  // Setup time greeting
+  // Set time greeting
   function updateGreeting() {
     if (!DOM.timeGreeting) return;
     const hour = new Date().getHours();
@@ -489,24 +509,34 @@ function init() {
     btn.addEventListener("click", () => switchNetwork(btn.dataset.network));
   });
   
-  // Initial render
+  // Setup footer links
+  DOM.footerLinks.forEach(link => {
+    link.addEventListener("click", (e) => {
+      e.preventDefault();
+      const network = link.dataset.network;
+      if (network) {
+        switchNetwork(network);
+        document.querySelector('.products-section').scrollIntoView({ behavior: 'smooth' });
+      } else if (link.id === 'scroll-to-payment') {
+        document.querySelector('.info-section').scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+  });
+  
+  // Setup auth button listeners
+  if (DOM.emailSignUpBtn) DOM.emailSignUpBtn.addEventListener("click", signUpWithEmail);
+  if (DOM.emailLoginBtn) DOM.emailLoginBtn.addEventListener("click", loginWithEmail);
+  if (DOM.googleSignInBtn) DOM.googleSignInBtn.addEventListener("click", loginWithGoogle);
+  if (DOM.logoutBtn) DOM.logoutBtn.addEventListener("click", signOutUser);
+  
+  // Initial products render
   renderProducts(currentNetwork);
   
-  // Setup logo fallback
-  if (DOM.siteLogo) {
-    DOM.siteLogo.onerror = function() {
-      console.log("Logo not found, using fallback");
-      this.src = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%232a4365'/><text x='50' y='60' font-family='Arial' font-size='30' fill='white' text-anchor='middle'>DZ</text></svg>";
-      this.style.backgroundColor = "#2a4365";
-      this.style.borderRadius = "8px";
-    };
-  }
-  
   // Log initialization
-  console.log("✅ Data Zone Ghana website initialized!");
-  console.log("Sheet ID: 1O41fuoAxBowosGw7HPKUseeetntrZ6k4kwkTwcWQQ-Y");
-  console.log("Email: brig*****000@gmail.com");
+  console.log("✅ Data Zone Ghana website initialized successfully!");
+  console.log("📱 Ready for orders!");
+  console.log("💡 Remember to create your Google Form and update FORM_FIELDS in script.js");
 }
 
-// Start everything when page loads
+// Start application
 document.addEventListener("DOMContentLoaded", init);
