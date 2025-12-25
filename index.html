@@ -1,64 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="robots" content="index, follow">
-  <link rel="canonical" href="https://data-zone-ghana.netlify.app/">
-  <meta name="google-site-verification" content="s7InLJ0J2VnzY3y_JxFQwNi_OyS8Dlvd2bAIT53bNTM" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Data Zone Ghana | Premium Mobile Data Bundles</title>
   <meta name="description" content="Buy MTN, AirtelTigo & Telecel data bundles at the best prices in Ghana. Fast delivery, reliable service.">
+  
+  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  
+  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📱</text></svg>">
+  
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📱</text></svg>">
+  
+  <!-- Styles -->
   <link rel="stylesheet" href="style.css">
   
   <style>
-    .modal {
-      z-index: 2000;
+    /* Logo styling */
+    .logo-placeholder {
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, #2a4365 0%, #4299e1 100%);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      font-size: 20px;
+      font-family: 'Montserrat', sans-serif;
     }
+    
     .hidden {
       display: none !important;
     }
+    
+    .modal {
+      z-index: 2000;
+    }
   </style>
 </head>
-
 <body>
-  <!-- SIGN-IN / AUTH MODAL -->
-  <div id="auth-modal" class="modal" aria-hidden="false" role="dialog">
-    <div class="modal-content" role="document" aria-labelledby="authTitle">
+  <!-- Auth Modal -->
+  <div id="auth-modal" class="modal">
+    <div class="modal-content">
       <div class="modal-header">
         <div class="modal-logo">
           <i class="fas fa-wifi"></i>
-          <h2 id="authTitle">DATA ZONE GHANA</h2>
+          <h2>DATA ZONE GHANA</h2>
         </div>
-        <p class="modal-subtitle">Sign in to continue — Google (recommended) or Email</p>
+        <p class="modal-subtitle">Sign in to continue — Google or Email</p>
       </div>
 
       <form id="auth-form" style="padding:24px;">
         <div class="form-group">
           <label for="auth-name"><i class="fas fa-user"></i> Full Name</label>
-          <input id="auth-name" type="text" placeholder="Full Name (required for manual signup)">
+          <input id="auth-name" type="text" placeholder="Your full name" required>
         </div>
 
         <div class="form-group">
           <label for="auth-email"><i class="fas fa-envelope"></i> Email</label>
-          <input id="auth-email" type="email" placeholder="Email (required)">
+          <input id="auth-email" type="email" placeholder="your@email.com" required>
         </div>
 
         <div class="form-group">
           <label for="auth-password"><i class="fas fa-lock"></i> Password</label>
-          <input id="auth-password" type="password" placeholder="Password (min 6 chars)">
+          <input id="auth-password" type="password" placeholder="Minimum 6 characters" required minlength="6">
         </div>
 
         <div style="display:flex;gap:12px;align-items:center;margin-top:8px;">
-          <button type="button" id="emailSignUpBtn" class="btn-primary btn-full">Create account (Email)</button>
-          <button type="button" id="emailLoginBtn" class="btn-outline">Login (Email)</button>
+          <button type="button" id="emailSignUpBtn" class="btn-primary btn-full">Create Account</button>
+          <button type="button" id="emailLoginBtn" class="btn-outline btn-full">Login</button>
         </div>
 
-        <hr style="margin:18px 0;" />
+        <hr style="margin:18px 0;">
 
         <div style="display:flex;gap:12px;">
           <button id="googleSignInBtn" type="button" class="btn-network btn-at" style="flex:1;">
@@ -68,19 +86,22 @@
 
         <p class="form-note" style="margin-top:16px;">
           <i class="fas fa-shield-alt"></i>
-          We use secure authentication. By signing in you agree to our terms.
+          Secure authentication. By signing in you agree to our terms.
         </p>
       </form>
     </div>
   </div>
 
-  <!-- MAIN CONTENT (hidden until auth) -->
+  <!-- Main Content -->
   <div id="main-content" class="hidden">
+    <!-- Navigation -->
     <nav class="top-nav">
       <div class="container">
         <div class="nav-content">
           <div class="nav-brand">
-            <img id="siteLogo" src="/assets/logo.png" alt="Data Zone Ghana" style="width:56px;height:auto;object-fit:contain;">
+            <div class="logo-placeholder">
+              <span>DZ</span>
+            </div>
             <div>
               <h1>DATA ZONE <span class="brand-ghana">GHANA</span></h1>
               <p class="tagline">Your Reliable Data Connection</p>
@@ -90,7 +111,7 @@
           <div class="user-section">
             <div class="user-greeting">
               <span class="akwaaba">Akwaaba, <span id="user-name">User</span>!</span>
-              <span id="time-greeting" class="time-greeting">Good Afternoon!</span>
+              <span id="time-greeting" class="time-greeting">Good Day!</span>
             </div>
             <div style="display:flex; gap:12px; align-items:center;">
               <button id="profileBtn" class="btn-outline" title="Profile"><i class="fas fa-user"></i></button>
@@ -101,7 +122,7 @@
       </div>
     </nav>
 
-    <!-- Hero -->
+    <!-- Hero Section -->
     <section class="hero-banner">
       <div class="container">
         <div class="hero-content">
@@ -145,24 +166,25 @@
             <div class="step-number">3</div>
             <div class="step-content">
               <h3>Quick Confirm</h3>
-              <p>Click the Buy button, enter recipient phone and confirm — no long form needed.</p>
+              <p>Click Buy button, enter recipient phone and confirm.</p>
             </div>
           </div>
           <div class="step">
             <div class="step-number">4</div>
             <div class="step-content">
               <h3>Receive Data</h3>
-              <p>Data usually delivers within 30 mins (max 1 hour if issues).</p>
+              <p>Data delivers within 30 mins (max 1 hour if issues).</p>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Products -->
+    <!-- Products Section -->
     <section class="products-section">
       <div class="container">
-        <div class="section-header"><i class="fas fa-sim-card section-icon"></i>
+        <div class="section-header">
+          <i class="fas fa-sim-card section-icon"></i>
           <h2>Available Data Bundles</h2>
           <p class="section-subtitle">Select your preferred network and bundle size</p>
         </div>
@@ -203,43 +225,61 @@
       </div>
     </section>
 
-    <!-- Info Section -->
+    <!-- Payment Instructions -->
     <section class="info-section">
       <div class="container">
         <div class="section-header">
-          <i class="fas fa-info-circle section-icon"></i>
-          <h2>Why Choose Data Zone Ghana?</h2>
-          <p class="section-subtitle">We provide the best data bundle service in Ghana</p>
+          <i class="fas fa-credit-card section-icon"></i>
+          <h2>Payment Instructions</h2>
+          <p class="section-subtitle">Make payment to the appropriate network number</p>
         </div>
 
-        <div class="info-grid">
-          <div class="info-card">
-            <div class="info-icon">
-              <i class="fas fa-bolt"></i>
+        <div class="payment-methods">
+          <div class="payment-method mtn-payment">
+            <div class="payment-method-header">
+              <div class="network-badge mtn-badge">MTN</div>
+              <h4>Mobile Money Payment</h4>
             </div>
-            <h3>Instant Delivery</h3>
-            <p>Data bundles delivered within minutes after confirmation.</p>
+            <div class="payment-details">
+              <p><strong>Number:</strong> 024 123 4567</p>
+              <p><strong>Name:</strong> Data Zone Ghana</p>
+              <p><strong>Reference:</strong> Your Phone Number</p>
+              <p><em>Send exact bundle price + GH₵0.50 service fee</em></p>
+            </div>
           </div>
-          <div class="info-card">
-            <div class="info-icon">
-              <i class="fas fa-shield-alt"></i>
+
+          <div class="payment-method at-payment">
+            <div class="payment-method-header">
+              <div class="network-badge at-badge">AirtelTigo</div>
+              <h4>Mobile Money Payment</h4>
             </div>
-            <h3>Secure Payments</h3>
-            <p>All transactions are safe and secure with proper records.</p>
+            <div class="payment-details">
+              <p><strong>Number:</strong> 027 890 1234</p>
+              <p><strong>Name:</strong> Data Zone GH</p>
+              <p><strong>Reference:</strong> Your Phone Number</p>
+              <p><em>Send exact bundle price + GH₵0.50 service fee</em></p>
+            </div>
           </div>
-          <div class="info-card">
-            <div class="info-icon">
-              <i class="fas fa-headset"></i>
+
+          <div class="payment-method telecel-payment">
+            <div class="payment-method-header">
+              <div class="network-badge telecel-badge">Telecel</div>
+              <h4>Mobile Money Payment</h4>
             </div>
-            <h3>24/7 Support</h3>
-            <p>Round-the-clock customer support via WhatsApp and email.</p>
+            <div class="payment-details">
+              <p><strong>Number:</strong> 020 567 8901</p>
+              <p><strong>Name:</strong> Data Zone</p>
+              <p><strong>Reference:</strong> Your Phone Number</p>
+              <p><em>Send exact bundle price + GH₵0.50 service fee</em></p>
+            </div>
           </div>
-          <div class="info-card">
-            <div class="info-icon">
-              <i class="fas fa-tag"></i>
-            </div>
-            <h3>Best Prices</h3>
-            <p>Competitive prices for MTN, AirtelTigo, and Telecel bundles.</p>
+        </div>
+
+        <div class="important-notice">
+          <i class="fas fa-exclamation-triangle"></i>
+          <div>
+            <h4>Important Notice</h4>
+            <p>After making payment, click the "Buy" button on your selected bundle and fill the confirmation form. Data will be delivered within 30 minutes of confirmation.</p>
           </div>
         </div>
       </div>
@@ -250,7 +290,8 @@
       <div class="container">
         <div class="footer-content">
           <div class="footer-brand">
-            <div class="footer-logo"><i class="fas fa-wifi"></i>
+            <div class="footer-logo">
+              <i class="fas fa-wifi"></i>
               <div>
                 <h3>DATA ZONE GHANA</h3>
                 <p>Your reliable data connection hub</p>
@@ -261,17 +302,20 @@
 
           <div class="footer-links">
             <h4>Quick Links</h4>
-            <a href="#mtn" class="footer-link">MTN Bundles</a>
-            <a href="#airteltigo" class="footer-link">AirtelTigo Bundles</a>
-            <a href="#telecel" class="footer-link">Telecel Bundles</a>
+            <a href="#" class="footer-link" data-network="mtn">MTN Bundles</a>
+            <a href="#" class="footer-link" data-network="airteltigo">AirtelTigo Bundles</a>
+            <a href="#" class="footer-link" data-network="telecel">Telecel Bundles</a>
+            <a href="#" class="footer-link" id="scroll-to-payment">Payment Details</a>
           </div>
 
           <div class="footer-contact">
-            <h4>Need Help?</h4>
-            <p>For orders or inquiries, contact us directly on WhatsApp.</p>
-            <div class="footer-whatsapp"><i class="fab fa-whatsapp"></i>
+            <h4>Contact & Support</h4>
+            <p>For orders or inquiries, contact us directly:</p>
+            <div class="footer-whatsapp">
+              <i class="fab fa-whatsapp"></i>
               <div>
-                <p><strong>Support:</strong> +233 27 590 3629</p>
+                <p><strong>WhatsApp:</strong> +233 27 590 3629</p>
+                <p><strong>Hours:</strong> 24/7 Support</p>
               </div>
             </div>
           </div>
@@ -279,19 +323,21 @@
 
         <div class="footer-bottom">
           <p>&copy; <span id="current-year">2024</span> Data Zone Ghana. All rights reserved.</p>
-          <p class="disclaimer">This website is for demonstration purposes only.</p>
+          <p class="disclaimer">This is a demonstration website for educational purposes.</p>
         </div>
       </div>
     </footer>
   </div>
 
-  <!-- Floating WhatsApp Buttons -->
+  <!-- Floating Buttons -->
   <div class="floating-buttons">
-    <a href="https://chat.whatsapp.com/KvupM9a1osR2ZE6LLy5NDb?mode=wwt" target="_blank" class="float-btn whatsapp-group" aria-label="Join our WhatsApp Group"><i class="fab fa-whatsapp"></i><span class="btn-tooltip">Join Group</span></a>
-    <a href="https://wa.me/233275903629" target="_blank" class="float-btn whatsapp-support" aria-label="Contact Support on WhatsApp"><i class="fas fa-headset"></i><span class="btn-tooltip">Support</span></a>
+    <a href="https://wa.me/233275903629" target="_blank" class="float-btn whatsapp-support" aria-label="WhatsApp Support">
+      <i class="fab fa-whatsapp"></i>
+      <span class="btn-tooltip">WhatsApp Support</span>
+    </a>
   </div>
 
-  <!-- Firebase + App JS -->
+  <!-- JavaScript -->
   <script type="module" src="script.js"></script>
 </body>
 </html>
