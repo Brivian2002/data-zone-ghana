@@ -32,7 +32,7 @@ const provider = new GoogleAuthProvider();
    GOOGLE FORM CONFIGURATION
    ========================= */
 // Google Form for order submissions (REPLACE WITH YOUR OWN FORM)
-const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSc4Y7Hc5J8QZ8oYQ7Xz9jK7L6T5rJ9vMpNqo0bVt7uRvXyQZw/formResponse";
+const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfMy0tJxTDmLjp2_uBe4Krgkg98Vv9urYEy1aovxBCPjABhwg/formResponse";
 
 // Form field IDs (REPLACE WITH YOUR FORM FIELD IDs)
 const FORM_FIELDS = {
