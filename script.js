@@ -30,7 +30,7 @@ const provider = new GoogleAuthProvider();
 
 // Your Apps Script endpoint
 const APPS_SCRIPT_ENDPOINT =
-  "https://script.google.com/macros/s/AKfycbyYUseoGNyY5_lRJw81SPp02IZne6dqx8mYOARHgouPsC6DmmInyB7ZabMpIZWNcmMY/exec";
+  "https://script.google.com/macros/s/AKfycbwusG3fZ0CGUAqjFFTudCcHV8stgOgm_HsAJM17Lb143neDBhFRWI0fX9NOJkJeF5Wb/exec";
 
 /* =========================
    PRODUCTS DATA
