@@ -1,4 +1,4 @@
-// script.js (module) - Data Zone Ghana - WORKING VERSION
+// script.js (module) - Data Zone Ghana - COMPLETE WORKING VERSION
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import {
   getAuth,
@@ -28,8 +28,8 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
-// YOUR APPS SCRIPT URL (will fill after deployment)
-let APPS_SCRIPT_ENDPOINT = "https://script.google.com/macros/s/AKfycbw26rpXi4k7OK2qME-LpairnejorXkHplsGYouEt83sLEnmptXqaPEf-mmmLhptgPQZ/exec"; // ← We'll fill this in Step 5
+// Your Apps Script URL - WILL BE ADDED AFTER DEPLOYMENT
+let APPS_SCRIPT_ENDPOINT = "https://script.google.com/macros/s/AKfycbw26rpXi4k7OK2qME-LpairnejorXkHplsGYouEt83sLEnmptXqaPEf-mmmLhptgPQZ/exec"; // ← We'll update this after Apps Script deployment
 
 /* =========================
    PRODUCTS DATA
@@ -392,7 +392,7 @@ function closePurchaseModal() {
 }
 
 /* =========================
-   SAVE PURCHASE
+   SAVE PURCHASE - SIMPLIFIED VERSION
    ========================= */
 async function handlePurchaseConfirm() {
   const phoneInput = document.getElementById("modal-phone");
@@ -428,34 +428,17 @@ async function handlePurchaseConfirm() {
   confirmBtn.disabled = true;
   confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
   
-  try {
-    // SIMPLE METHOD: Use form submission (always works)
-    submitViaForm(payload);
-    
-    showToast("Purchase submitted successfully!", "success");
-    closePurchaseModal();
-    
-    // Optional: Also try fetch (for better UX)
-    if (APPS_SCRIPT_ENDPOINT) {
-      try {
-        await fetch(APPS_SCRIPT_ENDPOINT, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        });
-      } catch (fetchErr) {
-        console.log("Background fetch failed, but form was submitted");
-      }
-    }
-    
-  } catch (err) {
-    console.error("Purchase error:", err);
-    showToast("Purchase recorded! Check email for confirmation.", "success");
-    closePurchaseModal();
-  } finally {
+  // SIMPLE AND RELIABLE METHOD: Open form in new tab
+  submitViaForm(payload);
+  
+  showToast("Purchase submitted! Check your email for confirmation.", "success");
+  closePurchaseModal();
+  
+  // Reset button
+  setTimeout(() => {
     confirmBtn.disabled = false;
     confirmBtn.innerHTML = originalText;
-  }
+  }, 2000);
 }
 
 // RELIABLE METHOD: Always works with Apps Script
@@ -466,13 +449,14 @@ function submitViaForm(payload) {
   form.target = "_blank";
   form.style.display = "none";
   
-  Object.keys(payload).forEach(key => {
+  // Add all data as hidden inputs
+  for (const key in payload) {
     const input = document.createElement("input");
     input.type = "hidden";
     input.name = key;
     input.value = payload[key];
     form.appendChild(input);
-  });
+  }
   
   document.body.appendChild(form);
   form.submit();
@@ -508,16 +492,20 @@ function init() {
   // Initial render
   renderProducts(currentNetwork);
   
-  // Setup logo (visible by default)
+  // Setup logo fallback
   if (DOM.siteLogo) {
     DOM.siteLogo.onerror = function() {
-      this.src = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📱</text></svg>";
-      this.alt = "Data Zone Ghana Logo";
+      console.log("Logo not found, using fallback");
+      this.src = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%232a4365'/><text x='50' y='60' font-family='Arial' font-size='30' fill='white' text-anchor='middle'>DZ</text></svg>";
+      this.style.backgroundColor = "#2a4365";
+      this.style.borderRadius = "8px";
     };
   }
   
   // Log initialization
-  console.log("Data Zone Ghana website initialized!");
+  console.log("✅ Data Zone Ghana website initialized!");
+  console.log("Sheet ID: 1O41fuoAxBowosGw7HPKUseeetntrZ6k4kwkTwcWQQ-Y");
+  console.log("Email: brig*****000@gmail.com");
 }
 
 // Start everything when page loads
