@@ -29,7 +29,7 @@ const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
 // Use this temporary endpoint that I know works:
-let APPS_SCRIPT_ENDPOINT = "https://script.google.com/macros/s/AKfycbw1ZwQls1WX0X8Ef1IclnA--EYSgNDL1OXVrA2brve_iNFdJZ2yYFw2FwZgbw9Pvq4f/exec";
+let APPS_SCRIPT_ENDPOINT = "https://script.google.com/macros/s/AKfycbw26rpXi4k7OK2qME-LpairnejorXkHplsGYouEt83sLEnmptXqaPEf-mmmLhptgPQZ/exec";
 
 /* =========================
    PRODUCTS DATA
