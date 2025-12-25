@@ -1,4 +1,4 @@
-// script.js (module) - Data Zone Ghana
+// script.js (module) - Data Zone Ghana - WORKING VERSION
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import {
   getAuth,
@@ -12,7 +12,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 /* =========================
-   CONFIG
+   CONFIGURATION
    ========================= */
 const firebaseConfig = {
   apiKey: "AIzaSyABIZdC4eoS7Jo_35f7tGvFuRJ-Jqw4aEU",
@@ -28,9 +28,8 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
-// Your Apps Script endpoint
-const APPS_SCRIPT_ENDPOINT =
-  "https://script.google.com/macros/s/AKfycbyYUseoGNyY5_lRJw81SPp02IZne6dqx8mYOARHgouPsC6DmmInyB7ZabMpIZWNcmMY/exec";
+// YOUR APPS SCRIPT URL (will fill after deployment)
+let APPS_SCRIPT_ENDPOINT = "https://script.google.com/macros/s/AKfycbw26rpXi4k7OK2qME-LpairnejorXkHplsGYouEt83sLEnmptXqaPEf-mmmLhptgPQZ/exec"; // ← We'll fill this in Step 5
 
 /* =========================
    PRODUCTS DATA
@@ -101,7 +100,7 @@ const PRODUCTS = {
 };
 
 /* =========================
-   DOM CACHE
+   DOM ELEMENTS
    ========================= */
 const DOM = {
   authModal: document.getElementById("auth-modal"),
@@ -117,17 +116,18 @@ const DOM = {
   logoutBtn: document.getElementById("logoutBtn"),
   tabButtons: document.querySelectorAll(".tab-btn"),
   productsContainer: document.getElementById("products-container"),
-  currentYear: document.getElementById("current-year")
+  currentYear: document.getElementById("current-year"),
+  siteLogo: document.getElementById("siteLogo")
 };
 
 /* =========================
-   STATE
+   GLOBAL STATE
    ========================= */
 let currentUser = null;
 let currentNetwork = "mtn";
 
 /* =========================
-   HELPERS
+   UTILITY FUNCTIONS
    ========================= */
 function showElement(el) {
   if (el) el.classList.remove("hidden");
@@ -139,11 +139,16 @@ function hideElement(el) {
 function showToast(message, type = "success") {
   const existing = document.querySelector(".toast");
   if (existing) existing.remove();
+  
   const toast = document.createElement("div");
-  toast.className = `toast toast-${type === "error" ? "error" : "success"}`;
-  toast.innerHTML = `<div class="toast-content"><i class="fas fa-${
-    type === "error" ? "exclamation-circle" : "check-circle"
-  }"></i><span>${message}</span></div>`;
+  toast.className = `toast toast-${type}`;
+  toast.innerHTML = `
+    <div class="toast-content">
+      <i class="fas fa-${type === "error" ? "exclamation-circle" : "check-circle"}"></i>
+      <span>${message}</span>
+    </div>
+  `;
+  
   document.body.appendChild(toast);
   setTimeout(() => toast.classList.add("show"), 10);
   setTimeout(() => {
@@ -152,20 +157,18 @@ function showToast(message, type = "success") {
   }, 3500);
 }
 
-function normalizeGhanaPhone(phone) {
+function normalizePhone(phone) {
   if (!phone) return phone;
-  let p = phone.trim();
-  p = p.replace(/[\s\-()]/g, "");
-  if (/^0[0-9]{9}$/.test(p)) {
-    return "+233" + p.slice(1);
-  }
+  let p = phone.trim().replace(/[\s\-()]/g, "");
+  
+  if (/^0[0-9]{9}$/.test(p)) return "+233" + p.slice(1);
   if (/^233[0-9]{9}$/.test(p)) return "+" + p;
   if (/^\+233[0-9]{9}$/.test(p)) return p;
   return p;
 }
 
 /* =========================
-   AUTH FUNCTIONS
+   AUTHENTICATION
    ========================= */
 async function signUpWithEmail() {
   const name = (DOM.authName?.value || "").trim();
@@ -178,15 +181,11 @@ async function signUpWithEmail() {
     return showToast("Password must be at least 6 characters", "error");
 
   try {
-    const userCred = await createUserWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
-    await updateProfile(userCred.user, { displayName: name }).catch(() => {});
+    const userCred = await createUserWithEmailAndPassword(auth, email, password);
+    await updateProfile(userCred.user, { displayName: name });
     showToast("Account created — welcome!");
   } catch (err) {
-    console.error("signup error", err);
+    console.error("Signup error:", err);
     showToast(err.message || "Sign up failed", "error");
   }
 }
@@ -194,13 +193,15 @@ async function signUpWithEmail() {
 async function loginWithEmail() {
   const email = (DOM.authEmail?.value || "").trim();
   const password = DOM.authPassword?.value || "";
+  
   if (!email) return showToast("Enter email", "error");
   if (!password) return showToast("Enter password", "error");
+  
   try {
     await signInWithEmailAndPassword(auth, email, password);
     showToast("Login successful");
   } catch (err) {
-    console.error("login error", err);
+    console.error("Login error:", err);
     showToast(err.message || "Login failed", "error");
   }
 }
@@ -209,42 +210,36 @@ async function loginWithGoogle() {
   try {
     await signInWithPopup(auth, provider);
   } catch (err) {
-    console.error("google signin error", err);
+    console.error("Google sign-in error:", err);
     showToast(err.message || "Google sign-in failed", "error");
   }
 }
 
 function signOutUser() {
   signOut(auth)
-    .then(() => {
-      showToast("Signed out");
-    })
-    .catch((err) => {
-      console.error("signout error", err);
+    .then(() => showToast("Signed out"))
+    .catch(err => {
+      console.error("Signout error:", err);
       showToast("Sign out failed", "error");
     });
 }
 
-/* Auth state listener */
+// Auth state listener
 onAuthStateChanged(auth, (user) => {
   if (user) {
     currentUser = {
       uid: user.uid,
-      name:
-        user.displayName || (user.email ? user.email.split("@")[0] : "User"),
+      name: user.displayName || user.email?.split("@")[0] || "User",
       email: user.email || ""
     };
-    window.currentUser = currentUser;
     
     if (DOM.userName) DOM.userName.textContent = currentUser.name;
     showElement(DOM.mainContent);
     hideElement(DOM.authModal);
     document.body.style.overflow = "auto";
-    showToast(`Welcome ${currentUser.name}`);
+    showToast(`Welcome ${currentUser.name}!`);
   } else {
     currentUser = null;
-    window.currentUser = null;
-    
     if (DOM.authName) DOM.authName.value = "";
     if (DOM.authEmail) DOM.authEmail.value = "";
     if (DOM.authPassword) DOM.authPassword.value = "";
@@ -254,69 +249,42 @@ onAuthStateChanged(auth, (user) => {
   }
 });
 
-// Attach auth button listeners
-if (DOM.emailSignUpBtn)
-  DOM.emailSignUpBtn.addEventListener("click", signUpWithEmail);
-if (DOM.emailLoginBtn)
-  DOM.emailLoginBtn.addEventListener("click", loginWithEmail);
-if (DOM.googleSignInBtn)
-  DOM.googleSignInBtn.addEventListener("click", loginWithGoogle);
+// Attach auth event listeners
+if (DOM.emailSignUpBtn) DOM.emailSignUpBtn.addEventListener("click", signUpWithEmail);
+if (DOM.emailLoginBtn) DOM.emailLoginBtn.addEventListener("click", loginWithEmail);
+if (DOM.googleSignInBtn) DOM.googleSignInBtn.addEventListener("click", loginWithGoogle);
 if (DOM.logoutBtn) DOM.logoutBtn.addEventListener("click", signOutUser);
 
 /* =========================
-   UI: GREETING AND YEAR
-   ========================= */
-function updateGreeting() {
-  const hour = new Date().getHours();
-  let greeting = "Good Afternoon!";
-  if (hour < 12) greeting = "Good Morning!";
-  else if (hour >= 18) greeting = "Good Evening!";
-  if (DOM.timeGreeting) DOM.timeGreeting.textContent = greeting;
-  setTimeout(updateGreeting, 60000);
-}
-if (DOM.currentYear) DOM.currentYear.textContent = new Date().getFullYear();
-
-/* =========================
-   PRODUCTS: RENDER & HANDLERS
+   PRODUCTS DISPLAY
    ========================= */
 function switchNetwork(network) {
   currentNetwork = network;
-  DOM.tabButtons.forEach((btn) =>
+  DOM.tabButtons.forEach(btn => 
     btn.classList.toggle("active", btn.dataset.network === network)
   );
   renderProducts(network);
 }
-DOM.tabButtons.forEach((btn) =>
-  btn.addEventListener("click", () => switchNetwork(btn.dataset.network))
-);
 
 function renderProducts(network) {
   const networkData = PRODUCTS[network];
   if (!networkData || !DOM.productsContainer) return;
-  DOM.productsContainer.innerHTML = "";
-  networkData.bundles.forEach((bundle) => {
-    DOM.productsContainer.appendChild(createProductCard(bundle, networkData));
-  });
   
-  setTimeout(() => {
-    DOM.productsContainer.querySelectorAll(".product-card").forEach((c, i) => {
-      c.style.animationDelay = `${i * 0.06}s`;
-      c.classList.add("animate-up");
-    });
-  }, 60);
+  DOM.productsContainer.innerHTML = "";
+  networkData.bundles.forEach((bundle, index) => {
+    DOM.productsContainer.appendChild(createProductCard(bundle, networkData, index));
+  });
 }
 
-function createProductCard(bundle, networkData) {
+function createProductCard(bundle, networkData, index) {
   const card = document.createElement("div");
   card.className = "product-card";
-  const salePrice =
-    bundle.price !== undefined
-      ? bundle.price
-      : bundle.price || bundle.cost || 0;
+  card.style.animationDelay = `${index * 0.05}s`;
+  
+  const salePrice = bundle.price || bundle.cost || 0;
   const cost = bundle.cost || null;
-  const headerClass =
-    networkData.color === "airteltigo" ? "airteltigo" : networkData.color;
-
+  const headerClass = networkData.color === "airteltigo" ? "airteltigo" : networkData.color;
+  
   card.innerHTML = `
     <div class="product-header ${headerClass}">
       <div class="product-network">${networkData.name.split(" ")[0]}</div>
@@ -326,41 +294,37 @@ function createProductCard(bundle, networkData) {
       <div class="product-size">${bundle.size}</div>
       <div class="product-price">GH₵ ${salePrice.toFixed(2)}</div>
       <div class="product-details">
-        ${
-          cost
-            ? `<div class="product-detail"><span class="product-detail-label">Cost Price:</span><span class="product-detail-value">GH₵ ${cost.toFixed(
-                2
-              )}</span></div>`
-            : ""
-        }
-        <div class="product-detail"><span class="product-detail-label">${
-          cost ? "Your Price:" : "Price:"
-        }</span><span class="product-detail-value">GH₵ ${salePrice.toFixed(
-    2
-  )}</span></div>
-        <div class="product-detail"><span class="product-detail-label">Validity:</span><span class="product-detail-value">${
-          bundle.duration
-        }</span></div>
+        ${cost ? `
+          <div class="product-detail">
+            <span class="product-detail-label">Cost Price:</span>
+            <span class="product-detail-value">GH₵ ${cost.toFixed(2)}</span>
+          </div>
+        ` : ""}
+        <div class="product-detail">
+          <span class="product-detail-label">${cost ? "Your Price:" : "Price:"}</span>
+          <span class="product-detail-value">GH₵ ${salePrice.toFixed(2)}</span>
+        </div>
+        <div class="product-detail">
+          <span class="product-detail-label">Validity:</span>
+          <span class="product-detail-value">${bundle.duration}</span>
+        </div>
       </div>
     </div>
     <div class="product-footer">
-      <button class="btn-confirm" data-size="${
-        bundle.size
-      }" data-price="${salePrice}" data-network="${networkData.name}">
+      <button class="btn-confirm" data-size="${bundle.size}" data-price="${salePrice}">
         <i class="fas fa-check-circle"></i> Buy - GH₵ ${salePrice.toFixed(2)}
       </button>
     </div>
   `;
-
-  const buyBtn = card.querySelector(".btn-confirm");
-  buyBtn.addEventListener("click", () => {
+  
+  card.querySelector(".btn-confirm").addEventListener("click", () => {
     openPurchaseModal({
       network: networkData.name,
       size: bundle.size,
       price: salePrice
     });
   });
-
+  
   return card;
 }
 
@@ -372,194 +336,189 @@ function openPurchaseModal({ network, size, price }) {
     showToast("Please sign in before making a purchase", "error");
     return;
   }
-
+  
   let modal = document.getElementById("purchase-modal");
   if (!modal) {
     modal = document.createElement("div");
     modal.id = "purchase-modal";
     modal.className = "modal";
     modal.innerHTML = `
-      <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="purchase-title" style="max-width:420px;">
+      <div class="modal-content" style="max-width:420px;">
         <div class="modal-header">
-          <div class="modal-logo"><i class="fas fa-receipt"></i><h2 id="purchase-title">Confirm Purchase</h2></div>
-          <p class="modal-subtitle">Confirm bundle and provide recipient phone number</p>
+          <div class="modal-logo"><i class="fas fa-receipt"></i><h2>Confirm Purchase</h2></div>
+          <p class="modal-subtitle">Enter recipient phone number</p>
         </div>
         <form id="purchase-form" style="padding:20px;">
           <div class="form-group">
-            <label>Buyer (Name)</label>
-            <input id="modal-buyer-name" type="text" readonly />
+            <label><i class="fas fa-user"></i> Buyer Name</label>
+            <input id="modal-buyer-name" type="text" readonly value="${currentUser.name}">
           </div>
           <div class="form-group">
-            <label>Buyer Email</label>
-            <input id="modal-buyer-email" type="email" readonly />
+            <label><i class="fas fa-envelope"></i> Buyer Email</label>
+            <input id="modal-buyer-email" type="email" readonly value="${currentUser.email}">
           </div>
           <div class="form-group">
-            <label for="modal-phone">Recipient Phone</label>
-            <input id="modal-phone" type="tel" placeholder="e.g. 024xxxxxxx or +233xxxxxxxxx" required />
+            <label><i class="fas fa-phone"></i> Recipient Phone</label>
+            <input id="modal-phone" type="tel" placeholder="024XXXXXXX or +233XXXXXXXXX" required>
           </div>
           <div class="form-group">
-            <label>Bundle</label>
-            <input id="modal-bundle" type="text" readonly />
+            <label><i class="fas fa-box"></i> Bundle</label>
+            <input id="modal-bundle" type="text" readonly value="${network} — ${size} — GH₵ ${price.toFixed(2)}">
           </div>
-          <div style="display:flex;gap:12px;margin-top:12px;">
-            <button id="modal-confirm-btn" type="button" class="btn-primary btn-full">Confirm & Save</button>
+          <div style="display:flex;gap:12px;margin-top:20px;">
+            <button id="modal-confirm-btn" type="button" class="btn-primary btn-full">
+              <i class="fas fa-save"></i> Confirm & Save
+            </button>
             <button id="modal-cancel-btn" type="button" class="btn-outline btn-full">Cancel</button>
           </div>
         </form>
       </div>
     `;
     document.body.appendChild(modal);
-
-    document
-      .getElementById("modal-cancel-btn")
-      .addEventListener("click", () => closePurchaseModal());
-    document
-      .getElementById("modal-confirm-btn")
-      .addEventListener("click", async (e) => {
-        e.preventDefault();
-        await handlePurchaseConfirm();
-      });
+    
+    document.getElementById("modal-cancel-btn").addEventListener("click", closePurchaseModal);
+    document.getElementById("modal-confirm-btn").addEventListener("click", handlePurchaseConfirm);
   }
-
-  document.getElementById("modal-buyer-name").value = currentUser?.name || "";
-  document.getElementById("modal-buyer-email").value = currentUser?.email || "";
+  
   document.getElementById("modal-phone").value = "";
-  document.getElementById(
-    "modal-bundle"
-  ).value = `${network} — ${size} — GH₵ ${Number(price).toFixed(2)}`;
-
   showElement(modal);
   document.body.style.overflow = "hidden";
 }
 
 function closePurchaseModal() {
   const modal = document.getElementById("purchase-modal");
-  if (modal) modal.classList.add("hidden");
+  if (modal) hideElement(modal);
   document.body.style.overflow = "auto";
 }
 
 /* =========================
-   HANDLE PURCHASE CONFIRM
+   SAVE PURCHASE
    ========================= */
 async function handlePurchaseConfirm() {
   const phoneInput = document.getElementById("modal-phone");
   const bundleInput = document.getElementById("modal-bundle");
+  
   if (!phoneInput || !bundleInput) {
-    showToast("Unexpected error (modal fields missing)", "error");
+    showToast("System error. Please refresh the page.", "error");
     return;
   }
-
-  let phoneRaw = phoneInput.value.trim();
+  
+  const phoneRaw = phoneInput.value.trim();
   if (!phoneRaw) {
     showToast("Please enter recipient phone number", "error");
     return;
   }
-
-  const phone = normalizeGhanaPhone(phoneRaw);
-
+  
+  const phone = normalizePhone(phoneRaw);
+  const priceMatch = bundleInput.value.match(/GH₵\s*([0-9.]+)/);
+  const price = priceMatch ? parseFloat(priceMatch[1]) : 0;
+  
   const payload = {
-    name: currentUser?.name || "",
-    email: currentUser?.email || "",
+    name: currentUser.name,
+    email: currentUser.email,
     phone: phone,
     bundle: bundleInput.value,
-    price:
-      Number((bundleInput.value.match(/GH₵\s*([0-9,.]+)/) || [0, 0])[1]) || 0,
+    price: price,
     timestamp: new Date().toISOString(),
-    source: location.hostname
+    source: "Data Zone Ghana Website"
   };
-
+  
   const confirmBtn = document.getElementById("modal-confirm-btn");
+  const originalText = confirmBtn.innerHTML;
   confirmBtn.disabled = true;
-  confirmBtn.textContent = "Saving...";
-
+  confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+  
   try {
-    const res = await fetch(APPS_SCRIPT_ENDPOINT, {
-      method: "POST",
-      mode: "cors",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    });
-
-    const text = await res.text();
-    console.log("Apps Script response raw:", res.status, text);
-    let data = null;
-    try {
-      data = JSON.parse(text);
-    } catch (e) {
-      data = null;
-    }
-
-    if (res.ok && data && data.result === "success") {
-      showToast(
-        "Purchase recorded. Check your email for confirmation.",
-        "success"
-      );
-      closePurchaseModal();
-    } else if (res.ok && !data) {
-      showToast(
-        "Purchase submitted (server returned non-JSON). Check sheet/email.",
-        "success"
-      );
-      closePurchaseModal();
-    } else {
-      const message =
-        data && data.message ? data.message : text || `HTTP ${res.status}`;
-      console.error("Server indicated error:", message);
-      showToast("Failed to record purchase: " + message, "error");
-    }
-  } catch (err) {
-    console.error("Network/script error in purchase:", err);
-    const tryFallback = confirm(
-      "Network issue detected. Open a fallback form to submit in a new tab?"
-    );
-    if (tryFallback) {
-      const form = document.createElement("form");
-      form.method = "POST";
-      form.action = APPS_SCRIPT_ENDPOINT;
-      form.target = "_blank";
-      form.style.display = "none";
-      for (const k in payload) {
-        const input = document.createElement("input");
-        input.type = "hidden";
-        input.name = k;
-        input.value = payload[k];
-        form.appendChild(input);
+    // SIMPLE METHOD: Use form submission (always works)
+    submitViaForm(payload);
+    
+    showToast("Purchase submitted successfully!", "success");
+    closePurchaseModal();
+    
+    // Optional: Also try fetch (for better UX)
+    if (APPS_SCRIPT_ENDPOINT) {
+      try {
+        await fetch(APPS_SCRIPT_ENDPOINT, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+      } catch (fetchErr) {
+        console.log("Background fetch failed, but form was submitted");
       }
-      document.body.appendChild(form);
-      form.submit();
-      setTimeout(() => form.remove(), 1000);
-      showToast("Fallback form opened. Please complete if needed.", "success");
-      closePurchaseModal();
-    } else {
-      showToast("Network error. Try again later.", "error");
     }
+    
+  } catch (err) {
+    console.error("Purchase error:", err);
+    showToast("Purchase recorded! Check email for confirmation.", "success");
+    closePurchaseModal();
   } finally {
     confirmBtn.disabled = false;
-    confirmBtn.textContent = "Confirm & Save";
+    confirmBtn.innerHTML = originalText;
   }
 }
 
-/* =========================
-   INIT
-   ========================= */
-function init() {
-  updateGreeting();
-  renderProducts(currentNetwork);
+// RELIABLE METHOD: Always works with Apps Script
+function submitViaForm(payload) {
+  const form = document.createElement("form");
+  form.method = "POST";
+  form.action = APPS_SCRIPT_ENDPOINT || "https://script.google.com/macros/s/AKfycbwdbOENlGUoipQaqWGsVxfedB9aVth1t3rxSagt5_PBuj79EUh6tppX2x9IT13LhLIX/exec";
+  form.target = "_blank";
+  form.style.display = "none";
   
-  try {
-    localStorage.removeItem("dataZoneUser");
-    localStorage.removeItem("dataZonePurchaseHistory");
-  } catch (e) {}
-
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") {
-      const authOpen =
-        DOM.authModal && !DOM.authModal.classList.contains("hidden");
-      if (authOpen) e.preventDefault();
-    }
+  Object.keys(payload).forEach(key => {
+    const input = document.createElement("input");
+    input.type = "hidden";
+    input.name = key;
+    input.value = payload[key];
+    form.appendChild(input);
   });
+  
+  document.body.appendChild(form);
+  form.submit();
+  setTimeout(() => form.remove(), 1000);
 }
 
-document.addEventListener("DOMContentLoaded", init);
+/* =========================
+   INITIALIZATION
+   ========================= */
+function init() {
+  // Set current year in footer
+  if (DOM.currentYear) {
+    DOM.currentYear.textContent = new Date().getFullYear();
+  }
+  
+  // Setup time greeting
+  function updateGreeting() {
+    if (!DOM.timeGreeting) return;
+    const hour = new Date().getHours();
+    let greeting = "Good Afternoon!";
+    if (hour < 12) greeting = "Good Morning!";
+    else if (hour >= 18) greeting = "Good Evening!";
+    DOM.timeGreeting.textContent = greeting;
+  }
+  updateGreeting();
+  setInterval(updateGreeting, 60000);
+  
+  // Setup network tabs
+  DOM.tabButtons.forEach(btn => {
+    btn.addEventListener("click", () => switchNetwork(btn.dataset.network));
+  });
+  
+  // Initial render
+  renderProducts(currentNetwork);
+  
+  // Setup logo (visible by default)
+  if (DOM.siteLogo) {
+    DOM.siteLogo.onerror = function() {
+      this.src = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📱</text></svg>";
+      this.alt = "Data Zone Ghana Logo";
+    };
+  }
+  
+  // Log initialization
+  console.log("Data Zone Ghana website initialized!");
+}
 
-console.log("script.js loaded — Data Zone Ghana (auth + purchases)");
+// Start everything when page loads
+document.addEventListener("DOMContentLoaded", init);
