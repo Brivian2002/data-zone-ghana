@@ -29,19 +29,18 @@ const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
 /* =========================
-   GOOGLE FORM CONFIGURATION
+   GOOGLE FORM CONFIGURATION - CORRECTED
    ========================= */
 // Google Form for order submissions
-const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfMy0tJxTDmLjp2_uBe4Krgkg98Vv9urYEy1aovxBCPjABhwg/formResponse
-";
+const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfMy0tJxTDmLjp2_uBe4Krgkg98Vv9urYEy1aovxBCPjABhwg/formResponse";
 
-// Form field IDs from your Google Form
+// Form field IDs from your Google Form - CORRECTED MAPPING
 const FORM_FIELDS = {
   name: "entry.2005620554",        // Name field
   email: "entry.1045781291",       // Email field
-  phone: "entry.1065046570",      // Recipient Phone field
+  phone: "entry.1065046570",       // Recipient Phone field
   transaction: "entry.1745455373", // Transaction ID field
-  bundle: "entry.1745455373"      // Selected Bundle field
+  bundle: "entry.1166974658"       // Selected Bundle field - CORRECTED
 };
 
 /* =========================
@@ -387,7 +386,6 @@ function openPurchaseModal({ network, size, price }) {
     paymentNumber = "020 955 8038";
     paymentName = "Bright Dumashie";
   } else if (network.includes("AirtelTigo")) {
-    // AirtelTigo payment instructions
     paymentNumber = "027 890 1234";
     paymentName = "Data Zone GH";
   }
@@ -469,7 +467,7 @@ function closePurchaseModal() {
 }
 
 /* =========================
-   GOOGLE FORM SUBMISSION - FIXED VERSION
+   GOOGLE FORM SUBMISSION - CORRECTED VERSION
    ========================= */
 async function submitPurchaseToGoogleForm() {
   const phoneInput = document.getElementById("modal-phone");
@@ -507,7 +505,7 @@ async function submitPurchaseToGoogleForm() {
   
   try {
     // Prepare form data for Google Form submission
-    const formData = new URLSearchParams();
+    const formData = new FormData();
     formData.append(FORM_FIELDS.name, currentUser.name);
     formData.append(FORM_FIELDS.email, currentUser.email);
     formData.append(FORM_FIELDS.phone, phone);
@@ -515,14 +513,10 @@ async function submitPurchaseToGoogleForm() {
     formData.append(FORM_FIELDS.bundle, bundleValue);
     
     // Submit to Google Form using fetch with no-cors mode
-    // This will submit the data without showing the Google Form to the user
     await fetch(GOOGLE_FORM_URL, {
       method: 'POST',
-      mode: 'no-cors', // Important: Prevents CORS errors and doesn't require response
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: formData.toString()
+      mode: 'no-cors',
+      body: formData
     });
     
     // Show success message
@@ -540,11 +534,11 @@ async function submitPurchaseToGoogleForm() {
   } catch (error) {
     console.error('Form submission error:', error);
     
-    // Fallback: Create hidden form and submit it
+    // Fallback method: Create hidden form and submit
     const hiddenForm = document.createElement('form');
     hiddenForm.method = 'POST';
     hiddenForm.action = GOOGLE_FORM_URL;
-    hiddenForm.target = '_blank'; // Open in background tab
+    hiddenForm.target = '_blank';
     hiddenForm.style.display = 'none';
     
     // Add all form fields as hidden inputs
@@ -666,8 +660,8 @@ function init() {
   console.log("🚀 Data Zone Ghana initialized successfully!");
   console.log("📱 MTN, Telecel & AirtelTigo bundles ready for orders!");
   console.log("🎄 Merry Christmas from Data Zone Ghana!");
-  console.log("✅ Google Form integration configured for background submission");
-  console.log("⚠️ Note: If submission fails, it will fallback to opening form in background tab");
+  console.log("✅ Google Form integration configured with CORRECTED mapping");
+  console.log(`📝 Using FORM_FIELDS: ${JSON.stringify(FORM_FIELDS)}`);
 }
 
 // Start application when DOM is loaded
