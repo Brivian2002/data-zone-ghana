@@ -32,16 +32,17 @@ const provider = new GoogleAuthProvider();
    GOOGLE FORM CONFIGURATION
    ========================= */
 // Google Form for order submissions (REPLACE WITH YOUR OWN FORM)
-const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfMy0tJxTDmLjp2_uBe4Krgkg98Vv9urYEy1aovxBCPjABhwg/formResponse";
+const GOOGLE_FORM_URL =
+  "https://docs.google.com/forms/d/e/1FAIpQLSfMy0tJxTDmLjp2_uBe4Krgkg98Vv9urYEy1aovxBCPjABhwg/formResponse";
 
 // Form field IDs (REPLACE WITH YOUR FORM FIELD IDs)
 const FORM_FIELDS = {
-  name: "entry.123456789",      // Replace with your form's name field ID
-  email: "entry.987654321",     // Replace with your form's email field ID
-  phone: "entry.555555555",     // Replace with your form's phone field ID
-  bundle: "entry.111111111",    // Replace with your form's bundle field ID
-  price: "entry.999999999",     // Replace with your form's price field ID
-  timestamp: "entry.888888888"  // Replace with your form's timestamp field ID
+  name: "entry.123456789", // Replace with your form's name field ID
+  email: "entry.987654321", // Replace with your form's email field ID
+  phone: "entry.555555555", // Replace with your form's phone field ID
+  bundle: "entry.111111111", // Replace with your form's bundle field ID
+  price: "entry.999999999", // Replace with your form's price field ID
+  timestamp: "entry.888888888" // Replace with your form's timestamp field ID
 };
 
 /* =========================
@@ -67,27 +68,6 @@ const PRODUCTS = {
       { size: "30 GB", price: 126.0, duration: "No Expiry" },
       { size: "40 GB", price: 165.0, duration: "No Expiry" },
       { size: "50 GB", price: 208.0, duration: "No Expiry" }
-    ]
-  },
-  airteltigo: {
-    name: "AirtelTigo Premium",
-    color: "airteltigo",
-    badge: "30 Days",
-    bundles: [
-      { size: "1 GB", cost: 3.95, price: 4.5, duration: "30 days" },
-      { size: "2 GB", cost: 8.35, price: 9.0, duration: "30 days" },
-      { size: "3 GB", cost: 13.25, price: 14.0, duration: "30 days" },
-      { size: "4 GB", cost: 16.5, price: 17.5, duration: "30 days" },
-      { size: "5 GB", cost: 19.5, price: 21.0, duration: "30 days" },
-      { size: "6 GB", cost: 23.5, price: 25.0, duration: "30 days" },
-      { size: "8 GB", cost: 30.5, price: 33.0, duration: "30 days" },
-      { size: "10 GB", cost: 38.5, price: 41.0, duration: "30 days" },
-      { size: "12 GB", cost: 45.5, price: 48.0, duration: "30 days" },
-      { size: "15 GB", cost: 57.5, price: 60.0, duration: "30 days" },
-      { size: "25 GB", cost: 95.0, price: 100.0, duration: "30 days" },
-      { size: "30 GB", cost: 115.0, price: 120.0, duration: "30 days" },
-      { size: "40 GB", cost: 151.0, price: 158.0, duration: "30 days" },
-      { size: "50 GB", cost: 190.0, price: 198.0, duration: "30 days" }
     ]
   },
   telecel: {
@@ -153,28 +133,30 @@ function hideElement(el) {
 function showToast(message, type = "success") {
   const existing = document.querySelector(".toast");
   if (existing) existing.remove();
-  
+
   const toast = document.createElement("div");
   toast.className = `toast toast-${type}`;
   toast.innerHTML = `
     <div class="toast-content">
-      <i class="fas fa-${type === "error" ? "exclamation-circle" : "check-circle"}"></i>
+      <i class="fas fa-${
+        type === "error" ? "exclamation-circle" : "check-circle"
+      }"></i>
       <span>${message}</span>
     </div>
   `;
-  
+
   document.body.appendChild(toast);
   setTimeout(() => toast.classList.add("show"), 10);
   setTimeout(() => {
     toast.classList.remove("show");
     setTimeout(() => toast.remove(), 300);
-  }, 3500);
+  }, 4000);
 }
 
 function normalizePhone(phone) {
   if (!phone) return "";
   let cleaned = phone.trim().replace(/[\s\-()]/g, "");
-  
+
   if (/^0[0-9]{9}$/.test(cleaned)) return "+233" + cleaned.slice(1);
   if (/^233[0-9]{9}$/.test(cleaned)) return "+" + cleaned;
   if (/^\+233[0-9]{9}$/.test(cleaned)) return cleaned;
@@ -195,9 +177,13 @@ async function signUpWithEmail() {
     return showToast("Password must be at least 6 characters", "error");
 
   try {
-    const userCred = await createUserWithEmailAndPassword(auth, email, password);
+    const userCred = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
     await updateProfile(userCred.user, { displayName: name });
-    showToast("Account created successfully!");
+    showToast("🎉 Account created successfully! Welcome to Data Zone Ghana!");
   } catch (err) {
     console.error("Signup error:", err);
     showToast(err.message || "Sign up failed", "error");
@@ -207,13 +193,13 @@ async function signUpWithEmail() {
 async function loginWithEmail() {
   const email = (DOM.authEmail?.value || "").trim();
   const password = DOM.authPassword?.value || "";
-  
+
   if (!email) return showToast("Enter email", "error");
   if (!password) return showToast("Enter password", "error");
-  
+
   try {
     await signInWithEmailAndPassword(auth, email, password);
-    showToast("Login successful!");
+    showToast("✅ Login successful! Welcome back!");
   } catch (err) {
     console.error("Login error:", err);
     showToast(err.message || "Login failed", "error");
@@ -223,6 +209,7 @@ async function loginWithEmail() {
 async function loginWithGoogle() {
   try {
     await signInWithPopup(auth, provider);
+    showToast("👋 Welcome! Google sign-in successful");
   } catch (err) {
     console.error("Google sign-in error:", err);
     showToast(err.message || "Google sign-in failed", "error");
@@ -231,8 +218,8 @@ async function loginWithGoogle() {
 
 function signOutUser() {
   signOut(auth)
-    .then(() => showToast("Signed out successfully"))
-    .catch(err => {
+    .then(() => showToast("👋 Signed out successfully. See you soon!"))
+    .catch((err) => {
       console.error("Signout error:", err);
       showToast("Sign out failed", "error");
     });
@@ -246,12 +233,21 @@ onAuthStateChanged(auth, (user) => {
       name: user.displayName || user.email?.split("@")[0] || "Customer",
       email: user.email || ""
     };
-    
+
     if (DOM.userName) DOM.userName.textContent = currentUser.name;
     showElement(DOM.mainContent);
     hideElement(DOM.authModal);
     document.body.style.overflow = "auto";
-    showToast(`Welcome ${currentUser.name}!`);
+
+    // Show Christmas greeting for logged in users
+    const hour = new Date().getHours();
+    let timeGreet = "Good Day";
+    if (hour < 12) timeGreet = "Good Morning";
+    else if (hour >= 18) timeGreet = "Good Evening";
+
+    setTimeout(() => {
+      showToast(`🎄 Merry Christmas, ${currentUser.name}! ${timeGreet}! 🎅`);
+    }, 500);
   } else {
     currentUser = null;
     if (DOM.authName) DOM.authName.value = "";
@@ -268,19 +264,31 @@ onAuthStateChanged(auth, (user) => {
    ========================= */
 function switchNetwork(network) {
   currentNetwork = network;
-  DOM.tabButtons.forEach(btn => 
+  DOM.tabButtons.forEach((btn) =>
     btn.classList.toggle("active", btn.dataset.network === network)
   );
   renderProducts(network);
+
+  // Scroll to products with smooth animation
+  document.querySelector(".products-section").scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
 }
 
 function renderProducts(network) {
   const networkData = PRODUCTS[network];
   if (!networkData || !DOM.productsContainer) return;
-  
+
   DOM.productsContainer.innerHTML = "";
   networkData.bundles.forEach((bundle, index) => {
-    DOM.productsContainer.appendChild(createProductCard(bundle, networkData, index));
+    const card = createProductCard(bundle, networkData, index);
+    DOM.productsContainer.appendChild(card);
+
+    // Stagger animation
+    setTimeout(() => {
+      card.style.animationDelay = `${index * 0.05}s`;
+    }, 10);
   });
 }
 
@@ -288,11 +296,10 @@ function createProductCard(bundle, networkData, index) {
   const card = document.createElement("div");
   card.className = "product-card";
   card.style.animationDelay = `${index * 0.05}s`;
-  
-  const salePrice = bundle.price || bundle.cost || 0;
-  const cost = bundle.cost || null;
-  const headerClass = networkData.color === "airteltigo" ? "airteltigo" : networkData.color;
-  
+
+  const price = bundle.price || 0;
+  const headerClass = networkData.color;
+
   card.innerHTML = `
     <div class="product-header ${headerClass}">
       <div class="product-network">${networkData.name.split(" ")[0]}</div>
@@ -300,39 +307,45 @@ function createProductCard(bundle, networkData, index) {
     </div>
     <div class="product-body">
       <div class="product-size">${bundle.size}</div>
-      <div class="product-price">GH₵ ${salePrice.toFixed(2)}</div>
+      <div class="product-price">${price.toFixed(2)}</div>
       <div class="product-details">
-        ${cost ? `
-          <div class="product-detail">
-            <span class="product-detail-label">Cost Price:</span>
-            <span class="product-detail-value">GH₵ ${cost.toFixed(2)}</span>
-          </div>
-        ` : ""}
         <div class="product-detail">
-          <span class="product-detail-label">${cost ? "Your Price:" : "Price:"}</span>
-          <span class="product-detail-value">GH₵ ${salePrice.toFixed(2)}</span>
+          <span class="product-detail-label">Price:</span>
+          <span class="product-detail-value">GH₵ ${price.toFixed(2)}</span>
         </div>
         <div class="product-detail">
           <span class="product-detail-label">Validity:</span>
           <span class="product-detail-value">${bundle.duration}</span>
         </div>
+        <div class="product-detail">
+          <span class="product-detail-label">Service Fee:</span>
+          <span class="product-detail-value">GH₵ 0.50</span>
+        </div>
+        <div class="product-detail">
+          <span class="product-detail-label">Total:</span>
+          <span class="product-detail-value">GH₵ ${(price + 0.5).toFixed(
+            2
+          )}</span>
+        </div>
       </div>
     </div>
     <div class="product-footer">
-      <button class="btn-confirm" data-size="${bundle.size}" data-price="${salePrice}">
-        <i class="fas fa-check-circle"></i> Buy - GH₵ ${salePrice.toFixed(2)}
+      <button class="btn-confirm" data-size="${
+        bundle.size
+      }" data-price="${price}">
+        <i class="fas fa-shopping-cart"></i> Buy Now - GH₵ ${price.toFixed(2)}
       </button>
     </div>
   `;
-  
+
   card.querySelector(".btn-confirm").addEventListener("click", () => {
     openPurchaseModal({
       network: networkData.name,
       size: bundle.size,
-      price: salePrice
+      price: price
     });
   });
-  
+
   return card;
 }
 
@@ -341,58 +354,95 @@ function createProductCard(bundle, networkData, index) {
    ========================= */
 function openPurchaseModal({ network, size, price }) {
   if (!currentUser) {
-    showToast("Please sign in before making a purchase", "error");
+    showToast("🔒 Please sign in before making a purchase", "error");
     return;
   }
-  
+
+  // Show payment reminder first
+  const paymentNumber = network.includes("MTN")
+    ? "053 534 3490"
+    : "020 955 8038";
+  const paymentName = network.includes("MTN")
+    ? "Vivian Ahorlu"
+    : "Bright Dumashie";
+
+  if (
+    !confirm(
+      `💳 IMPORTANT: Before proceeding, ensure you've sent GH₵${(
+        price + 0.5
+      ).toFixed(
+        2
+      )} to:\n\n${network}: ${paymentNumber}\nName: ${paymentName}\n\nHave you made the payment?`
+    )
+  ) {
+    return;
+  }
+
   let modal = document.getElementById("purchase-modal");
   if (!modal) {
     modal = document.createElement("div");
     modal.id = "purchase-modal";
     modal.className = "modal";
     modal.innerHTML = `
-      <div class="modal-content" style="max-width:420px;">
+      <div class="modal-content" style="max-width:450px;">
         <div class="modal-header">
           <div class="modal-logo"><i class="fas fa-receipt"></i><h2>Confirm Purchase</h2></div>
-          <p class="modal-subtitle">Enter recipient phone number</p>
+          <p class="modal-subtitle">Enter recipient phone number & transaction ID</p>
         </div>
-        <form id="purchase-form" style="padding:20px;">
+        <form id="purchase-form" style="padding:24px;">
           <div class="form-group">
             <label><i class="fas fa-user"></i> Your Name</label>
-            <input id="modal-buyer-name" type="text" readonly value="${currentUser.name}">
+            <input id="modal-buyer-name" type="text" readonly value="${
+              currentUser.name
+            }">
           </div>
           <div class="form-group">
             <label><i class="fas fa-envelope"></i> Your Email</label>
-            <input id="modal-buyer-email" type="email" readonly value="${currentUser.email}">
+            <input id="modal-buyer-email" type="email" readonly value="${
+              currentUser.email
+            }">
           </div>
           <div class="form-group">
             <label><i class="fas fa-phone"></i> Recipient Phone *</label>
             <input id="modal-phone" type="tel" placeholder="024XXXXXXX or +233XXXXXXXXX" required>
-            <small style="display:block; margin-top:4px; color:#718096;">Enter the phone number to receive data</small>
+            <small style="display:block; margin-top:6px; color:#94a3b8;">Phone number to receive data</small>
+          </div>
+          <div class="form-group">
+            <label><i class="fas fa-receipt"></i> Transaction ID *</label>
+            <input id="modal-transaction" type="text" placeholder="MM Transaction ID from payment" required>
+            <small style="display:block; margin-top:6px; color:#94a3b8;">Your Mobile Money transaction ID</small>
           </div>
           <div class="form-group">
             <label><i class="fas fa-box"></i> Selected Bundle</label>
-            <input id="modal-bundle" type="text" readonly value="${network} — ${size} — GH₵ ${price.toFixed(2)}">
+            <input id="modal-bundle" type="text" readonly value="${network} — ${size} — GH₵ ${price.toFixed(
+      2
+    )}">
           </div>
-          <div style="display:flex;gap:12px;margin-top:20px;">
+          <div class="payment-reminder">
+            <i class="fas fa-info-circle"></i>
+            <small>Payment made to: ${paymentNumber} (${paymentName})</small>
+          </div>
+          <div style="display:flex;gap:12px;margin-top:24px;">
             <button id="modal-confirm-btn" type="button" class="btn-primary btn-full">
               <i class="fas fa-paper-plane"></i> Submit Order
             </button>
             <button id="modal-cancel-btn" type="button" class="btn-outline btn-full">Cancel</button>
           </div>
-          <p style="margin-top:16px; font-size:0.9rem; color:#718096; text-align:center;">
-            <i class="fas fa-info-circle"></i> After submitting, make payment to the number shown above
-          </p>
         </form>
       </div>
     `;
     document.body.appendChild(modal);
-    
-    document.getElementById("modal-cancel-btn").addEventListener("click", closePurchaseModal);
-    document.getElementById("modal-confirm-btn").addEventListener("click", submitPurchaseToGoogleForm);
+
+    document
+      .getElementById("modal-cancel-btn")
+      .addEventListener("click", closePurchaseModal);
+    document
+      .getElementById("modal-confirm-btn")
+      .addEventListener("click", submitPurchaseToGoogleForm);
   }
-  
+
   document.getElementById("modal-phone").value = "";
+  document.getElementById("modal-transaction").value = "";
   showElement(modal);
   document.body.style.overflow = "hidden";
 }
@@ -408,43 +458,62 @@ function closePurchaseModal() {
    ========================= */
 function submitPurchaseToGoogleForm() {
   const phoneInput = document.getElementById("modal-phone");
+  const transactionInput = document.getElementById("modal-transaction");
   const bundleInput = document.getElementById("modal-bundle");
-  
-  if (!phoneInput || !bundleInput) {
+
+  if (!phoneInput || !transactionInput || !bundleInput) {
     showToast("System error. Please refresh page.", "error");
     return;
   }
-  
+
   const phoneRaw = phoneInput.value.trim();
+  const transactionRaw = transactionInput.value.trim();
+
   if (!phoneRaw) {
     showToast("Please enter recipient phone number", "error");
     phoneInput.focus();
     return;
   }
-  
+
+  if (!transactionRaw) {
+    showToast("Please enter your transaction ID", "error");
+    transactionInput.focus();
+    return;
+  }
+
   const phone = normalizePhone(phoneRaw);
   const priceMatch = bundleInput.value.match(/GH₵\s*([0-9.]+)/);
   const price = priceMatch ? parseFloat(priceMatch[1]) : 0;
-  const timestamp = new Date().toISOString();
-  
+  const timestamp = new Date().toLocaleString("en-GH", {
+    timeZone: "Africa/Accra",
+    dateStyle: "medium",
+    timeStyle: "medium"
+  });
+
   // Create form data
   const formData = new FormData();
-  
-  // Add all fields to form data (using your form field IDs)
+
+  // Add all fields to form data
   formData.append(FORM_FIELDS.name, currentUser.name);
   formData.append(FORM_FIELDS.email, currentUser.email);
   formData.append(FORM_FIELDS.phone, phone);
-  formData.append(FORM_FIELDS.bundle, bundleInput.value);
-  formData.append(FORM_FIELDS.price, `GH₵${price.toFixed(2)}`);
+  formData.append(
+    FORM_FIELDS.bundle,
+    `${bundleInput.value} | Transaction: ${transactionRaw}`
+  );
+  formData.append(
+    FORM_FIELDS.price,
+    `GH₵${(price + 0.5).toFixed(2)} (Bundle: ${price} + Fee: 0.50)`
+  );
   formData.append(FORM_FIELDS.timestamp, timestamp);
-  
+
   // Create and submit form
   const form = document.createElement("form");
   form.method = "POST";
   form.action = GOOGLE_FORM_URL;
   form.target = "_blank";
   form.style.display = "none";
-  
+
   // Add all form data as hidden inputs
   for (const [key, value] of formData.entries()) {
     const input = document.createElement("input");
@@ -453,34 +522,34 @@ function submitPurchaseToGoogleForm() {
     input.value = value;
     form.appendChild(input);
   }
-  
+
   // Create a confirmation message
   const confirmBtn = document.getElementById("modal-confirm-btn");
   const originalText = confirmBtn.innerHTML;
   confirmBtn.disabled = true;
-  confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
-  
+  confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+
   // Submit form
   document.body.appendChild(form);
   form.submit();
-  
+
   // Show success message
   setTimeout(() => {
-    showToast("Order submitted! Check your email for confirmation.", "success");
+    showToast(
+      "🎉 Order submitted successfully! We'll process it within 30 minutes.",
+      "success"
+    );
     closePurchaseModal();
-    
-    // Show payment reminder
-    setTimeout(() => {
-      alert("IMPORTANT: Make payment to the appropriate number shown in the Payment Instructions section. Data will be delivered within 30 minutes of payment confirmation.");
-    }, 500);
-    
+
     // Reset button
-    confirmBtn.disabled = false;
-    confirmBtn.innerHTML = originalText;
-    
+    setTimeout(() => {
+      confirmBtn.disabled = false;
+      confirmBtn.innerHTML = originalText;
+    }, 1000);
+
     // Remove form after submission
-    setTimeout(() => form.remove(), 1000);
-  }, 1000);
+    setTimeout(() => form.remove(), 2000);
+  }, 1500);
 }
 
 /* =========================
@@ -491,52 +560,88 @@ function init() {
   if (DOM.currentYear) {
     DOM.currentYear.textContent = new Date().getFullYear();
   }
-  
-  // Set time greeting
+
+  // Set dynamic time greeting
   function updateGreeting() {
     if (!DOM.timeGreeting) return;
     const hour = new Date().getHours();
-    let greeting = "Good Afternoon!";
-    if (hour < 12) greeting = "Good Morning!";
-    else if (hour >= 18) greeting = "Good Evening!";
+    let greeting = "Good Afternoon! 🌤️";
+    if (hour < 5) greeting = "Good Night! 🌙";
+    else if (hour < 12) greeting = "Good Morning! ☀️";
+    else if (hour >= 18) greeting = "Good Evening! 🌆";
+
+    // Add Christmas emoji during December
+    const month = new Date().getMonth();
+    if (month === 11) {
+      // December
+      greeting = greeting.replace("!", "! 🎄");
+    }
+
     DOM.timeGreeting.textContent = greeting;
   }
   updateGreeting();
   setInterval(updateGreeting, 60000);
-  
+
   // Setup network tabs
-  DOM.tabButtons.forEach(btn => {
+  DOM.tabButtons.forEach((btn) => {
     btn.addEventListener("click", () => switchNetwork(btn.dataset.network));
   });
-  
+
   // Setup footer links
-  DOM.footerLinks.forEach(link => {
+  DOM.footerLinks.forEach((link) => {
     link.addEventListener("click", (e) => {
       e.preventDefault();
       const network = link.dataset.network;
       if (network) {
         switchNetwork(network);
-        document.querySelector('.products-section').scrollIntoView({ behavior: 'smooth' });
-      } else if (link.id === 'scroll-to-payment') {
-        document.querySelector('.info-section').scrollIntoView({ behavior: 'smooth' });
+      } else if (link.id === "scroll-to-payment") {
+        document
+          .querySelector(".payment-top-section")
+          .scrollIntoView({ behavior: "smooth" });
+      } else if (link.id === "scroll-to-instructions") {
+        document
+          .querySelector(".order-guide")
+          .scrollIntoView({ behavior: "smooth" });
       }
     });
   });
-  
+
   // Setup auth button listeners
-  if (DOM.emailSignUpBtn) DOM.emailSignUpBtn.addEventListener("click", signUpWithEmail);
-  if (DOM.emailLoginBtn) DOM.emailLoginBtn.addEventListener("click", loginWithEmail);
-  if (DOM.googleSignInBtn) DOM.googleSignInBtn.addEventListener("click", loginWithGoogle);
+  if (DOM.emailSignUpBtn)
+    DOM.emailSignUpBtn.addEventListener("click", signUpWithEmail);
+  if (DOM.emailLoginBtn)
+    DOM.emailLoginBtn.addEventListener("click", loginWithEmail);
+  if (DOM.googleSignInBtn)
+    DOM.googleSignInBtn.addEventListener("click", loginWithGoogle);
   if (DOM.logoutBtn) DOM.logoutBtn.addEventListener("click", signOutUser);
-  
+
+  // Setup profile button
+  if (document.getElementById("profileBtn")) {
+    document.getElementById("profileBtn").addEventListener("click", () => {
+      showToast(
+        `👋 Welcome ${
+          currentUser?.name || "User"
+        }! Profile features coming soon.`
+      );
+    });
+  }
+
   // Initial products render
   renderProducts(currentNetwork);
-  
+
   // Log initialization
-  console.log("✅ Data Zone Ghana website initialized successfully!");
-  console.log("📱 Ready for orders!");
-  console.log("💡 Remember to create your Google Form and update FORM_FIELDS in script.js");
+  console.log("🚀 Data Zone Ghana initialized successfully!");
+  console.log("📱 MTN & Telecel bundles ready for orders!");
+  console.log("🎄 Merry Christmas from Data Zone Ghana!");
+  console.log("💡 Update FORM_FIELDS with your Google Form field IDs");
 }
 
-// Start application
-document.addEventListener("DOMContentLoaded", init);
+// Start application when DOM is loaded
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", init);
+} else {
+  init();
+}
+
+// Export for module usage
+export { auth, currentUser };
