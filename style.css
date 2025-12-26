@@ -1,680 +1,1519 @@
-// Data Zone Ghana - Complete JavaScript
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import {
-  getAuth,
-  GoogleAuthProvider,
-  signInWithPopup,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  onAuthStateChanged,
-  signOut,
-  updateProfile
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-
-/* =========================
-   FIREBASE CONFIGURATION
-   ========================= */
-const firebaseConfig = {
-  apiKey: "AIzaSyABIZdC4eoS7Jo_35f7tGvFuRJ-Jqw4aEU",
-  authDomain: "data-zone-ghana.firebaseapp.com",
-  projectId: "data-zone-ghana",
-  storageBucket: "data-zone-ghana.firebasestorage.app",
-  messagingSenderId: "646703313086",
-  appId: "1:646703313086:web:bc60a2b200176d540a2eef",
-  measurementId: "G-CZM5SHSS0Z"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const provider = new GoogleAuthProvider();
-
-/* =========================
-   GOOGLE FORM CONFIGURATION
-   ========================= */
-// Google Form for order submissions
-const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfMy0tJxTDmLjp2_uBe4Krgkg98Vv9urYEy1aovxBCPjABhwg/formResponse";
-
-// Form field IDs from your Google Form
-const FORM_FIELDS = {
-  name: "entry.933286285",        // Name field
-  email: "entry.311447064",       // Email field
-  phone: "entry.1442342955",      // Recipient Phone field
-  transaction: "entry.1423713792", // Transaction ID field
-  bundle: "entry.1395532210"      // Selected Bundle field
-};
-
-/* =========================
-   PRODUCTS DATA
-   ========================= */
-const PRODUCTS = {
-  mtn: {
-    name: "MTN Non-Expiry",
-    color: "mtn",
-    badge: "No Expiry",
-    bundles: [
-      { size: "1 GB", price: 5.0, duration: "No Expiry" },
-      { size: "2 GB", price: 10.0, duration: "No Expiry" },
-      { size: "3 GB", price: 14.0, duration: "No Expiry" },
-      { size: "4 GB", price: 19.5, duration: "No Expiry" },
-      { size: "5 GB", price: 25.0, duration: "No Expiry" },
-      { size: "6 GB", price: 29.5, duration: "No Expiry" },
-      { size: "8 GB", price: 38.0, duration: "No Expiry" },
-      { size: "10 GB", price: 45.0, duration: "No Expiry" },
-      { size: "15 GB", price: 65.0, duration: "No Expiry" },
-      { size: "20 GB", price: 85.0, duration: "No Expiry" },
-      { size: "25 GB", price: 110.0, duration: "No Expiry" },
-      { size: "30 GB", price: 126.0, duration: "No Expiry" },
-      { size: "40 GB", price: 165.0, duration: "No Expiry" },
-      { size: "50 GB", price: 208.0, duration: "No Expiry" }
-    ]
-  },
-  telecel: {
-    name: "Telecel Non-Expiry",
-    color: "telecel",
-    badge: "No Expiry",
-    bundles: [
-      { size: "5 GB", price: 21.0, duration: "No Expiry" },
-      { size: "8 GB", price: 36.5, duration: "No Expiry" },
-      { size: "10 GB", price: 45.0, duration: "No Expiry" },
-      { size: "12 GB", price: 46.0, duration: "No Expiry" },
-      { size: "15 GB", price: 65.0, duration: "No Expiry" },
-      { size: "20 GB", price: 74.0, duration: "No Expiry" },
-      { size: "25 GB", price: 92.0, duration: "No Expiry" },
-      { size: "30 GB", price: 110.0, duration: "No Expiry" },
-      { size: "35 GB", price: 128.0, duration: "No Expiry" },
-      { size: "40 GB", price: 145.0, duration: "No Expiry" },
-      { size: "45 GB", price: 162.0, duration: "No Expiry" },
-      { size: "50 GB", price: 180.0, duration: "No Expiry" },
-      { size: "100 GB", price: 355.0, duration: "No Expiry" }
-    ]
-  },
-  airteltigo: {
-    name: "AirtelTigo Premium",
-    color: "airteltigo",
-    badge: "30 Days",
-    bundles: [
-      { size: "1 GB", cost: 3.95, price: 4.5, duration: "30 days" },
-      { size: "2 GB", cost: 8.35, price: 9.0, duration: "30 days" },
-      { size: "3 GB", cost: 13.25, price: 14.0, duration: "30 days" },
-      { size: "4 GB", cost: 16.5, price: 17.5, duration: "30 days" },
-      { size: "5 GB", cost: 19.5, price: 21.0, duration: "30 days" },
-      { size: "6 GB", cost: 23.5, price: 25.0, duration: "30 days" },
-      { size: "8 GB", cost: 30.5, price: 33.0, duration: "30 days" },
-      { size: "10 GB", cost: 38.5, price: 41.0, duration: "30 days" },
-      { size: "12 GB", cost: 45.5, price: 48.0, duration: "30 days" },
-      { size: "15 GB", cost: 57.5, price: 60.0, duration: "30 days" },
-      { size: "25 GB", cost: 95.0, price: 100.0, duration: "30 days" },
-      { size: "30 GB", cost: 115.0, price: 120.0, duration: "30 days" },
-      { size: "40 GB", cost: 151.0, price: 158.0, duration: "30 days" },
-      { size: "50 GB", cost: 190.0, price: 198.0, duration: "30 days" }
-    ]
-  }
-};
-
-/* =========================
-   DOM ELEMENTS
-   ========================= */
-const DOM = {
-  authModal: document.getElementById("auth-modal"),
-  authName: document.getElementById("auth-name"),
-  authEmail: document.getElementById("auth-email"),
-  authPassword: document.getElementById("auth-password"),
-  emailSignUpBtn: document.getElementById("emailSignUpBtn"),
-  emailLoginBtn: document.getElementById("emailLoginBtn"),
-  googleSignInBtn: document.getElementById("googleSignInBtn"),
-  mainContent: document.getElementById("main-content"),
-  userName: document.getElementById("user-name"),
-  timeGreeting: document.getElementById("time-greeting"),
-  logoutBtn: document.getElementById("logoutBtn"),
-  tabButtons: document.querySelectorAll(".tab-btn"),
-  productsContainer: document.getElementById("products-container"),
-  currentYear: document.getElementById("current-year"),
-  footerLinks: document.querySelectorAll(".footer-link")
-};
-
-/* =========================
-   APPLICATION STATE
-   ========================= */
-let currentUser = null;
-let currentNetwork = "mtn";
-
-/* =========================
-   UTILITY FUNCTIONS
-   ========================= */
-function showElement(el) {
-  if (el) el.classList.remove("hidden");
+/* ===== CSS RESET & BASE STYLES ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-function hideElement(el) {
-  if (el) el.classList.add("hidden");
+:root {
+  /* Modern Color Palette */
+  --primary: #1a237e;
+  --primary-dark: #0d1457;
+  --primary-light: #283593;
+  --secondary: #00bcd4;
+  --accent: #ff4081;
+  --text-dark: #1a1a2e;
+  --text-light: #666680;
+  --background: #0f172a;
+  --card-bg: #1e293b;
+  --white: #ffffff;
+  --gray-light: #334155;
+  --gray: #475569;
+  --success: #00e676;
+  --warning: #ffd600;
+  --danger: #ff5252;
+  --live-green: #00ff88;
+
+  /* Network Colors */
+  --mtn-yellow: #ffd100;
+  --mtn-black: #000000;
+  --telecel-red: #e30613;
+  --telecel-white: #ffffff;
+  --at-blue: #009cde;
+  --at-red: #ed1c24;
+  --at-white: #ffffff;
+
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  --gradient-mtn: linear-gradient(135deg, var(--mtn-yellow) 0%, #ffc107 100%);
+  --gradient-telecel: linear-gradient(135deg, var(--telecel-red) 0%, #c53030 100%);
+  --gradient-at: linear-gradient(135deg, var(--at-blue) 0%, var(--at-red) 100%);
+  --gradient-tech: linear-gradient(135deg, var(--background) 0%, var(--card-bg) 100%);
+
+  /* Glass Morphism */
+  --glass-bg: rgba(30, 41, 59, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.36);
+
+  /* Shadows & Effects */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 30px 90px rgba(0, 0, 0, 0.6);
+  --neon-glow: 0 0 20px rgba(0, 188, 212, 0.3);
+
+  /* Border Radius */
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+  --radius-full: 999px;
+
+  /* Transitions */
+  --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-function showToast(message, type = "success") {
-  const existing = document.querySelector(".toast");
-  if (existing) existing.remove();
-  
-  const toast = document.createElement("div");
-  toast.className = `toast toast-${type}`;
-  toast.innerHTML = `
-    <div class="toast-content">
-      <i class="fas fa-${type === "error" ? "exclamation-circle" : "check-circle"}"></i>
-      <span>${message}</span>
-    </div>
-  `;
-  
-  document.body.appendChild(toast);
-  setTimeout(() => toast.classList.add("show"), 10);
-  setTimeout(() => {
-    toast.classList.remove("show");
-    setTimeout(() => toast.remove(), 300);
-  }, 4000);
+html {
+  scroll-behavior: smooth;
 }
 
-function normalizePhone(phone) {
-  if (!phone) return "";
-  let cleaned = phone.trim().replace(/[\s\-()]/g, "");
-  
-  if (/^0[0-9]{9}$/.test(cleaned)) return "+233" + cleaned.slice(1);
-  if (/^233[0-9]{9}$/.test(cleaned)) return "+" + cleaned;
-  if (/^\+233[0-9]{9}$/.test(cleaned)) return cleaned;
-  return cleaned;
+body {
+  font-family: "Inter", "Poppins", sans-serif;
+  line-height: 1.6;
+  color: var(--white);
+  background: var(--gradient-tech);
+  min-height: 100vh;
+  overflow-x: hidden;
 }
 
-/* =========================
-   AUTHENTICATION FUNCTIONS
-   ========================= */
-async function signUpWithEmail() {
-  const name = (DOM.authName?.value || "").trim();
-  const email = (DOM.authEmail?.value || "").trim();
-  const password = DOM.authPassword?.value || "";
-
-  if (!name) return showToast("Please enter full name", "error");
-  if (!email) return showToast("Please enter email", "error");
-  if (!password || password.length < 6)
-    return showToast("Password must be at least 6 characters", "error");
-
-  try {
-    const userCred = await createUserWithEmailAndPassword(auth, email, password);
-    await updateProfile(userCred.user, { displayName: name });
-    showToast("🎉 Account created successfully! Welcome to Data Zone Ghana!");
-  } catch (err) {
-    console.error("Signup error:", err);
-    showToast(err.message || "Sign up failed", "error");
-  }
+.container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 24px;
 }
 
-async function loginWithEmail() {
-  const email = (DOM.authEmail?.value || "").trim();
-  const password = DOM.authPassword?.value || "";
-  
-  if (!email) return showToast("Enter email", "error");
-  if (!password) return showToast("Enter password", "error");
-  
-  try {
-    await signInWithEmailAndPassword(auth, email, password);
-    showToast("✅ Login successful! Welcome back!");
-  } catch (err) {
-    console.error("Login error:", err);
-    showToast(err.message || "Login failed", "error");
-  }
+.hidden {
+  display: none !important;
 }
 
-async function loginWithGoogle() {
-  try {
-    await signInWithPopup(auth, provider);
-    showToast("👋 Welcome! Google sign-in successful");
-  } catch (err) {
-    console.error("Google sign-in error:", err);
-    showToast(err.message || "Google sign-in failed", "error");
-  }
+/* ===== CHRISTMAS BAR ===== */
+.christmas-bar {
+  background: linear-gradient(90deg, #c53030 0%, #38a169 50%, #2a4365 100%);
+  padding: 12px 0;
+  position: relative;
+  overflow: hidden;
 }
 
-function signOutUser() {
-  signOut(auth)
-    .then(() => showToast("👋 Signed out successfully. See you soon!"))
-    .catch(err => {
-      console.error("Signout error:", err);
-      showToast("Sign out failed", "error");
-    });
-}
-
-// Auth state listener
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    currentUser = {
-      uid: user.uid,
-      name: user.displayName || user.email?.split("@")[0] || "Customer",
-      email: user.email || ""
-    };
-    
-    if (DOM.userName) DOM.userName.textContent = currentUser.name;
-    showElement(DOM.mainContent);
-    hideElement(DOM.authModal);
-    document.body.style.overflow = "auto";
-    
-    // Show Christmas greeting for logged in users
-    const hour = new Date().getHours();
-    let timeGreet = "Good Day";
-    if (hour < 12) timeGreet = "Good Morning";
-    else if (hour >= 18) timeGreet = "Good Evening";
-    
-    setTimeout(() => {
-      showToast(`🎄 Merry Christmas, ${currentUser.name}! ${timeGreet}! 🎅`);
-    }, 500);
-    
-  } else {
-    currentUser = null;
-    if (DOM.authName) DOM.authName.value = "";
-    if (DOM.authEmail) DOM.authEmail.value = "";
-    if (DOM.authPassword) DOM.authPassword.value = "";
-    hideElement(DOM.mainContent);
-    showElement(DOM.authModal);
-    document.body.style.overflow = "hidden";
-  }
-});
-
-/* =========================
-   PRODUCT DISPLAY FUNCTIONS
-   ========================= */
-function switchNetwork(network) {
-  currentNetwork = network;
-  DOM.tabButtons.forEach(btn => 
-    btn.classList.toggle("active", btn.dataset.network === network)
+.christmas-bar::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 10px,
+    rgba(255, 255, 255, 0.1) 10px,
+    rgba(255, 255, 255, 0.1) 20px
   );
-  renderProducts(network);
-  
-  // Scroll to products with smooth animation
-  document.querySelector('.products-section').scrollIntoView({ 
-    behavior: 'smooth',
-    block: 'start'
-  });
+  pointer-events: none;
 }
 
-function renderProducts(network) {
-  const networkData = PRODUCTS[network];
-  if (!networkData || !DOM.productsContainer) return;
-  
-  DOM.productsContainer.innerHTML = "";
-  networkData.bundles.forEach((bundle, index) => {
-    const card = createProductCard(bundle, networkData, index);
-    DOM.productsContainer.appendChild(card);
-    
-    // Stagger animation
-    setTimeout(() => {
-      card.style.animationDelay = `${index * 0.05}s`;
-    }, 10);
-  });
+.christmas-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  text-align: center;
+  position: relative;
+  z-index: 1;
 }
 
-function createProductCard(bundle, networkData, index) {
-  const card = document.createElement("div");
-  card.className = "product-card";
-  card.style.animationDelay = `${index * 0.05}s`;
-  
-  const salePrice = bundle.price || bundle.cost || 0;
-  const cost = bundle.cost || null;
-  const headerClass = networkData.color;
-  
-  card.innerHTML = `
-    <div class="product-header ${headerClass}">
-      <div class="product-network">${networkData.name.split(" ")[0]}</div>
-      <div class="product-badge">${networkData.badge}</div>
-    </div>
-    <div class="product-body">
-      <div class="product-size">${bundle.size}</div>
-      <div class="product-price">${salePrice.toFixed(2)}</div>
-      <div class="product-details">
-        ${cost ? `
-          <div class="product-detail">
-            <span class="product-detail-label">Cost Price:</span>
-            <span class="product-detail-value">GH₵ ${cost.toFixed(2)}</span>
-          </div>
-        ` : ""}
-        <div class="product-detail">
-          <span class="product-detail-label">Your Price:</span>
-          <span class="product-detail-value">GH₵ ${salePrice.toFixed(2)}</span>
-        </div>
-        <div class="product-detail">
-          <span class="product-detail-label">Validity:</span>
-          <span class="product-detail-value">${bundle.duration}</span>
-        </div>
-        <div class="product-detail">
-          <span class="product-detail-label">Service Fee:</span>
-          <span class="product-detail-value">GH₵ 0.50</span>
-        </div>
-        <div class="product-detail">
-          <span class="product-detail-label">Total:</span>
-          <span class="product-detail-value">GH₵ ${(salePrice + 0.5).toFixed(2)}</span>
-        </div>
-      </div>
-    </div>
-    <div class="product-footer">
-      <button class="btn-confirm" data-size="${bundle.size}" data-price="${salePrice}">
-        <i class="fas fa-shopping-cart"></i> Buy Now - GH₵ ${salePrice.toFixed(2)}
-      </button>
-    </div>
-  `;
-  
-  card.querySelector(".btn-confirm").addEventListener("click", () => {
-    openPurchaseModal({
-      network: networkData.name,
-      size: bundle.size,
-      price: salePrice
-    });
-  });
-  
-  return card;
+.christmas-content i {
+  color: gold;
+  animation: bounce 2s infinite;
 }
 
-/* =========================
-   PURCHASE MODAL FUNCTIONS
-   ========================= */
-function openPurchaseModal({ network, size, price }) {
-  if (!currentUser) {
-    showToast("🔒 Please sign in before making a purchase", "error");
-    return;
-  }
-  
-  // Determine payment number based on network
-  let paymentNumber = "";
-  let paymentName = "";
-  
-  if (network.includes("MTN")) {
-    paymentNumber = "053 534 3490";
-    paymentName = "Vivian Ahorlu";
-  } else if (network.includes("Telecel")) {
-    paymentNumber = "020 955 8038";
-    paymentName = "Bright Dumashie";
-  } else if (network.includes("AirtelTigo")) {
-    // AirtelTigo payment instructions
-    paymentNumber = "027 890 1234";
-    paymentName = "Data Zone GH";
-  }
-  
-  // Show payment reminder first
-  if (!confirm(`💳 IMPORTANT: Before proceeding, ensure you've sent GH₵${(price + 0.5).toFixed(2)} to:\n\n${network}: ${paymentNumber}\nName: ${paymentName}\n\nHave you made the payment?`)) {
-    return;
-  }
-  
-  let modal = document.getElementById("purchase-modal");
-  if (!modal) {
-    modal = document.createElement("div");
-    modal.id = "purchase-modal";
-    modal.className = "modal";
-    modal.innerHTML = `
-      <div class="modal-content" style="max-width:450px;">
-        <div class="modal-header">
-          <div class="modal-logo"><i class="fas fa-receipt"></i><h2>Confirm Purchase</h2></div>
-          <p class="modal-subtitle">Enter recipient phone number & transaction ID</p>
-        </div>
-        <form id="purchase-form" style="padding:24px;">
-          <div class="form-group">
-            <label><i class="fas fa-user"></i> Your Name</label>
-            <input id="modal-buyer-name" type="text" readonly value="${currentUser.name}">
-          </div>
-          <div class="form-group">
-            <label><i class="fas fa-envelope"></i> Your Email</label>
-            <input id="modal-buyer-email" type="email" readonly value="${currentUser.email}">
-          </div>
-          <div class="form-group">
-            <label><i class="fas fa-phone"></i> Recipient Phone *</label>
-            <input id="modal-phone" type="tel" placeholder="024XXXXXXX or +233XXXXXXXXX" required>
-            <small style="display:block; margin-top:6px; color:#94a3b8;">Phone number to receive data</small>
-          </div>
-          <div class="form-group">
-            <label><i class="fas fa-receipt"></i> Transaction ID *</label>
-            <input id="modal-transaction" type="text" placeholder="MM Transaction ID from payment" required>
-            <small style="display:block; margin-top:6px; color:#94a3b8;">Your Mobile Money transaction ID</small>
-          </div>
-          <div class="form-group">
-            <label><i class="fas fa-box"></i> Selected Bundle</label>
-            <input id="modal-bundle" type="text" readonly value="${network} — ${size} — GH₵ ${price.toFixed(2)}">
-          </div>
-          <div class="payment-reminder">
-            <i class="fas fa-info-circle"></i>
-            <small>Payment made to: ${paymentNumber} (${paymentName})</small>
-          </div>
-          <div style="display:flex;gap:12px;margin-top:24px;">
-            <button id="modal-confirm-btn" type="button" class="btn-primary btn-full">
-              <i class="fas fa-paper-plane"></i> Submit Order
-            </button>
-            <button id="modal-cancel-btn" type="button" class="btn-outline btn-full">Cancel</button>
-          </div>
-        </form>
-      </div>
-    `;
-    document.body.appendChild(modal);
-    
-    document.getElementById("modal-cancel-btn").addEventListener("click", closePurchaseModal);
-    document.getElementById("modal-confirm-btn").addEventListener("click", submitPurchaseToGoogleForm);
-  }
-  
-  // Update payment reminder in modal
-  const paymentReminder = modal.querySelector('.payment-reminder small');
-  if (paymentReminder) {
-    paymentReminder.textContent = `Payment made to: ${paymentNumber} (${paymentName})`;
-  }
-  
-  document.getElementById("modal-phone").value = "";
-  document.getElementById("modal-transaction").value = "";
-  showElement(modal);
-  document.body.style.overflow = "hidden";
+.christmas-text {
+  font-size: 1rem;
+  font-weight: 500;
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-function closePurchaseModal() {
-  const modal = document.getElementById("purchase-modal");
-  if (modal) hideElement(modal);
-  document.body.style.overflow = "auto";
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
 }
 
-/* =========================
-   GOOGLE FORM SUBMISSION - FIXED VERSION
-   ========================= */
-async function submitPurchaseToGoogleForm() {
-  const phoneInput = document.getElementById("modal-phone");
-  const transactionInput = document.getElementById("modal-transaction");
-  const bundleInput = document.getElementById("modal-bundle");
-  
-  if (!phoneInput || !transactionInput || !bundleInput) {
-    showToast("System error. Please refresh page.", "error");
-    return;
+/* ===== TYPOGRAPHY ===== */
+h1, h2, h3, h4, h5 {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+}
+
+h1 {
+  font-size: 3rem;
+  background: linear-gradient(135deg, var(--white) 0%, var(--secondary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+h2 {
+  font-size: 2.5rem;
+  color: var(--white);
+  position: relative;
+  display: inline-block;
+}
+
+h2::after {
+  content: "";
+  position: absolute;
+  bottom: -10px;
+  left: 0;
+  width: 60px;
+  height: 4px;
+  background: var(--secondary);
+  border-radius: 2px;
+}
+
+h3 {
+  font-size: 1.8rem;
+  color: var(--white);
+}
+
+p {
+  margin-bottom: 1rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1.1rem;
+  line-height: 1.7;
+}
+
+/* ===== BUTTON STYLES ===== */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: linear-gradient(135deg, var(--secondary) 0%, #0097a7 100%);
+  color: var(--white);
+  border: none;
+  padding: 16px 32px;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: var(--transition-normal);
+  text-decoration: none;
+  font-family: "Inter", sans-serif;
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: var(--transition-normal);
+}
+
+.btn-primary:hover::before {
+  left: 100%;
+}
+
+.btn-primary:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: var(--shadow-lg), var(--neon-glow);
+  background: linear-gradient(135deg, #00e5ff 0%, var(--secondary) 100%);
+}
+
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: transparent;
+  color: var(--secondary);
+  border: 2px solid var(--secondary);
+  padding: 12px 24px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: var(--transition-normal);
+  backdrop-filter: blur(10px);
+}
+
+.btn-outline:hover {
+  background-color: var(--secondary);
+  color: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--neon-glow);
+}
+
+.btn-full {
+  width: 100%;
+}
+
+.btn-network {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 18px 28px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: var(--transition-normal);
+  text-decoration: none;
+  border: none;
+  color: var(--white);
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-network::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+  transform: translateX(-100%);
+}
+
+.btn-network:hover::after {
+  transform: translateX(100%);
+  transition: transform 0.6s;
+}
+
+.btn-network:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn-mtn {
+  background: var(--gradient-mtn);
+  color: var(--mtn-black);
+}
+
+.btn-at {
+  background: var(--gradient-at);
+  color: var(--white);
+}
+
+.btn-telecel {
+  background: var(--gradient-telecel);
+  color: var(--white);
+}
+
+/* ===== LIVE INDICATOR ===== */
+.live-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 255, 136, 0.1);
+  border: 1px solid var(--live-green);
+  border-radius: var(--radius-full);
+  padding: 8px 16px;
+  backdrop-filter: blur(10px);
+}
+
+.live-dot {
+  width: 10px;
+  height: 10px;
+  background: var(--live-green);
+  border-radius: 50%;
+  animation: pulse 1.5s infinite;
+  box-shadow: 0 0 20px var(--live-green);
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
   }
-  
-  const phoneRaw = phoneInput.value.trim();
-  const transactionRaw = transactionInput.value.trim();
-  
-  if (!phoneRaw) {
-    showToast("Please enter recipient phone number", "error");
-    phoneInput.focus();
-    return;
-  }
-  
-  if (!transactionRaw) {
-    showToast("Please enter your transaction ID", "error");
-    transactionInput.focus();
-    return;
-  }
-  
-  const phone = normalizePhone(phoneRaw);
-  const bundleValue = bundleInput.value;
-  
-  // Create a confirmation message
-  const confirmBtn = document.getElementById("modal-confirm-btn");
-  const originalText = confirmBtn.innerHTML;
-  confirmBtn.disabled = true;
-  confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting Order...';
-  
-  try {
-    // Prepare form data for Google Form submission
-    const formData = new URLSearchParams();
-    formData.append(FORM_FIELDS.name, currentUser.name);
-    formData.append(FORM_FIELDS.email, currentUser.email);
-    formData.append(FORM_FIELDS.phone, phone);
-    formData.append(FORM_FIELDS.transaction, transactionRaw);
-    formData.append(FORM_FIELDS.bundle, bundleValue);
-    
-    // Submit to Google Form using fetch with no-cors mode
-    // This will submit the data without showing the Google Form to the user
-    await fetch(GOOGLE_FORM_URL, {
-      method: 'POST',
-      mode: 'no-cors', // Important: Prevents CORS errors and doesn't require response
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: formData.toString()
-    });
-    
-    // Show success message
-    showToast("🎉 Order submitted successfully! We'll process it within 30 minutes.", "success");
-    
-    // Clear form fields
-    phoneInput.value = "";
-    transactionInput.value = "";
-    
-    // Close modal after delay
-    setTimeout(() => {
-      closePurchaseModal();
-    }, 1500);
-    
-  } catch (error) {
-    console.error('Form submission error:', error);
-    
-    // Fallback: Create hidden form and submit it
-    const hiddenForm = document.createElement('form');
-    hiddenForm.method = 'POST';
-    hiddenForm.action = GOOGLE_FORM_URL;
-    hiddenForm.target = '_blank'; // Open in background tab
-    hiddenForm.style.display = 'none';
-    
-    // Add all form fields as hidden inputs
-    const fields = {
-      [FORM_FIELDS.name]: currentUser.name,
-      [FORM_FIELDS.email]: currentUser.email,
-      [FORM_FIELDS.phone]: phone,
-      [FORM_FIELDS.transaction]: transactionRaw,
-      [FORM_FIELDS.bundle]: bundleValue
-    };
-    
-    Object.entries(fields).forEach(([name, value]) => {
-      const input = document.createElement('input');
-      input.type = 'hidden';
-      input.name = name;
-      input.value = value;
-      hiddenForm.appendChild(input);
-    });
-    
-    document.body.appendChild(hiddenForm);
-    hiddenForm.submit();
-    
-    // Remove form after submission
-    setTimeout(() => {
-      document.body.removeChild(hiddenForm);
-    }, 1000);
-    
-    showToast("✅ Order submitted! Check your email for confirmation.", "success");
-    
-    // Clear form fields
-    phoneInput.value = "";
-    transactionInput.value = "";
-    
-    // Close modal after delay
-    setTimeout(() => {
-      closePurchaseModal();
-    }, 1500);
-    
-  } finally {
-    // Reset button state
-    setTimeout(() => {
-      confirmBtn.disabled = false;
-      confirmBtn.innerHTML = originalText;
-    }, 1000);
-    
-    // Show follow-up message
-    setTimeout(() => {
-      showToast("📱 Data will be delivered within 30 minutes. Keep your transaction ID handy!", "success");
-    }, 2000);
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1);
   }
 }
 
-/* =========================
-   INITIALIZATION
-   ========================= */
-function init() {
-  // Set current year
-  if (DOM.currentYear) {
-    DOM.currentYear.textContent = new Date().getFullYear();
-  }
-  
-  // Set dynamic time greeting
-  function updateGreeting() {
-    if (!DOM.timeGreeting) return;
-    const hour = new Date().getHours();
-    let greeting = "Good Afternoon! 🌤️";
-    if (hour < 5) greeting = "Good Night! 🌙";
-    else if (hour < 12) greeting = "Good Morning! ☀️";
-    else if (hour >= 18) greeting = "Good Evening! 🌆";
-    
-    // Add Christmas emoji during December
-    const month = new Date().getMonth();
-    if (month === 11) { // December
-      greeting = greeting.replace('!', '! 🎄');
-    }
-    
-    DOM.timeGreeting.textContent = greeting;
-  }
-  updateGreeting();
-  setInterval(updateGreeting, 60000);
-  
-  // Setup network tabs
-  DOM.tabButtons.forEach(btn => {
-    btn.addEventListener("click", () => switchNetwork(btn.dataset.network));
-  });
-  
-  // Setup footer links
-  DOM.footerLinks.forEach(link => {
-    link.addEventListener("click", (e) => {
-      e.preventDefault();
-      const network = link.dataset.network;
-      if (network) {
-        switchNetwork(network);
-      } else if (link.id === 'scroll-to-payment') {
-        document.querySelector('.payment-top-section').scrollIntoView({ behavior: 'smooth' });
-      } else if (link.id === 'scroll-to-instructions') {
-        document.querySelector('.order-guide').scrollIntoView({ behavior: 'smooth' });
-      }
-    });
-  });
-  
-  // Setup auth button listeners
-  if (DOM.emailSignUpBtn) DOM.emailSignUpBtn.addEventListener("click", signUpWithEmail);
-  if (DOM.emailLoginBtn) DOM.emailLoginBtn.addEventListener("click", loginWithEmail);
-  if (DOM.googleSignInBtn) DOM.googleSignInBtn.addEventListener("click", loginWithGoogle);
-  if (DOM.logoutBtn) DOM.logoutBtn.addEventListener("click", signOutUser);
-  
-  // Setup profile button
-  if (document.getElementById("profileBtn")) {
-    document.getElementById("profileBtn").addEventListener("click", () => {
-      showToast(`👋 Welcome ${currentUser?.name || 'User'}! Profile features coming soon.`);
-    });
-  }
-  
-  // Initial products render
-  renderProducts(currentNetwork);
-  
-  // Log initialization
-  console.log("🚀 Data Zone Ghana initialized successfully!");
-  console.log("📱 MTN, Telecel & AirtelTigo bundles ready for orders!");
-  console.log("🎄 Merry Christmas from Data Zone Ghana!");
-  console.log("✅ Google Form integration configured for background submission");
-  console.log("⚠️ Note: If submission fails, it will fallback to opening form in background tab");
+.live-indicator span {
+  color: var(--live-green);
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
-// Start application when DOM is loaded
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', init);
-} else {
-  init();
+/* ===== MODAL STYLES ===== */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(10px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px;
+  animation: fadeIn 0.3s ease;
 }
 
-// Export for module usage
-export { auth, currentUser };
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-content {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  width: 100%;
+  max-width: 480px;
+  overflow: hidden;
+  box-shadow: var(--glass-shadow);
+  animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(20px);
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-header {
+  background: var(--gradient-primary);
+  padding: 32px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.modal-header::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+}
+
+.modal-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 10px;
+  position: relative;
+  z-index: 1;
+}
+
+.modal-logo h2 {
+  color: var(--white);
+  font-size: 1.8rem;
+  margin: 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.modal-subtitle {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1rem;
+  margin: 0;
+  position: relative;
+  z-index: 1;
+}
+
+/* ===== FORM STYLES ===== */
+form {
+  padding: 32px;
+}
+
+.form-group {
+  margin-bottom: 24px;
+}
+
+.form-group label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: var(--white);
+  font-size: 0.95rem;
+}
+
+.form-group label i {
+  color: var(--secondary);
+  width: 20px;
+  text-align: center;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  font-family: "Inter", sans-serif;
+  transition: var(--transition-normal);
+  color: var(--white);
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--secondary);
+  box-shadow: 0 0 0 3px rgba(0, 188, 212, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.form-note {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: 24px;
+  padding: 12px;
+  background: rgba(0, 230, 118, 0.1);
+  border-radius: var(--radius-md);
+  border-left: 3px solid var(--success);
+}
+
+.form-note i {
+  color: var(--success);
+}
+
+/* ===== NAVIGATION ===== */
+.top-nav {
+  background: var(--glass-bg);
+  border-bottom: 1px solid var(--glass-border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(20px);
+}
+
+.nav-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 0;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.nav-brand h1 {
+  font-size: 1.8rem;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.brand-ghana {
+  background: linear-gradient(135deg, var(--success) 0%, var(--secondary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.tagline {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 4px 0 0 0;
+  letter-spacing: 1px;
+}
+
+.user-section {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.nav-controls {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.user-greeting {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.akwaaba {
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--white) 0%, var(--secondary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-size: 1.2rem;
+}
+
+.time-greeting {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: 2px;
+}
+
+/* ===== HERO BANNER ===== */
+.hero-banner {
+  background: radial-gradient(circle at 20% 50%, rgba(42, 67, 101, 0.3) 0%, transparent 50%),
+              radial-gradient(circle at 80% 20%, rgba(0, 188, 212, 0.2) 0%, transparent 50%),
+              var(--gradient-tech);
+  padding: 100px 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-banner::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 40%;
+  height: 100%;
+  background: radial-gradient(circle at 70% 30%, rgba(66, 153, 225, 0.1) 0%, transparent 50%);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+  max-width: 800px;
+}
+
+.hero-title {
+  font-size: 4rem;
+  color: var(--white);
+  margin-bottom: 24px;
+  line-height: 1.1;
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.hero-highlight {
+  background: linear-gradient(135deg, var(--mtn-yellow) 0%, var(--secondary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-subtitle {
+  font-size: 1.4rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 40px;
+  max-width: 600px;
+}
+
+.hero-features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-top: 40px;
+}
+
+.feature {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  padding: 20px;
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(10px);
+  transition: var(--transition-normal);
+}
+
+.feature:hover {
+  transform: translateY(-5px);
+  border-color: var(--secondary);
+  box-shadow: var(--neon-glow);
+}
+
+.feature i {
+  color: var(--secondary);
+  font-size: 1.5rem;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 188, 212, 0.1);
+  border-radius: var(--radius-full);
+}
+
+.feature span {
+  color: var(--white);
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+/* ===== PAYMENT TOP SECTION ===== */
+.payment-top-section {
+  padding: 60px 0;
+  background: rgba(30, 41, 59, 0.5);
+  border-top: 1px solid var(--glass-border);
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.payment-note {
+  color: var(--danger);
+  font-size: 0.9rem;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ===== SECTION STYLES ===== */
+.order-guide,
+.products-section {
+  padding: 80px 0;
+}
+
+.order-guide {
+  background: var(--gradient-tech);
+}
+
+.products-section {
+  background: rgba(30, 41, 59, 0.3);
+  border-top: 1px solid var(--glass-border);
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.section-icon {
+  font-size: 3.5rem;
+  color: var(--secondary);
+  margin-bottom: 20px;
+  display: inline-block;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.section-subtitle {
+  font-size: 1.2rem;
+  color: rgba(255, 255, 255, 0.8);
+  max-width: 600px;
+  margin: 12px auto 0;
+}
+
+/* ===== ORDER GUIDE ===== */
+.steps-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+  margin-bottom: 60px;
+}
+
+.step {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  padding: 40px 30px;
+  box-shadow: var(--shadow-md);
+  transition: var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+}
+
+.step::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--secondary), var(--accent));
+}
+
+.step:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-lg), var(--neon-glow);
+  border-color: var(--secondary);
+}
+
+.step-number {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  background: var(--gradient-primary);
+  color: var(--white);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1.5rem;
+  box-shadow: var(--shadow-md);
+}
+
+.step-content h3 {
+  color: var(--white);
+  margin-bottom: 15px;
+  font-size: 1.4rem;
+  padding-right: 60px;
+}
+
+.step-content p {
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 0;
+  line-height: 1.6;
+}
+
+/* ===== PAYMENT METHODS ===== */
+.payment-methods {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 30px;
+  margin-bottom: 40px;
+}
+
+.payment-method {
+  border-radius: var(--radius-lg);
+  padding: 30px;
+  transition: var(--transition-normal);
+  background: var(--glass-bg);
+  border: 1px solid transparent;
+  backdrop-filter: blur(10px);
+}
+
+.payment-method:hover {
+  transform: translateY(-5px);
+  border-color: var(--secondary);
+  box-shadow: var(--neon-glow);
+}
+
+.mtn-payment {
+  background: linear-gradient(135deg, rgba(255, 209, 0, 0.1) 0%, rgba(30, 41, 59, 0.8) 100%);
+  border: 1px solid var(--mtn-yellow);
+}
+
+.telecel-payment {
+  background: linear-gradient(135deg, rgba(227, 6, 19, 0.1) 0%, rgba(30, 41, 59, 0.8) 100%);
+  border: 1px solid var(--telecel-red);
+}
+
+.payment-method-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.network-badge {
+  padding: 8px 20px;
+  border-radius: var(--radius-full);
+  font-weight: 800;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: var(--shadow-sm);
+}
+
+.mtn-badge {
+  background: var(--gradient-mtn);
+  color: var(--mtn-black);
+}
+
+.telecel-badge {
+  background: var(--gradient-telecel);
+  color: var(--white);
+}
+
+.at-badge {
+  background: var(--gradient-at);
+  color: var(--white);
+}
+
+.payment-method-header h4 {
+  margin: 0;
+  color: var(--white);
+  font-size: 1.3rem;
+}
+
+.payment-details p {
+  margin-bottom: 12px;
+  color: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.payment-details strong {
+  color: var(--white);
+  min-width: 80px;
+}
+
+.important-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  background: linear-gradient(135deg, rgba(245, 101, 101, 0.1) 0%, rgba(30, 41, 59, 0.8) 100%);
+  border: 1px solid var(--danger);
+  border-radius: var(--radius-lg);
+  padding: 30px;
+  margin-top: 40px;
+  backdrop-filter: blur(10px);
+}
+
+.important-notice i {
+  font-size: 1.8rem;
+  color: var(--danger);
+  flex-shrink: 0;
+  margin-top: 5px;
+}
+
+.important-notice h4 {
+  color: var(--danger);
+  margin-bottom: 10px;
+  font-size: 1.3rem;
+}
+
+.important-notice p {
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+/* ===== NETWORK TABS ===== */
+.network-tabs {
+  margin-bottom: 60px;
+}
+
+.tabs-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.tab-btn {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  padding: 0;
+  cursor: pointer;
+  transition: var(--transition-normal);
+  overflow: hidden;
+  text-align: left;
+  backdrop-filter: blur(10px);
+}
+
+.tab-btn.active {
+  border-color: var(--secondary);
+  box-shadow: var(--shadow-md), var(--neon-glow);
+  transform: scale(1.02);
+}
+
+.tab-btn:hover:not(.active) {
+  border-color: var(--secondary);
+  transform: translateY(-5px);
+  box-shadow: var(--neon-glow);
+}
+
+.tab-content {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  padding: 30px;
+}
+
+.tab-icon {
+  width: 70px;
+  height: 70px;
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 1.3rem;
+  flex-shrink: 0;
+  box-shadow: var(--shadow-md);
+}
+
+.mtn-tab {
+  background: var(--gradient-mtn);
+  color: var(--mtn-black);
+}
+
+.telecel-tab {
+  background: var(--gradient-telecel);
+  color: var(--white);
+}
+
+.at-tab {
+  background: var(--gradient-at);
+  color: var(--white);
+}
+
+.tab-info h4 {
+  margin: 0 0 6px 0;
+  color: var(--white);
+  font-size: 1.4rem;
+}
+
+.tab-info p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1rem;
+}
+
+/* ===== PRODUCTS GRID ===== */
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 35px;
+}
+
+.product-card {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  transition: var(--transition-normal);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  backdrop-filter: blur(10px);
+  animation: fadeInUp 0.6s ease forwards;
+  opacity: 0;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.product-card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: var(--shadow-lg), var(--neon-glow);
+  border-color: var(--secondary);
+}
+
+.product-header {
+  padding: 25px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.product-header::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+}
+
+.product-header.mtn {
+  background: linear-gradient(135deg, var(--mtn-yellow) 0%, #ffc107 100%);
+  color: var(--mtn-black);
+}
+
+.product-header.telecel {
+  background: linear-gradient(135deg, var(--telecel-red) 0%, #c53030 100%);
+  color: var(--white);
+}
+
+.product-header.airteltigo {
+  background: linear-gradient(135deg, var(--at-blue) 0%, var(--at-red) 100%);
+  color: var(--white);
+}
+
+.product-network {
+  font-weight: 900;
+  font-size: 1.6rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+  z-index: 1;
+}
+
+.product-badge {
+  background: rgba(0, 0, 0, 0.3);
+  color: var(--white);
+  padding: 8px 20px;
+  border-radius: var(--radius-full);
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  position: relative;
+  z-index: 1;
+}
+
+.product-body {
+  padding: 30px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.product-size {
+  font-size: 2.8rem;
+  font-weight: 900;
+  color: var(--white);
+  margin-bottom: 15px;
+  line-height: 1;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.product-price {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--success);
+  margin-bottom: 25px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.product-price::before {
+  content: "GH₵";
+  font-size: 1.5rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.product-details {
+  margin-bottom: 30px;
+  flex-grow: 1;
+}
+
+.product-detail {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.product-detail:last-child {
+  border-bottom: none;
+}
+
+.product-detail-label {
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.product-detail-value {
+  font-weight: 700;
+  color: var(--white);
+}
+
+.product-footer {
+  padding: 0 30px 30px;
+}
+
+.btn-confirm {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  width: 100%;
+  padding: 20px;
+  font-size: 1.2rem;
+  font-weight: 800;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: var(--transition-normal);
+  text-decoration: none;
+  text-align: center;
+  border: none;
+  color: var(--white);
+  background: linear-gradient(135deg, var(--success) 0%, #00c853 100%);
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-confirm::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: var(--transition-normal);
+}
+
+.btn-confirm:hover::before {
+  left: 100%;
+}
+
+.btn-confirm:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg), 0 0 30px rgba(0, 230, 118, 0.4);
+  background: linear-gradient(135deg, #00ff88 0%, var(--success) 100%);
+}
+
+.btn-confirm i {
+  font-size: 1.3rem;
+}
+
+/* ===== FOOTER ===== */
+.main-footer {
+  background: var(--primary-dark);
+  color: var(--white);
+  padding: 80px 0 30px;
+  border-top: 1px solid var(--glass-border);
+  position: relative;
+  overflow: hidden;
+}
+
+.main-footer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--secondary), transparent);
+}
+
+.footer-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 50px;
+  margin-bottom: 50px;
+}
+
+.footer-brand {
+  max-width: 350px;
+}
+
+.footer-logo {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 25px;
+}
+
+.footer-logo h3 {
+  color: var(--white);
+  margin: 0;
+  font-size: 1.6rem;
+}
+
+.footer-logo p {
+  color: rgba(255, 255, 255, 0.7);
+  margin: 4px 0 0 0;
+  font-size: 0.95rem;
+}
+
+.footer-description {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.footer-links h4,
+.footer-contact h4 {
+  color: var(--white);
+  margin-bottom: 25px;
+  font-size: 1.3rem;
+  position: relative;
+  padding-bottom: 10px;
+}
+
+.footer-links h4::after,
+.footer-contact h4::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 40px;
+  height: 3px;
+  background: var(--secondary);
+  border-radius: 2px;
+}
+
+.footer-link {
+  display: block;
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  margin-bottom: 15px;
+  transition: var(--transition-normal);
+  cursor: pointer;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.footer-link::before {
+  content: "›";
+  color: var(--secondary);
+  font-size: 1.2rem;
+  transition: var(--transition-normal);
+}
+
+.footer-link:hover {
+  color: var(--secondary);
+  transform: translateX(10px);
+}
+
+.footer-link:hover::before {
+  transform: scale(1.5);
+}
+
+.footer-contact p {
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 25px;
+  font-size: 1rem;
+}
+
+.footer-whatsapp {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background: rgba(37, 211, 102, 0.1);
+  border: 1px solid #25d366;
+  padding: 20px;
+  border-radius: var(--radius-lg);
+  transition: var(--transition-normal);
+}
+
+.footer-whatsapp:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(37, 211, 102, 0.2);
+}
+
+.footer-whatsapp i {
+  font-size: 2rem;
+  color: #25d366;
+}
+
+.footer-whatsapp p {
+  margin: 0;
+  color: var(--white);
+  font-size: 1rem;
+}
+
+.footer-bottom {
+  text-align: center;
+  padding-top: 40px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.95rem;
+  position: relative;
+}
+
+.disclaimer {
+  margin-top: 15px;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* ===== FLOATING BUTTONS ===== */
+.floating-buttons {
+  position: fixed;
+  bottom: 40px;
+  right: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  z-index: 99;
+}
+
+.float-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 65px;
+  height: 65px;
+  border-radius: 50%;
+  color: var(--white);
+  box-shadow: var(--shadow-lg);
+  transition: var(--transition-normal);
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.float-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+}
+
+.float-btn:hover {
+  transform: scale(1.15) translateY(-5px);
+  box-shadow: var(--shadow-xl);
+}
+
+.float-btn .btn-tooltip {
+  position: absolute;
+  right: 80px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  color: var(--white);
+  padding: 12px 20px;
+  border-radius: var(--radius-md);
+  font-size: 0.95rem;
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: var(--transition-normal);
+  pointer-events: none;
+  backdrop-filter: blur(10px);
+  box-shadow: var(--shadow-md);
+}
+
+.float-btn:hover .btn-tooltip {
+  opacity: 1;
+  visibility: visible;
+  right: 85px;
+}
+
+.whatsapp-support {
+  background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+}
+
+.whatsapp-group {
+  background: linear-gradient(135deg, #833ab4 0%, #fd1d1d 50%, #fcb045 100%);
+}
+
+.float-btn i {
+  font-size: 1.6rem;
+  position: relative;
+  z-index: 1;
+}
+
+/* ===== TOAST STYLES ===== */
+.toast {
+  position: fixed;
+  top: 30px;
+  right: 30px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  padding: 20px 28px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  transform: translateX(150%);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1000;
+  max-width: 400px;
+  backdrop-filter: blur(20px);
+}
+.toast.show {
+  transform: translateX(0);
+}
+.toast-success {
+  border-left: 4px solid var(--success);
+}
+.toast-error {
+  border-left: 4px solid var(--danger);
+}
+.toast-content {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.toast-content i {
+  font-size: 1.4rem;
+}
+.toast-success .toast-content i {
+  color: var(--success);
+}
+.toast-error .toast-content i {
+  color: var(--danger);
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 1200px) {
+  .container { max-width: 100%; }
+  .hero-title { font-size: 3.5rem; }
+  .tabs-container { grid-template-columns: repeat(2, 1fr); max-width: 800px; }
+}
+
+@media (max-width: 992px) {
+  h1 { font-size: 2.5rem; }
+  h2 { font-size: 2.2rem; }
+  .hero-title { font-size: 3rem; }
+  .steps-container { grid-template-columns: repeat(2, 1fr); }
+  .payment-methods { grid-template-columns: 1fr; }
+  .products-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+  .container { padding: 0 20px; }
+  .nav-content { flex-direction: column; gap: 20px; text-align: center; }
+  .user-section { width: 100%; flex-direction: column; align-items: center; gap: 20px; }
+  .nav-controls { flex-direction: column; gap: 15px; }
+  .hero-title { font-size: 2.5rem; }
+  .hero-subtitle { font-size: 1.2rem; }
+  .hero-features { grid-template-columns: 1fr; }
+  .steps-container { grid-template-columns: 1fr; }
+  .tabs-container { grid-template-columns: 1fr; max-width: 400px; }
+  .products-grid { grid-template-columns: 1fr; }
+  .footer-content { grid-template-columns: 1fr; text-align: center; }
+  .footer-logo { justify-content: center; }
+  .footer-links h4::after, .footer-contact h4::after { left: 50%; transform: translateX(-50%); }
+  .floating-buttons { bottom: 20px; right: 20px; }
+  .float-btn { width: 55px; height: 55px; }
+  .float-btn i { font-size: 1.4rem; }
+  .float-btn:hover .btn-tooltip { display: none; }
+  .christmas-text { font-size: 0.9rem; }
+}
+
+@media (max-width: 480px) {
+  h1 { font-size: 2rem; }
+  h2 { font-size: 1.8rem; }
+  .hero-title { font-size: 2rem; }
+  .modal-content { max-width: 95%; }
+  .modal-header, form { padding: 24px; }
+  .hero-banner, .payment-top-section, .order-guide, .products-section { padding: 60px 0; }
+  .important-notice { flex-direction: column; align-items: flex-start; }
+  .tab-content { padding: 20px; }
+  .christmas-content { flex-direction: column; gap: 8px; }
+  .christmas-text { text-align: center; }
+}
