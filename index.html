@@ -1,55 +1,131 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Data Zone Ghana | Premium Mobile Data Bundles</title>
-  <meta name="description" content="Buy MTN, AirtelTigo & Telecel data bundles at the best prices in Ghana. Fast delivery, reliable service.">
-  
+  <meta name="description" content="Buy MTN & Telecel data bundles at the best prices in Ghana. Fast delivery, reliable service.">
+
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
+
   <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Montserrat:wght@700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
   <!-- Favicon -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📱</text></svg>">
-  
+
   <!-- Styles -->
   <link rel="stylesheet" href="style.css">
-  
+
   <style>
-    /* Logo styling */
-    .logo-placeholder {
+    /* Animated WiFi Logo */
+    .wifi-logo {
       width: 56px;
       height: 56px;
-      background: linear-gradient(135deg, #2a4365 0%, #4299e1 100%);
-      border-radius: 12px;
+      position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: white;
-      font-weight: bold;
-      font-size: 20px;
-      font-family: 'Montserrat', sans-serif;
     }
-    
+
+    .wifi-waves {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+
+    .wifi-wave {
+      position: absolute;
+      border: 3px solid transparent;
+      border-top-color: #4299e1;
+      border-radius: 50%;
+      animation: wifiPulse 2s infinite;
+    }
+
+    .wifi-wave:nth-child(1) {
+      width: 100%;
+      height: 100%;
+      animation-delay: 0s;
+    }
+
+    .wifi-wave:nth-child(2) {
+      width: 75%;
+      height: 75%;
+      animation-delay: 0.3s;
+    }
+
+    .wifi-wave:nth-child(3) {
+      width: 50%;
+      height: 50%;
+      animation-delay: 0.6s;
+    }
+
+    .wifi-dot {
+      width: 12px;
+      height: 12px;
+      background: #4299e1;
+      border-radius: 50%;
+      position: relative;
+      z-index: 2;
+      box-shadow: 0 0 20px rgba(66, 153, 225, 0.7);
+    }
+
+    @keyframes wifiPulse {
+      0% {
+        border-top-color: rgba(66, 153, 225, 0.3);
+        transform: scale(0.8);
+      }
+
+      50% {
+        border-top-color: rgba(66, 153, 225, 0.8);
+        transform: scale(1);
+      }
+
+      100% {
+        border-top-color: rgba(66, 153, 225, 0.3);
+        transform: scale(0.8);
+      }
+    }
+
     .hidden {
       display: none !important;
     }
-    
+
     .modal {
       z-index: 2000;
     }
   </style>
 </head>
+
 <body>
+  <!-- Christmas Message Bar -->
+  <div class="christmas-bar">
+    <div class="container">
+      <div class="christmas-content">
+        <i class="fas fa-gift"></i>
+        <span class="christmas-text">
+          🎄 <strong>Merry Christmas!</strong> Enjoy our special holiday data bundles. May your connection be as joyful as the season! 🎅
+        </span>
+        <i class="fas fa-star"></i>
+      </div>
+    </div>
+  </div>
+
   <!-- Auth Modal -->
   <div id="auth-modal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
         <div class="modal-logo">
-          <i class="fas fa-wifi"></i>
+          <div class="wifi-logo">
+            <div class="wifi-waves">
+              <div class="wifi-wave"></div>
+              <div class="wifi-wave"></div>
+              <div class="wifi-wave"></div>
+            </div>
+            <div class="wifi-dot"></div>
+          </div>
           <h2>DATA ZONE GHANA</h2>
         </div>
         <p class="modal-subtitle">Sign in to continue — Google or Email</p>
@@ -99,12 +175,17 @@
       <div class="container">
         <div class="nav-content">
           <div class="nav-brand">
-            <div class="logo-placeholder">
-              <span>DZ</span>
+            <div class="wifi-logo">
+              <div class="wifi-waves">
+                <div class="wifi-wave"></div>
+                <div class="wifi-wave"></div>
+                <div class="wifi-wave"></div>
+              </div>
+              <div class="wifi-dot"></div>
             </div>
             <div>
               <h1>DATA ZONE <span class="brand-ghana">GHANA</span></h1>
-              <p class="tagline">Your Reliable Data Connection</p>
+              <p class="tagline">Your Premium Data Connection</p>
             </div>
           </div>
 
@@ -113,68 +194,80 @@
               <span class="akwaaba">Akwaaba, <span id="user-name">User</span>!</span>
               <span id="time-greeting" class="time-greeting">Good Day!</span>
             </div>
-            <div style="display:flex; gap:12px; align-items:center;">
-              <button id="profileBtn" class="btn-outline" title="Profile"><i class="fas fa-user"></i></button>
-              <button id="logoutBtn" class="btn-outline"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            <div class="nav-controls">
+              <div class="live-indicator">
+                <div class="live-dot"></div>
+                <span>Live Support</span>
+              </div>
+              <div style="display:flex; gap:12px; align-items:center;">
+                <button id="profileBtn" class="btn-outline" title="Profile"><i class="fas fa-user"></i></button>
+                <button id="logoutBtn" class="btn-outline"><i class="fas fa-sign-out-alt"></i> Logout</button>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="hero-banner">
+    <!-- Payment Instructions (Moved to Top) -->
+    <section class="payment-top-section">
       <div class="container">
-        <div class="hero-content">
-          <h2 class="hero-title"><span class="hero-highlight">Premium Data Bundles</span><br>For All Networks</h2>
-          <p class="hero-subtitle">Fast, reliable delivery of MTN, AirtelTigo & Telecel data bundles at unbeatable prices.</p>
+        <div class="section-header">
+          <i class="fas fa-credit-card section-icon"></i>
+          <h2>Payment Instructions</h2>
+          <p class="section-subtitle">Make payment to these numbers BEFORE purchasing any bundle</p>
+        </div>
 
-          <div class="hero-features">
-            <div class="feature"><i class="fas fa-bolt"></i><span>Instant Delivery</span></div>
-            <div class="feature"><i class="fas fa-shield-alt"></i><span>100% Secure</span></div>
-            <div class="feature"><i class="fas fa-headset"></i><span>24/7 Support</span></div>
+        <div class="payment-methods">
+          <div class="payment-method mtn-payment">
+            <div class="payment-method-header">
+              <div class="network-badge mtn-badge">MTN</div>
+              <h4>Mobile Money Payment</h4>
+            </div>
+            <div class="payment-details">
+              <p><strong><i class="fas fa-phone"></i> Number:</strong> 053 534 3490</p>
+              <p><strong><i class="fas fa-user"></i> Name:</strong> Vivian Ahorlu</p>
+              <p><strong><i class="fas fa-hashtag"></i> Reference:</strong> Your Phone Number</p>
+              <p class="payment-note"><i class="fas fa-info-circle"></i> Send exact bundle price + GH₵0.50 service fee</p>
+            </div>
+          </div>
+
+          <div class="payment-method telecel-payment">
+            <div class="payment-method-header">
+              <div class="network-badge telecel-badge">Telecel</div>
+              <h4>Mobile Money Payment</h4>
+            </div>
+            <div class="payment-details">
+              <p><strong><i class="fas fa-phone"></i> Number:</strong> 020 955 8038</p>
+              <p><strong><i class="fas fa-user"></i> Name:</strong> Bright Dumashie</p>
+              <p><strong><i class="fas fa-hashtag"></i> Reference:</strong> Your Phone Number</p>
+              <p class="payment-note"><i class="fas fa-info-circle"></i> Send exact bundle price + GH₵0.50 service fee</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="important-notice">
+          <i class="fas fa-exclamation-triangle"></i>
+          <div>
+            <h4>Important Notice</h4>
+            <p><strong>Step 1:</strong> Make payment to the correct number above. <strong>Step 2:</strong> Click "Buy" on your selected bundle. <strong>Step 3:</strong> Fill confirmation form. Data delivers within 30 minutes.</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Order Guide -->
-    <section class="order-guide">
+    <!-- Hero Section -->
+    <section class="hero-banner">
       <div class="container">
-        <div class="section-header">
-          <i class="fas fa-shopping-cart section-icon"></i>
-          <h2>How to Place Your Order</h2>
-          <p class="section-subtitle">Simple steps to get your data bundle</p>
-        </div>
+        <div class="hero-content">
+          <h2 class="hero-title"><span class="hero-highlight">Premium Data Bundles</span><br>For MTN & Telecel</h2>
+          <p class="hero-subtitle">Lightning-fast delivery of mobile data bundles at unbeatable prices. Your connection, our priority.</p>
 
-        <div class="steps-container">
-          <div class="step">
-            <div class="step-number">1</div>
-            <div class="step-content">
-              <h3>Browse & Select</h3>
-              <p>Choose MTN, AirtelTigo or Telecel and the bundle you want.</p>
-            </div>
-          </div>
-          <div class="step">
-            <div class="step-number">2</div>
-            <div class="step-content">
-              <h3>Make Payment</h3>
-              <p>Use the payment details shown. <strong>Don't forget GH₵0.50 extra.</strong></p>
-            </div>
-          </div>
-          <div class="step">
-            <div class="step-number">3</div>
-            <div class="step-content">
-              <h3>Quick Confirm</h3>
-              <p>Click Buy button, enter recipient phone and confirm.</p>
-            </div>
-          </div>
-          <div class="step">
-            <div class="step-number">4</div>
-            <div class="step-content">
-              <h3>Receive Data</h3>
-              <p>Data delivers within 30 mins (max 1 hour if issues).</p>
-            </div>
+          <div class="hero-features">
+            <div class="feature"><i class="fas fa-bolt"></i><span>Instant Delivery</span></div>
+            <div class="feature"><i class="fas fa-shield-alt"></i><span>100% Secure</span></div>
+            <div class="feature"><i class="fas fa-headset"></i><span>24/7 Support</span></div>
+            <div class="feature"><i class="fas fa-tags"></i><span>Best Prices</span></div>
           </div>
         </div>
       </div>
@@ -200,15 +293,6 @@
                 </div>
               </div>
             </button>
-            <button class="tab-btn" data-network="airteltigo">
-              <div class="tab-content">
-                <div class="tab-icon at-tab"><span>AT</span></div>
-                <div class="tab-info">
-                  <h4>AirtelTigo Premium</h4>
-                  <p>30 days validity</p>
-                </div>
-              </div>
-            </button>
             <button class="tab-btn" data-network="telecel">
               <div class="tab-content">
                 <div class="tab-icon telecel-tab"><span>TELECEL</span></div>
@@ -225,61 +309,43 @@
       </div>
     </section>
 
-    <!-- Payment Instructions -->
-    <section class="info-section">
+    <!-- Order Guide -->
+    <section class="order-guide">
       <div class="container">
         <div class="section-header">
-          <i class="fas fa-credit-card section-icon"></i>
-          <h2>Payment Instructions</h2>
-          <p class="section-subtitle">Make payment to the appropriate network number</p>
+          <i class="fas fa-shopping-cart section-icon"></i>
+          <h2>How to Place Your Order</h2>
+          <p class="section-subtitle">Simple steps to get your data bundle</p>
         </div>
 
-        <div class="payment-methods">
-          <div class="payment-method mtn-payment">
-            <div class="payment-method-header">
-              <div class="network-badge mtn-badge">MTN</div>
-              <h4>Mobile Money Payment</h4>
-            </div>
-            <div class="payment-details">
-              <p><strong>Number:</strong> 024 123 4567</p>
-              <p><strong>Name:</strong> Data Zone Ghana</p>
-              <p><strong>Reference:</strong> Your Phone Number</p>
-              <p><em>Send exact bundle price + GH₵0.50 service fee</em></p>
+        <div class="steps-container">
+          <div class="step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+              <h3>Make Payment First</h3>
+              <p>Send money to the payment number shown above for your chosen network.</p>
             </div>
           </div>
-
-          <div class="payment-method at-payment">
-            <div class="payment-method-header">
-              <div class="network-badge at-badge">AirtelTigo</div>
-              <h4>Mobile Money Payment</h4>
-            </div>
-            <div class="payment-details">
-              <p><strong>Number:</strong> 027 890 1234</p>
-              <p><strong>Name:</strong> Data Zone GH</p>
-              <p><strong>Reference:</strong> Your Phone Number</p>
-              <p><em>Send exact bundle price + GH₵0.50 service fee</em></p>
+          <div class="step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+              <h3>Select Bundle</h3>
+              <p>Choose MTN or Telecel and the exact bundle you paid for.</p>
             </div>
           </div>
-
-          <div class="payment-method telecel-payment">
-            <div class="payment-method-header">
-              <div class="network-badge telecel-badge">Telecel</div>
-              <h4>Mobile Money Payment</h4>
-            </div>
-            <div class="payment-details">
-              <p><strong>Number:</strong> 020 567 8901</p>
-              <p><strong>Name:</strong> Data Zone</p>
-              <p><strong>Reference:</strong> Your Phone Number</p>
-              <p><em>Send exact bundle price + GH₵0.50 service fee</em></p>
+          <div class="step">
+            <div class="step-number">3</div>
+            <div class="step-content">
+              <h3>Quick Confirm</h3>
+              <p>Click Buy button, enter recipient phone and transaction details.</p>
             </div>
           </div>
-        </div>
-
-        <div class="important-notice">
-          <i class="fas fa-exclamation-triangle"></i>
-          <div>
-            <h4>Important Notice</h4>
-            <p>After making payment, click the "Buy" button on your selected bundle and fill the confirmation form. Data will be delivered within 30 minutes of confirmation.</p>
+          <div class="step">
+            <div class="step-number">4</div>
+            <div class="step-content">
+              <h3>Receive Data</h3>
+              <p>Data delivers within 30 mins (max 1 hour if issues).</p>
+            </div>
           </div>
         </div>
       </div>
@@ -291,21 +357,28 @@
         <div class="footer-content">
           <div class="footer-brand">
             <div class="footer-logo">
-              <i class="fas fa-wifi"></i>
+              <div class="wifi-logo" style="width: 40px; height: 40px;">
+                <div class="wifi-waves">
+                  <div class="wifi-wave"></div>
+                  <div class="wifi-wave"></div>
+                  <div class="wifi-wave"></div>
+                </div>
+                <div class="wifi-dot"></div>
+              </div>
               <div>
                 <h3>DATA ZONE GHANA</h3>
                 <p>Your reliable data connection hub</p>
               </div>
             </div>
-            <p class="footer-description">We provide fast and reliable delivery of mobile data bundles for MTN, AirtelTigo, and Telecel networks at competitive prices.</p>
+            <p class="footer-description">We provide fast and reliable delivery of mobile data bundles for MTN and Telecel networks at competitive prices.</p>
           </div>
 
           <div class="footer-links">
             <h4>Quick Links</h4>
             <a href="#" class="footer-link" data-network="mtn">MTN Bundles</a>
-            <a href="#" class="footer-link" data-network="airteltigo">AirtelTigo Bundles</a>
             <a href="#" class="footer-link" data-network="telecel">Telecel Bundles</a>
             <a href="#" class="footer-link" id="scroll-to-payment">Payment Details</a>
+            <a href="#" class="footer-link" id="scroll-to-instructions">How to Order</a>
           </div>
 
           <div class="footer-contact">
@@ -323,7 +396,7 @@
 
         <div class="footer-bottom">
           <p>&copy; <span id="current-year">2024</span> Data Zone Ghana. All rights reserved.</p>
-          <p class="disclaimer">This is a demonstration website for educational purposes.</p>
+          <p class="disclaimer">Secure data bundle delivery service.</p>
         </div>
       </div>
     </footer>
@@ -331,6 +404,10 @@
 
   <!-- Floating Buttons -->
   <div class="floating-buttons">
+    <a href="https://chat.whatsapp.com/KvupM9a1osR2ZE6LLy5NDb?mode=wwt" target="_blank" class="float-btn whatsapp-group" aria-label="Join WhatsApp Group">
+      <i class="fas fa-users"></i>
+      <span class="btn-tooltip">Join WhatsApp Group</span>
+    </a>
     <a href="https://wa.me/233275903629" target="_blank" class="float-btn whatsapp-support" aria-label="WhatsApp Support">
       <i class="fab fa-whatsapp"></i>
       <span class="btn-tooltip">WhatsApp Support</span>
@@ -340,4 +417,5 @@
   <!-- JavaScript -->
   <script type="module" src="script.js"></script>
 </body>
+
 </html>
