@@ -37,11 +37,11 @@ const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfMy0tJxTDmLjp
 
 // Form field IDs from your Google Form
 const FORM_FIELDS = {
-  name: "entry.933286285",        // Name field
-  email: "entry.311447064",       // Email field
-  phone: "entry.1442342955",      // Recipient Phone field
-  transaction: "entry.1423713792", // Transaction ID field
-  bundle: "entry.1395532210"      // Selected Bundle field
+  name: "entry.2005620554",        // Name field
+  email: "entry.1045781291",       // Email field
+  phone: "entry.1065046570",      // Recipient Phone field
+  transaction: "entry.1745455373", // Transaction ID field
+  bundle: "entry.1745455373"      // Selected Bundle field
 };
 
 /* =========================
