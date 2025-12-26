@@ -29,24 +29,16 @@
   --mtn-black: #000000;
   --telecel-red: #e30613;
   --telecel-white: #ffffff;
+  --at-blue: #009cde;
+  --at-red: #ed1c24;
+  --at-white: #ffffff;
 
   /* Gradients */
-  --gradient-primary: linear-gradient(
-    135deg,
-    var(--primary) 0%,
-    var(--primary-dark) 100%
-  );
+  --gradient-primary: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
   --gradient-mtn: linear-gradient(135deg, var(--mtn-yellow) 0%, #ffc107 100%);
-  --gradient-telecel: linear-gradient(
-    135deg,
-    var(--telecel-red) 0%,
-    #c53030 100%
-  );
-  --gradient-tech: linear-gradient(
-    135deg,
-    var(--background) 0%,
-    var(--card-bg) 100%
-  );
+  --gradient-telecel: linear-gradient(135deg, var(--telecel-red) 0%, #c53030 100%);
+  --gradient-at: linear-gradient(135deg, var(--at-blue) 0%, var(--at-red) 100%);
+  --gradient-tech: linear-gradient(135deg, var(--background) 0%, var(--card-bg) 100%);
 
   /* Glass Morphism */
   --glass-bg: rgba(30, 41, 59, 0.7);
@@ -145,21 +137,12 @@ body {
 }
 
 @keyframes bounce {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-5px);
-  }
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
 }
 
 /* ===== TYPOGRAPHY ===== */
-h1,
-h2,
-h3,
-h4,
-h5 {
+h1, h2, h3, h4, h5 {
   font-family: "Montserrat", sans-serif;
   font-weight: 800;
   line-height: 1.2;
@@ -233,12 +216,7 @@ p {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.2),
-    transparent
-  );
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
   transition: var(--transition-normal);
 }
 
@@ -306,12 +284,7 @@ p {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(
-    45deg,
-    transparent 30%,
-    rgba(255, 255, 255, 0.1) 50%,
-    transparent 70%
-  );
+  background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
   transform: translateX(-100%);
 }
 
@@ -331,7 +304,7 @@ p {
 }
 
 .btn-at {
-  background: linear-gradient(135deg, var(--at-blue) 0%, var(--at-red) 100%);
+  background: var(--gradient-at);
   color: var(--white);
 }
 
@@ -362,8 +335,7 @@ p {
 }
 
 @keyframes pulse {
-  0%,
-  100% {
+  0%, 100% {
     opacity: 1;
     transform: scale(1);
   }
@@ -399,12 +371,8 @@ p {
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .modal-content {
@@ -445,11 +413,7 @@ p {
   left: 0;
   right: 0;
   bottom: 0;
-  background: radial-gradient(
-    circle at 30% 20%,
-    rgba(255, 255, 255, 0.1) 0%,
-    transparent 50%
-  );
+  background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
 }
 
 .modal-logo {
@@ -614,35 +578,11 @@ form {
   margin-top: 2px;
 }
 
-/* ===== PAYMENT TOP SECTION ===== */
-.payment-top-section {
-  padding: 60px 0 30px;
-  background: rgba(30, 41, 59, 0.5);
-  border-bottom: 1px solid var(--glass-border);
-}
-
-.payment-note {
-  color: var(--danger);
-  font-size: 0.9rem;
-  margin-top: 8px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
 /* ===== HERO BANNER ===== */
 .hero-banner {
-  background: radial-gradient(
-      circle at 20% 50%,
-      rgba(42, 67, 101, 0.3) 0%,
-      transparent 50%
-    ),
-    radial-gradient(
-      circle at 80% 20%,
-      rgba(0, 188, 212, 0.2) 0%,
-      transparent 50%
-    ),
-    var(--gradient-tech);
+  background: radial-gradient(circle at 20% 50%, rgba(42, 67, 101, 0.3) 0%, transparent 50%),
+              radial-gradient(circle at 80% 20%, rgba(0, 188, 212, 0.2) 0%, transparent 50%),
+              var(--gradient-tech);
   padding: 100px 0;
   position: relative;
   overflow: hidden;
@@ -655,11 +595,7 @@ form {
   right: 0;
   width: 40%;
   height: 100%;
-  background: radial-gradient(
-    circle at 70% 30%,
-    rgba(66, 153, 225, 0.1) 0%,
-    transparent 50%
-  );
+  background: radial-gradient(circle at 70% 30%, rgba(66, 153, 225, 0.1) 0%, transparent 50%);
 }
 
 .hero-content {
@@ -677,11 +613,7 @@ form {
 }
 
 .hero-highlight {
-  background: linear-gradient(
-    135deg,
-    var(--mtn-yellow) 0%,
-    var(--secondary) 100%
-  );
+  background: linear-gradient(135deg, var(--mtn-yellow) 0%, var(--secondary) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -737,10 +669,36 @@ form {
   font-size: 1.1rem;
 }
 
+/* ===== PAYMENT TOP SECTION ===== */
+.payment-top-section {
+  padding: 60px 0;
+  background: rgba(30, 41, 59, 0.5);
+  border-top: 1px solid var(--glass-border);
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.payment-note {
+  color: var(--danger);
+  font-size: 0.9rem;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
 /* ===== SECTION STYLES ===== */
 .order-guide,
 .products-section {
   padding: 80px 0;
+}
+
+.order-guide {
+  background: var(--gradient-tech);
+}
+
+.products-section {
+  background: rgba(30, 41, 59, 0.3);
+  border-top: 1px solid var(--glass-border);
 }
 
 .section-header {
@@ -757,13 +715,8 @@ form {
 }
 
 @keyframes float {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
 }
 
 .section-subtitle {
@@ -863,20 +816,12 @@ form {
 }
 
 .mtn-payment {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 209, 0, 0.1) 0%,
-    rgba(30, 41, 59, 0.8) 100%
-  );
+  background: linear-gradient(135deg, rgba(255, 209, 0, 0.1) 0%, rgba(30, 41, 59, 0.8) 100%);
   border: 1px solid var(--mtn-yellow);
 }
 
 .telecel-payment {
-  background: linear-gradient(
-    135deg,
-    rgba(227, 6, 19, 0.1) 0%,
-    rgba(30, 41, 59, 0.8) 100%
-  );
+  background: linear-gradient(135deg, rgba(227, 6, 19, 0.1) 0%, rgba(30, 41, 59, 0.8) 100%);
   border: 1px solid var(--telecel-red);
 }
 
@@ -907,6 +852,11 @@ form {
   color: var(--white);
 }
 
+.at-badge {
+  background: var(--gradient-at);
+  color: var(--white);
+}
+
 .payment-method-header h4 {
   margin: 0;
   color: var(--white);
@@ -930,11 +880,7 @@ form {
   display: flex;
   align-items: flex-start;
   gap: 20px;
-  background: linear-gradient(
-    135deg,
-    rgba(245, 101, 101, 0.1) 0%,
-    rgba(30, 41, 59, 0.8) 100%
-  );
+  background: linear-gradient(135deg, rgba(245, 101, 101, 0.1) 0%, rgba(30, 41, 59, 0.8) 100%);
   border: 1px solid var(--danger);
   border-radius: var(--radius-lg);
   padding: 30px;
@@ -968,9 +914,9 @@ form {
 
 .tabs-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 24px;
-  max-width: 800px;
+  max-width: 1200px;
   margin: 0 auto;
 }
 
@@ -1025,6 +971,11 @@ form {
 
 .telecel-tab {
   background: var(--gradient-telecel);
+  color: var(--white);
+}
+
+.at-tab {
+  background: var(--gradient-at);
   color: var(--white);
 }
 
@@ -1104,6 +1055,11 @@ form {
 
 .product-header.telecel {
   background: linear-gradient(135deg, var(--telecel-red) 0%, #c53030 100%);
+  color: var(--white);
+}
+
+.product-header.airteltigo {
+  background: linear-gradient(135deg, var(--at-blue) 0%, var(--at-red) 100%);
   color: var(--white);
 }
 
@@ -1220,12 +1176,7 @@ form {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.2),
-    transparent
-  );
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
   transition: var(--transition-normal);
 }
 
@@ -1260,12 +1211,7 @@ form {
   left: 0;
   right: 0;
   height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    var(--secondary),
-    transparent
-  );
+  background: linear-gradient(90deg, transparent, var(--secondary), transparent);
 }
 
 .footer-content {
@@ -1435,11 +1381,7 @@ form {
   left: 0;
   right: 0;
   bottom: 0;
-  background: radial-gradient(
-    circle at 30% 30%,
-    rgba(255, 255, 255, 0.2) 0%,
-    transparent 70%
-  );
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
 }
 
 .float-btn:hover {
@@ -1528,141 +1470,50 @@ form {
 
 /* ===== RESPONSIVE DESIGN ===== */
 @media (max-width: 1200px) {
-  .container {
-    max-width: 100%;
-  }
-  .hero-title {
-    font-size: 3.5rem;
-  }
-  .tabs-container {
-    grid-template-columns: 1fr;
-    max-width: 600px;
-  }
+  .container { max-width: 100%; }
+  .hero-title { font-size: 3.5rem; }
+  .tabs-container { grid-template-columns: repeat(2, 1fr); max-width: 800px; }
 }
 
 @media (max-width: 992px) {
-  h1 {
-    font-size: 2.5rem;
-  }
-  h2 {
-    font-size: 2.2rem;
-  }
-  .hero-title {
-    font-size: 3rem;
-  }
-  .steps-container {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .payment-methods {
-    grid-template-columns: 1fr;
-  }
-  .products-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+  h1 { font-size: 2.5rem; }
+  h2 { font-size: 2.2rem; }
+  .hero-title { font-size: 3rem; }
+  .steps-container { grid-template-columns: repeat(2, 1fr); }
+  .payment-methods { grid-template-columns: 1fr; }
+  .products-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 768px) {
-  .container {
-    padding: 0 20px;
-  }
-  .nav-content {
-    flex-direction: column;
-    gap: 20px;
-    text-align: center;
-  }
-  .user-section {
-    width: 100%;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-  }
-  .nav-controls {
-    flex-direction: column;
-    gap: 15px;
-  }
-  .hero-title {
-    font-size: 2.5rem;
-  }
-  .hero-subtitle {
-    font-size: 1.2rem;
-  }
-  .hero-features {
-    grid-template-columns: 1fr;
-  }
-  .steps-container {
-    grid-template-columns: 1fr;
-  }
-  .products-grid {
-    grid-template-columns: 1fr;
-  }
-  .footer-content {
-    grid-template-columns: 1fr;
-    text-align: center;
-  }
-  .footer-logo {
-    justify-content: center;
-  }
-  .footer-links h4::after,
-  .footer-contact h4::after {
-    left: 50%;
-    transform: translateX(-50%);
-  }
-  .floating-buttons {
-    bottom: 20px;
-    right: 20px;
-  }
-  .float-btn {
-    width: 55px;
-    height: 55px;
-  }
-  .float-btn i {
-    font-size: 1.4rem;
-  }
-  .float-btn:hover .btn-tooltip {
-    display: none;
-  }
-  .christmas-text {
-    font-size: 0.9rem;
-  }
+  .container { padding: 0 20px; }
+  .nav-content { flex-direction: column; gap: 20px; text-align: center; }
+  .user-section { width: 100%; flex-direction: column; align-items: center; gap: 20px; }
+  .nav-controls { flex-direction: column; gap: 15px; }
+  .hero-title { font-size: 2.5rem; }
+  .hero-subtitle { font-size: 1.2rem; }
+  .hero-features { grid-template-columns: 1fr; }
+  .steps-container { grid-template-columns: 1fr; }
+  .tabs-container { grid-template-columns: 1fr; max-width: 400px; }
+  .products-grid { grid-template-columns: 1fr; }
+  .footer-content { grid-template-columns: 1fr; text-align: center; }
+  .footer-logo { justify-content: center; }
+  .footer-links h4::after, .footer-contact h4::after { left: 50%; transform: translateX(-50%); }
+  .floating-buttons { bottom: 20px; right: 20px; }
+  .float-btn { width: 55px; height: 55px; }
+  .float-btn i { font-size: 1.4rem; }
+  .float-btn:hover .btn-tooltip { display: none; }
+  .christmas-text { font-size: 0.9rem; }
 }
 
 @media (max-width: 480px) {
-  h1 {
-    font-size: 2rem;
-  }
-  h2 {
-    font-size: 1.8rem;
-  }
-  .hero-title {
-    font-size: 2rem;
-  }
-  .modal-content {
-    max-width: 95%;
-  }
-  .modal-header,
-  form {
-    padding: 24px;
-  }
-  .hero-banner {
-    padding: 80px 0;
-  }
-  .order-guide,
-  .products-section,
-  .payment-top-section {
-    padding: 60px 0;
-  }
-  .important-notice {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .tab-content {
-    padding: 20px;
-  }
-  .christmas-content {
-    flex-direction: column;
-    gap: 8px;
-  }
-  .christmas-text {
-    text-align: center;
-  }
+  h1 { font-size: 2rem; }
+  h2 { font-size: 1.8rem; }
+  .hero-title { font-size: 2rem; }
+  .modal-content { max-width: 95%; }
+  .modal-header, form { padding: 24px; }
+  .hero-banner, .payment-top-section, .order-guide, .products-section { padding: 60px 0; }
+  .important-notice { flex-direction: column; align-items: flex-start; }
+  .tab-content { padding: 20px; }
+  .christmas-content { flex-direction: column; gap: 8px; }
+  .christmas-text { text-align: center; }
 }
