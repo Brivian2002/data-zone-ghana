@@ -31,17 +31,16 @@ const provider = new GoogleAuthProvider();
 /* =========================
    GOOGLE FORM CONFIGURATION
    ========================= */
-// Google Form for order submissions (REPLACE WITH YOUR OWN FORM)
-const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfMy0tJxTDmLjp2_uBe4Krgkg98Vv9urYEy1aovxBCPjABhwg/viewform?usp=dialog";
+// Google Form for order submissions
+const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfMy0tJxTDmLjp2_uBe4Krgkg98Vv9urYEy1aovxBCPjABhwg/formResponse";
 
-// Form field IDs (REPLACE WITH YOUR FORM FIELD IDs)
+// Form field IDs from your Google Form
 const FORM_FIELDS = {
-  name: "entry.123456789",      // Replace with your form's name field ID
-  email: "entry.987654321",     // Replace with your form's email field ID
-  phone: "entry.555555555",     // Replace with your form's phone field ID
-  bundle: "entry.111111111",    // Replace with your form's bundle field ID
-  price: "entry.999999999",     // Replace with your form's price field ID
-  timestamp: "entry.888888888"  // Replace with your form's timestamp field ID
+  name: "entry.933286285",        // Name field
+  email: "entry.311447064",       // Email field
+  phone: "entry.1442342955",      // Recipient Phone field
+  transaction: "entry.1423713792", // Transaction ID field
+  bundle: "entry.1395532210"      // Selected Bundle field
 };
 
 /* =========================
@@ -387,7 +386,7 @@ function openPurchaseModal({ network, size, price }) {
     paymentNumber = "020 955 8038";
     paymentName = "Bright Dumashie";
   } else if (network.includes("AirtelTigo")) {
-    // AirtelTigo payment instructions (add your details here)
+    // AirtelTigo payment instructions
     paymentNumber = "027 890 1234";
     paymentName = "Data Zone GH";
   }
@@ -469,9 +468,9 @@ function closePurchaseModal() {
 }
 
 /* =========================
-   GOOGLE FORM SUBMISSION
+   GOOGLE FORM SUBMISSION - FIXED VERSION
    ========================= */
-function submitPurchaseToGoogleForm() {
+async function submitPurchaseToGoogleForm() {
   const phoneInput = document.getElementById("modal-phone");
   const transactionInput = document.getElementById("modal-transaction");
   const bundleInput = document.getElementById("modal-bundle");
@@ -497,65 +496,104 @@ function submitPurchaseToGoogleForm() {
   }
   
   const phone = normalizePhone(phoneRaw);
-  const priceMatch = bundleInput.value.match(/GH₵\s*([0-9.]+)/);
-  const price = priceMatch ? parseFloat(priceMatch[1]) : 0;
-  const timestamp = new Date().toLocaleString('en-GH', { 
-    timeZone: 'Africa/Accra',
-    dateStyle: 'medium',
-    timeStyle: 'medium'
-  });
-  
-  // Create form data
-  const formData = new FormData();
-  
-  // Add all fields to form data
-  formData.append(FORM_FIELDS.name, currentUser.name);
-  formData.append(FORM_FIELDS.email, currentUser.email);
-  formData.append(FORM_FIELDS.phone, phone);
-  formData.append(FORM_FIELDS.bundle, `${bundleInput.value} | Transaction: ${transactionRaw}`);
-  formData.append(FORM_FIELDS.price, `GH₵${(price + 0.5).toFixed(2)} (Bundle: ${price} + Fee: 0.50)`);
-  formData.append(FORM_FIELDS.timestamp, timestamp);
-  
-  // Create and submit form
-  const form = document.createElement("form");
-  form.method = "POST";
-  form.action = GOOGLE_FORM_URL;
-  form.target = "_blank";
-  form.style.display = "none";
-  
-  // Add all form data as hidden inputs
-  for (const [key, value] of formData.entries()) {
-    const input = document.createElement("input");
-    input.type = "hidden";
-    input.name = key;
-    input.value = value;
-    form.appendChild(input);
-  }
+  const bundleValue = bundleInput.value;
   
   // Create a confirmation message
   const confirmBtn = document.getElementById("modal-confirm-btn");
   const originalText = confirmBtn.innerHTML;
   confirmBtn.disabled = true;
-  confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+  confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting Order...';
   
-  // Submit form
-  document.body.appendChild(form);
-  form.submit();
-  
-  // Show success message
-  setTimeout(() => {
-    showToast("🎉 Order submitted successfully! We'll process it within 30 minutes.", "success");
-    closePurchaseModal();
+  try {
+    // Prepare form data for Google Form submission
+    const formData = new URLSearchParams();
+    formData.append(FORM_FIELDS.name, currentUser.name);
+    formData.append(FORM_FIELDS.email, currentUser.email);
+    formData.append(FORM_FIELDS.phone, phone);
+    formData.append(FORM_FIELDS.transaction, transactionRaw);
+    formData.append(FORM_FIELDS.bundle, bundleValue);
     
-    // Reset button
+    // Submit to Google Form using fetch with no-cors mode
+    // This will submit the data without showing the Google Form to the user
+    await fetch(GOOGLE_FORM_URL, {
+      method: 'POST',
+      mode: 'no-cors', // Important: Prevents CORS errors and doesn't require response
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: formData.toString()
+    });
+    
+    // Show success message
+    showToast("🎉 Order submitted successfully! We'll process it within 30 minutes.", "success");
+    
+    // Clear form fields
+    phoneInput.value = "";
+    transactionInput.value = "";
+    
+    // Close modal after delay
+    setTimeout(() => {
+      closePurchaseModal();
+    }, 1500);
+    
+  } catch (error) {
+    console.error('Form submission error:', error);
+    
+    // Fallback: Create hidden form and submit it
+    const hiddenForm = document.createElement('form');
+    hiddenForm.method = 'POST';
+    hiddenForm.action = GOOGLE_FORM_URL;
+    hiddenForm.target = '_blank'; // Open in background tab
+    hiddenForm.style.display = 'none';
+    
+    // Add all form fields as hidden inputs
+    const fields = {
+      [FORM_FIELDS.name]: currentUser.name,
+      [FORM_FIELDS.email]: currentUser.email,
+      [FORM_FIELDS.phone]: phone,
+      [FORM_FIELDS.transaction]: transactionRaw,
+      [FORM_FIELDS.bundle]: bundleValue
+    };
+    
+    Object.entries(fields).forEach(([name, value]) => {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = name;
+      input.value = value;
+      hiddenForm.appendChild(input);
+    });
+    
+    document.body.appendChild(hiddenForm);
+    hiddenForm.submit();
+    
+    // Remove form after submission
+    setTimeout(() => {
+      document.body.removeChild(hiddenForm);
+    }, 1000);
+    
+    showToast("✅ Order submitted! Check your email for confirmation.", "success");
+    
+    // Clear form fields
+    phoneInput.value = "";
+    transactionInput.value = "";
+    
+    // Close modal after delay
+    setTimeout(() => {
+      closePurchaseModal();
+    }, 1500);
+    
+  } finally {
+    // Reset button state
     setTimeout(() => {
       confirmBtn.disabled = false;
       confirmBtn.innerHTML = originalText;
     }, 1000);
     
-    // Remove form after submission
-    setTimeout(() => form.remove(), 2000);
-  }, 1500);
+    // Show follow-up message
+    setTimeout(() => {
+      showToast("📱 Data will be delivered within 30 minutes. Keep your transaction ID handy!", "success");
+    }, 2000);
+  }
 }
 
 /* =========================
@@ -627,7 +665,8 @@ function init() {
   console.log("🚀 Data Zone Ghana initialized successfully!");
   console.log("📱 MTN, Telecel & AirtelTigo bundles ready for orders!");
   console.log("🎄 Merry Christmas from Data Zone Ghana!");
-  console.log("💡 Update FORM_FIELDS with your Google Form field IDs");
+  console.log("✅ Google Form integration configured for background submission");
+  console.log("⚠️ Note: If submission fails, it will fallback to opening form in background tab");
 }
 
 // Start application when DOM is loaded
