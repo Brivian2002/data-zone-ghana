@@ -1,4 +1,3 @@
-/* Your existing CSS file remains exactly the same */
 /* ===== CSS RESET & BASE STYLES ===== */
 * {
   margin: 0;
@@ -64,6 +63,20 @@
   --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* New Data Zone variables */
+  --dz-primary: #1FA971;
+  --dz-dark: #071412;
+  --dz-panel: #F6FBF8;
+  --dz-accent: #F4C430;
+  --dz-teal: #0E858A;
+  --dz-muted: #7B8C84;
+  --dz-line: #E6EFEA;
+  --dz-error: #E44C4C;
+  --dz-success: #119A52;
+  --dz-focus-ring: rgba(31,169,113,0.12);
+  --dz-radius: 10px;
+  --dz-maxform: 420px;
 }
 
 html {
@@ -142,6 +155,80 @@ body {
   50% { transform: translateY(-5px); }
 }
 
+/* ===== ORBITAL ANIMATION ===== */
+@keyframes dz-bean-rot {
+  0%, 100% { transform: rotate(0deg) translateX(15px) rotate(0deg); }
+  50% { transform: rotate(180deg) translateX(15px) rotate(-180deg); }
+}
+
+.dz-orbital {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--dz-radius);
+}
+
+.dz-orbital::before,
+.dz-orbital::after {
+  content: '';
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: var(--dz-primary);
+  border-radius: 50%;
+  opacity: 0.3;
+  animation: dz-bean-rot 8s linear infinite;
+}
+
+.dz-orbital::before {
+  top: 8px;
+  left: 8px;
+  animation-delay: 0s;
+}
+
+.dz-orbital::after {
+  bottom: 8px;
+  right: 8px;
+  animation-delay: 4s;
+}
+
+.dz-orbital-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.dz-orbital-btn::before,
+.dz-orbital-btn::after {
+  content: '';
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  animation: dz-bean-rot 10s linear infinite;
+}
+
+.dz-orbital-btn::before {
+  top: 10px;
+  left: 10px;
+  animation-delay: 0s;
+}
+
+.dz-orbital-btn::after {
+  bottom: 10px;
+  right: 10px;
+  animation-delay: 5s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dz-orbital::before,
+  .dz-orbital::after,
+  .dz-orbital-btn::before,
+  .dz-orbital-btn::after {
+    animation: none;
+    opacity: 0;
+  }
+}
+
 /* ===== TYPOGRAPHY ===== */
 h1, h2, h3, h4, h5 {
   font-family: "Montserrat", sans-serif;
@@ -186,6 +273,401 @@ p {
   color: rgba(255, 255, 255, 0.8);
   font-size: 1.1rem;
   line-height: 1.7;
+}
+
+/* ===== DATA ZONE SPECIFIC STYLES ===== */
+/* Cards/Panels */
+.dz-card {
+  background: #fff;
+  border: 1px solid var(--dz-line);
+  border-radius: var(--dz-radius);
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+/* Forms/Inputs */
+.dz-input {
+  width: 100%;
+  padding: 14px 16px;
+  background: #fff;
+  border: 1px solid var(--dz-line);
+  border-radius: var(--dz-radius);
+  font-size: 1rem;
+  font-family: "Inter", sans-serif;
+  transition: all 0.2s ease;
+}
+
+.dz-input:focus {
+  outline: none;
+  border-color: var(--dz-primary);
+  box-shadow: 0 0 0 3px var(--dz-focus-ring);
+}
+
+.dz-input::placeholder {
+  color: var(--dz-muted);
+  font-size: 0.95em;
+  opacity: 1;
+}
+
+.dz-input:-ms-input-placeholder {
+  color: var(--dz-muted);
+  font-size: 0.95em;
+}
+
+/* WhatsApp Widget */
+#dz-wa-fab {
+  position: fixed;
+  bottom: 210px;
+  right: 30px;
+  width: 60px;
+  height: 60px;
+  background: #25D366;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 28px;
+  box-shadow: 0 4px 20px rgba(37, 211, 102, 0.3);
+  cursor: pointer;
+  z-index: 999;
+  border: none;
+  transition: transform 0.3s ease;
+}
+
+#dz-wa-fab:hover {
+  transform: scale(1.1);
+}
+
+.dz-wa-panel {
+  position: fixed;
+  bottom: 280px;
+  right: 30px;
+  width: 340px;
+  background: white;
+  border-radius: var(--dz-radius);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  display: none;
+}
+
+.dz-wa-panel.show {
+  display: block;
+}
+
+.dz-wa-header {
+  padding: 20px;
+  background: var(--dz-dark);
+  color: white;
+  border-radius: var(--dz-radius) var(--dz-radius) 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dz-wa-body {
+  padding: 20px;
+}
+
+.dz-wa-input-group {
+  margin-bottom: 15px;
+}
+
+.dz-wa-input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--dz-line);
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.dz-btn-primary {
+  background: var(--dz-primary);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: var(--dz-radius);
+  font-weight: 600;
+  cursor: pointer;
+  min-height: 44px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.dz-btn-primary:hover {
+  background: #1a8f60;
+  transform: translateY(-2px);
+}
+
+.dz-btn-ghost {
+  background: transparent;
+  border: 1px solid var(--dz-line);
+  color: var(--dz-teal);
+  padding: 12px 24px;
+  border-radius: var(--dz-radius);
+  font-weight: 600;
+  cursor: pointer;
+  min-height: 44px;
+  transition: all 0.2s ease;
+}
+
+.dz-btn-ghost:hover {
+  background: var(--dz-panel);
+}
+
+.dz-group-card {
+  background: var(--dz-panel);
+  border-radius: var(--dz-radius);
+  padding: 16px;
+  margin: 15px 0;
+}
+
+.dz-checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 15px 0;
+  font-size: 14px;
+}
+
+/* Compact Confirm Modal */
+#dz-confirm {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(7, 20, 18, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 20px;
+  display: none;
+}
+
+#dz-confirm.show {
+  display: flex;
+}
+
+.dz-confirm-modal {
+  background: white;
+  border-radius: var(--dz-radius);
+  max-width: 420px;
+  width: 100%;
+  overflow: hidden;
+}
+
+.dz-confirm-header {
+  padding: 20px;
+  background: var(--dz-dark);
+  color: white;
+}
+
+.dz-confirm-body {
+  padding: 20px;
+}
+
+.dz-confirm-field {
+  margin-bottom: 15px;
+}
+
+.dz-confirm-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+/* Order History */
+.dz-orders-container {
+  background: white;
+  border: 1px solid var(--dz-line);
+  border-radius: var(--dz-radius);
+  padding: 24px;
+  margin: 30px auto;
+  max-width: 1200px;
+}
+
+.dz-orders-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.dz-orders-header h3 {
+  color: var(--dz-dark);
+}
+
+.dz-orders-list {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.dz-order-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  border-bottom: 1px solid var(--dz-line);
+}
+
+.dz-order-status {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.dz-status-success {
+  background: rgba(17, 154, 82, 0.1);
+  color: var(--dz-success);
+}
+
+.dz-status-pending {
+  background: rgba(244, 196, 48, 0.1);
+  color: var(--dz-accent);
+}
+
+/* FAQ Accordion */
+.dz-faq-container {
+  background: white;
+  border: 1px solid var(--dz-line);
+  border-radius: var(--dz-radius);
+  overflow: hidden;
+  margin: 30px auto;
+  max-width: 1200px;
+}
+
+.dz-faq-item {
+  border-bottom: 1px solid var(--dz-line);
+}
+
+.dz-faq-question {
+  width: 100%;
+  padding: 20px;
+  text-align: left;
+  background: var(--dz-panel);
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--dz-dark);
+}
+
+.dz-faq-answer {
+  padding: 0 20px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+  color: var(--dz-muted);
+}
+
+.dz-faq-item.active .dz-faq-answer {
+  padding: 20px;
+  max-height: 500px;
+}
+
+/* Help Modal */
+#dz-help-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(7, 20, 18, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 20px;
+  display: none;
+}
+
+#dz-help-modal.show {
+  display: flex;
+}
+
+.dz-help-modal {
+  background: white;
+  border-radius: var(--dz-radius);
+  max-width: 600px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+/* Error Messages */
+.dz-error-message {
+  color: var(--dz-error);
+  font-size: 14px;
+  margin-top: 5px;
+  display: none;
+}
+
+.dz-error-message.show {
+  display: block;
+}
+
+/* Accessibility */
+[role="dialog"] {
+  outline: none;
+}
+
+.dz-focus-visible:focus {
+  outline: 2px solid var(--dz-primary);
+  outline-offset: 2px;
+}
+
+.dz-focus-visible:focus:not(:focus-visible) {
+  outline: none;
+}
+
+.dz-focus-visible:focus-visible {
+  outline: 2px solid var(--dz-primary);
+  outline-offset: 2px;
+}
+
+/* Accent elements (max 2 per screen) */
+.dz-accent-badge {
+  background: var(--dz-accent);
+  color: var(--dz-dark);
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 14px;
+  display: inline-block;
+}
+
+/* Microcopy styles */
+.dz-microcopy {
+  font-size: 14px;
+  color: var(--dz-muted);
+  margin-top: 4px;
+}
+
+.dz-microcopy-error {
+  color: var(--dz-error);
+}
+
+.dz-microcopy-success {
+  color: var(--dz-success);
+}
+
+/* Price chips */
+.dz-price-chip {
+  background: var(--dz-accent);
+  color: var(--dz-dark);
+  padding: 8px 16px;
+  border-radius: var(--dz-radius);
+  font-weight: 700;
+  display: inline-block;
 }
 
 /* ===== BUTTON STYLES ===== */
@@ -1504,6 +1986,10 @@ form {
   .float-btn i { font-size: 1.4rem; }
   .float-btn:hover .btn-tooltip { display: none; }
   .christmas-text { font-size: 0.9rem; }
+  
+  /* WhatsApp Widget Responsive */
+  #dz-wa-fab { bottom: 180px; right: 20px; width: 55px; height: 55px; font-size: 24px; }
+  .dz-wa-panel { bottom: 240px; right: 20px; left: 20px; width: auto; }
 }
 
 @media (max-width: 480px) {
@@ -1517,4 +2003,13 @@ form {
   .tab-content { padding: 20px; }
   .christmas-content { flex-direction: column; gap: 8px; }
   .christmas-text { text-align: center; }
+  
+  /* Compact modal adjustments */
+  .dz-confirm-modal { max-width: calc(100vw - 40px); }
+  .dz-confirm-buttons { flex-direction: column; }
+  .dz-btn-primary, .dz-btn-ghost { width: 100%; }
+  
+  /* Order history responsive */
+  .dz-orders-header { flex-direction: column; gap: 15px; align-items: flex-start; }
+  .dz-order-item { flex-direction: column; align-items: flex-start; gap: 10px; }
 }
