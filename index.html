@@ -116,6 +116,73 @@
       font-size: 0.9rem;
       line-height: 1.4;
     }
+
+    /* New Data Zone CSS Variables */
+    :root {
+      --dz-primary: #1FA971;
+      --dz-dark: #071412;
+      --dz-panel: #F6FBF8;
+      --dz-accent: #F4C430;
+      --dz-teal: #0E858A;
+      --dz-muted: #7B8C84;
+      --dz-line: #E6EFEA;
+      --dz-error: #E44C4C;
+      --dz-success: #119A52;
+      --dz-focus-ring: rgba(31,169,113,0.12);
+      --dz-radius: 10px;
+      --dz-maxform: 420px;
+    }
+
+    /* Header/Nav overrides */
+    .top-nav {
+      background: var(--dz-dark) !important;
+    }
+
+    .nav-brand h1 {
+      color: white !important;
+    }
+
+    .brand-ghana {
+      color: var(--dz-primary) !important;
+      -webkit-text-fill-color: var(--dz-primary) !important;
+    }
+
+    /* Hero/Top CTA */
+    .hero-banner {
+      background: var(--dz-panel) !important;
+    }
+
+    /* Primary buttons */
+    .btn-primary {
+      background: var(--dz-primary) !important;
+      color: white !important;
+      min-height: 44px;
+      box-shadow: 0 2px 8px rgba(31, 169, 113, 0.2);
+    }
+
+    /* Secondary buttons */
+    .btn-outline {
+      border: 1px solid var(--dz-line) !important;
+      background: transparent !important;
+      color: var(--dz-teal) !important;
+    }
+
+    /* Placeholder styles */
+    ::placeholder {
+      opacity: 1 !important;
+      color: var(--dz-muted) !important;
+      font-size: 0.95em !important;
+    }
+
+    :-ms-input-placeholder {
+      color: var(--dz-muted) !important;
+      font-size: 0.95em !important;
+    }
+
+    ::-ms-input-placeholder {
+      color: var(--dz-muted) !important;
+      font-size: 0.95em !important;
+    }
   </style>
 </head>
 <body>
@@ -379,6 +446,63 @@
       </div>
     </section>
 
+    <!-- Order History -->
+    <section class="dz-orders-container">
+      <div class="dz-orders-header">
+        <h3>Order History</h3>
+        <div style="display: flex; gap: 10px;">
+          <button id="dz-orders-clear" class="dz-btn-ghost">Clear</button>
+          <button id="dz-orders-export" class="dz-btn-primary">Export CSV</button>
+        </div>
+      </div>
+      <div id="dz-orders-list" class="dz-orders-list">
+        <!-- Orders will be loaded here -->
+      </div>
+      <div id="dz-orders-empty" style="text-align: center; padding: 40px; color: var(--dz-muted);">
+        No orders yet. Your purchase history will appear here.
+      </div>
+    </section>
+
+    <!-- FAQ Accordion -->
+    <section class="dz-faq-container">
+      <div class="dz-faq-item">
+        <button class="dz-faq-question dz-focus-visible" aria-expanded="false">
+          How long does delivery take?
+          <span class="dz-faq-icon">+</span>
+        </button>
+        <div class="dz-faq-answer">
+          <p>Data bundles are typically delivered within 30 minutes after confirmation. During peak hours, it may take up to 1 hour.</p>
+        </div>
+      </div>
+      <div class="dz-faq-item">
+        <button class="dz-faq-question dz-focus-visible" aria-expanded="false">
+          What payment methods do you accept?
+          <span class="dz-faq-icon">+</span>
+        </button>
+        <div class="dz-faq-answer">
+          <p>We accept Mobile Money payments only. Please use the payment numbers displayed on our platform.</p>
+        </div>
+      </div>
+      <div class="dz-faq-item">
+        <button class="dz-faq-question dz-focus-visible" aria-expanded="false">
+          Can I buy for someone else?
+          <span class="dz-faq-icon">+</span>
+        </button>
+        <div class="dz-faq-answer">
+          <p>Yes, you can purchase data for any Ghanaian number. Just enter the recipient's phone number during checkout.</p>
+        </div>
+      </div>
+      <div class="dz-faq-item">
+        <button class="dz-faq-question dz-focus-visible" aria-expanded="false">
+          What if my data doesn't arrive?
+          <span class="dz-faq-icon">+</span>
+        </button>
+        <div class="dz-faq-answer">
+          <p>Contact our WhatsApp support immediately with your transaction ID. We'll resolve the issue within 2 hours.</p>
+        </div>
+      </div>
+    </section>
+
     <!-- Footer -->
     <footer class="main-footer">
       <div class="container">
@@ -408,6 +532,7 @@
             <a href="#" class="footer-link" data-network="airteltigo">AirtelTigo Bundles</a>
             <a href="#" class="footer-link" id="scroll-to-payment">Payment Details</a>
             <a href="#" class="footer-link" id="scroll-to-instructions">How to Order</a>
+            <a href="#" class="footer-link" id="dz-help-link">Help & Support</a>
           </div>
 
           <div class="footer-contact">
@@ -441,6 +566,127 @@
       <i class="fab fa-whatsapp"></i>
       <span class="btn-tooltip">WhatsApp Support</span>
     </a>
+  </div>
+
+  <!-- WhatsApp Widget -->
+  <button id="dz-wa-fab" aria-label="WhatsApp Support">
+    <i class="fab fa-whatsapp"></i>
+  </button>
+
+  <div id="dz-wa-panel" class="dz-wa-panel" role="dialog" aria-label="WhatsApp Options">
+    <div class="dz-wa-header">
+      <h3>Contact Support</h3>
+      <button id="dz-wa-close" aria-label="Close WhatsApp panel">×</button>
+    </div>
+    <div class="dz-wa-body">
+      <div class="dz-wa-input-group">
+        <input type="text" id="dz-wa-message" class="dz-wa-input" 
+               placeholder="Type your message here..." 
+               aria-label="WhatsApp message">
+      </div>
+      <button id="dz-wa-send" class="dz-btn-primary dz-orbital-btn">
+        <i class="fab fa-whatsapp"></i> Send Message
+      </button>
+      
+      <div class="dz-group-card">
+        <h4>Join Our Community</h4>
+        <p>Get updates and support in our WhatsApp group</p>
+        <button id="dz-wa-join" class="dz-btn-ghost" style="margin-top: 10px;">
+          Join Group
+        </button>
+      </div>
+      
+      <div class="dz-checkbox-group">
+        <input type="checkbox" id="dz-wa-hide">
+        <label for="dz-wa-hide">Don't show this again</label>
+      </div>
+      
+      <button id="dz-wa-dismiss" class="dz-btn-ghost" style="width: 100%; margin-top: 10px;">
+        Dismiss
+      </button>
+    </div>
+  </div>
+
+  <!-- Compact Confirm Modal -->
+  <div id="dz-confirm" role="dialog" aria-modal="true" aria-labelledby="dz-confirm-title">
+    <div class="dz-confirm-modal">
+      <div class="dz-confirm-header">
+        <h3 id="dz-confirm-title">Confirm Purchase</h3>
+      </div>
+      <div class="dz-confirm-body">
+        <div class="dz-confirm-field">
+          <input type="text" id="dz-confirm-item" class="dz-input" readonly 
+                 placeholder="Selected bundle">
+        </div>
+        <div class="dz-confirm-field dz-orbital">
+          <input type="tel" id="dz-confirm-phone" class="dz-input" 
+                 placeholder="Phone number (0XXXXXXXXX)"
+                 aria-label="Recipient phone number">
+          <div id="dz-phone-error" class="dz-error-message"></div>
+        </div>
+        <div class="dz-confirm-field">
+          <input type="text" id="dz-confirm-note" class="dz-input" 
+                 placeholder="Optional note"
+                 maxlength="50">
+        </div>
+        <div class="dz-confirm-buttons">
+          <button id="dz-confirm-cancel" class="dz-btn-ghost">Cancel</button>
+          <button id="dz-confirm-submit" class="dz-btn-primary dz-orbital-btn">Confirm</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Help Modal -->
+  <div id="dz-help-modal" role="dialog" aria-modal="true" aria-labelledby="dz-help-title">
+    <div class="dz-help-modal">
+      <div style="padding: 30px;">
+        <h2 id="dz-help-title">Help & Support</h2>
+        
+        <div style="margin: 30px 0;">
+          <h3>Contact Methods</h3>
+          <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 15px;">
+            <div class="dz-card" style="flex: 1; min-width: 200px;">
+              <h4><i class="fab fa-whatsapp" style="color: #25D366;"></i> WhatsApp</h4>
+              <p>Fast response for order issues</p>
+              <button class="dz-btn-primary" id="dz-help-whatsapp" style="margin-top: 10px;">
+                Open Chat
+              </button>
+            </div>
+            
+            <div class="dz-card" style="flex: 1; min-width: 200px;">
+              <h4><i class="fas fa-envelope" style="color: var(--dz-teal);"></i> Email</h4>
+              <p>For detailed inquiries</p>
+              <a href="mailto:support@datazoneghana.com" class="dz-btn-ghost" style="margin-top: 10px; display: inline-block;">
+                Send Email
+              </a>
+            </div>
+          </div>
+        </div>
+        
+        <div style="margin-top: 30px;">
+          <h3>Quick Links</h3>
+          <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+            <button class="dz-btn-ghost" id="dz-help-faq" style="text-align: left;">
+              View FAQ
+            </button>
+            <button class="dz-btn-ghost" id="dz-help-orders" style="text-align: left;">
+              Check Order Status
+            </button>
+            <button class="dz-btn-ghost" id="dz-help-payment" style="text-align: left;">
+              Payment Instructions
+            </button>
+          </div>
+        </div>
+        
+        <div style="margin-top: 30px; display: flex; justify-content: space-between;">
+          <button id="dz-help-close" class="dz-btn-ghost">Close</button>
+          <button id="dz-help-emergency" class="dz-btn-primary" style="background: var(--dz-error);">
+            Emergency Support
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- JavaScript -->
