@@ -324,7 +324,7 @@ function saveOrder(order) {
   // Add timestamp if not present
   if (!order.timestamp) {
     order.timestamp = new Date().toISOString();
-    order.status = 'Successful';
+    order.status = 'pending';
   }
   
   // Add to beginning of array
@@ -420,8 +420,8 @@ function renderOrdersHistory() {
           </div>
           <div class="order-details">
             <div class="order-price">GH₵${order.price}</div>
-            <div class="order-status ${order.status === 'sent' ? 'status-sent' : 'status-successful'}">
-              ${order.status || 'successful'}
+            <div class="order-status ${order.status === 'sent' ? 'status-sent' : 'status-pending'}">
+              ${order.status || 'pending'}
             </div>
           </div>
         </div>
@@ -808,7 +808,7 @@ async function submitPurchaseForm() {
     phone,
     transactionId,
     timestamp: new Date().toISOString(),
-    status: 'pending',
+    status: 'sucessful',
     userId: currentUser.uid
   };
   
