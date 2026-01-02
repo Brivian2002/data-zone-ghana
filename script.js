@@ -1,4 +1,4 @@
-// Data Zone Ghana - Complete JavaScript
+// Data Zone Ghana - Complete JavaScript Application
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import {
   getAuth,
@@ -29,27 +29,15 @@ const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
 /* =========================
-   CONFIGURATION VALUES
+   GOOGLE FORM CONFIGURATION
    ========================= */
-const CONFIG = {
-  WA_NUMBER: "233275903629", // WhatsApp number (format: 233XXXXXXXXX, no plus)
-  GROUP_INVITE: "https://chat.whatsapp.com/KvupM9a1osR2ZE6LLy5NDb?mode=wwt", // WhatsApp group invite
-  BACKEND_ENDPOINT: "https://your-backend.com/api/orders" // Placeholder for future backend
-};
-
-/* =========================
-   GOOGLE FORM CONFIGURATION - CORRECTED
-   ========================= */
-// Google Form for order submissions
 const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfMy0tJxTDmLjp2_uBe4Krgkg98Vv9urYEy1aovxBCPjABhwg/formResponse";
-
-// Form field IDs from your Google Form - CORRECTED MAPPING
 const FORM_FIELDS = {
-  name: "entry.2005620554",        // Name field
-  email: "entry.1045781291",       // Email field
-  phone: "entry.1065046570",       // Recipient Phone field
-  transaction: "entry.1745455373", // Transaction ID field
-  bundle: "entry.1166974658"       // Selected Bundle field - CORRECTED
+  name: "entry.2005620554",
+  email: "entry.1045781291",
+  phone: "entry.1065046570",
+  transaction: "entry.1745455373",
+  bundle: "entry.1166974658"
 };
 
 /* =========================
@@ -102,43 +90,22 @@ const PRODUCTS = {
     color: "airteltigo",
     badge: "30 Days",
     bundles: [
-      { size: "1 GB", cost: 3.95, price: 4.5, duration: "30 days" },
-      { size: "2 GB", cost: 8.35, price: 9.0, duration: "30 days" },
-      { size: "3 GB", cost: 13.25, price: 14.0, duration: "30 days" },
-      { size: "4 GB", cost: 16.5, price: 17.5, duration: "30 days" },
-      { size: "5 GB", cost: 19.5, price: 21.0, duration: "30 days" },
-      { size: "6 GB", cost: 23.5, price: 25.0, duration: "30 days" },
-      { size: "8 GB", cost: 30.5, price: 33.0, duration: "30 days" },
-      { size: "10 GB", cost: 38.5, price: 41.0, duration: "30 days" },
-      { size: "12 GB", cost: 45.5, price: 48.0, duration: "30 days" },
-      { size: "15 GB", cost: 57.5, price: 60.0, duration: "30 days" },
-      { size: "25 GB", cost: 95.0, price: 100.0, duration: "30 days" },
-      { size: "30 GB", cost: 115.0, price: 120.0, duration: "30 days" },
-      { size: "40 GB", cost: 151.0, price: 158.0, duration: "30 days" },
-      { size: "50 GB", cost: 190.0, price: 198.0, duration: "30 days" }
+      { size: "1 GB", price: 4.5, duration: "30 days" },
+      { size: "2 GB", price: 9.0, duration: "30 days" },
+      { size: "3 GB", price: 14.0, duration: "30 days" },
+      { size: "4 GB", price: 17.5, duration: "30 days" },
+      { size: "5 GB", price: 21.0, duration: "30 days" },
+      { size: "6 GB", price: 25.0, duration: "30 days" },
+      { size: "8 GB", price: 33.0, duration: "30 days" },
+      { size: "10 GB", price: 41.0, duration: "30 days" },
+      { size: "12 GB", price: 48.0, duration: "30 days" },
+      { size: "15 GB", price: 60.0, duration: "30 days" },
+      { size: "25 GB", price: 100.0, duration: "30 days" },
+      { size: "30 GB", price: 120.0, duration: "30 days" },
+      { size: "40 GB", price: 158.0, duration: "30 days" },
+      { size: "50 GB", price: 198.0, duration: "30 days" }
     ]
   }
-};
-
-/* =========================
-   DOM ELEMENTS
-   ========================= */
-const DOM = {
-  authModal: document.getElementById("auth-modal"),
-  authName: document.getElementById("auth-name"),
-  authEmail: document.getElementById("auth-email"),
-  authPassword: document.getElementById("auth-password"),
-  emailSignUpBtn: document.getElementById("emailSignUpBtn"),
-  emailLoginBtn: document.getElementById("emailLoginBtn"),
-  googleSignInBtn: document.getElementById("googleSignInBtn"),
-  mainContent: document.getElementById("main-content"),
-  userName: document.getElementById("user-name"),
-  timeGreeting: document.getElementById("time-greeting"),
-  logoutBtn: document.getElementById("logoutBtn"),
-  tabButtons: document.querySelectorAll(".tab-btn"),
-  productsContainer: document.getElementById("products-container"),
-  currentYear: document.getElementById("current-year"),
-  footerLinks: document.querySelectorAll(".footer-link")
 };
 
 /* =========================
@@ -146,632 +113,413 @@ const DOM = {
    ========================= */
 let currentUser = null;
 let currentNetwork = "mtn";
+let currentOrder = null;
+let ordersHistory = [];
+
+/* =========================
+   LOCAL STORAGE KEYS
+   ========================= */
+const STORAGE_KEYS = {
+  ORDERS: 'data_zone_orders_v2',
+  WHATSAPP_DISMISSED: 'data_zone_whatsapp_dismissed',
+  USER_PREFERENCES: 'data_zone_user_prefs'
+};
+
+/* =========================
+   DOM ELEMENTS
+   ========================= */
+const DOM = {
+  // Auth Elements
+  authModal: document.getElementById('auth-modal'),
+  authTabs: document.querySelectorAll('.auth-tab'),
+  loginForm: document.getElementById('login-form'),
+  signupForm: document.getElementById('signup-form'),
+  loginEmail: document.getElementById('login-email'),
+  loginPassword: document.getElementById('login-password'),
+  signupName: document.getElementById('signup-name'),
+  signupEmail: document.getElementById('signup-email'),
+  signupPassword: document.getElementById('signup-password'),
+  emailLoginBtn: document.getElementById('emailLoginBtn'),
+  emailSignUpBtn: document.getElementById('emailSignUpBtn'),
+  googleSignInBtn: document.getElementById('googleSignInBtn'),
+  
+  // Main Elements
+  mainContent: document.getElementById('main-content'),
+  userName: document.getElementById('user-name'),
+  timeGreeting: document.getElementById('time-greeting'),
+  logoutBtn: document.getElementById('logoutBtn'),
+  ordersBtn: document.getElementById('ordersBtn'),
+  helpBtn: document.getElementById('helpBtn'),
+  profileBtn: document.getElementById('profileBtn'),
+  
+  // Network Tabs
+  tabButtons: document.querySelectorAll('.tab-btn'),
+  
+  // Products
+  productsContainer: document.getElementById('products-container'),
+  
+  // Order History
+  orderHistorySection: document.getElementById('order-history-section'),
+  ordersContainer: document.getElementById('orders-container'),
+  clearHistoryBtn: document.getElementById('clearHistoryBtn'),
+  exportHistoryBtn: document.getElementById('exportHistoryBtn'),
+  
+  // FAQ
+  faqQuestions: document.querySelectorAll('.faq-question'),
+  
+  // WhatsApp Widget
+  whatsappToggle: document.getElementById('whatsapp-toggle'),
+  whatsappPanel: document.getElementById('whatsapp-panel'),
+  closeWhatsapp: document.getElementById('close-whatsapp'),
+  dismissPreview: document.getElementById('dismiss-preview'),
+  dontShowAgain: document.getElementById('dont-show-again'),
+  chatOptions: document.querySelectorAll('.chat-option'),
+  chatMessage: document.getElementById('chat-message'),
+  sendWhatsapp: document.getElementById('send-whatsapp'),
+  
+  // Help Modal
+  helpModal: document.getElementById('help-modal'),
+  closeHelp: document.getElementById('close-help'),
+  openHelpModal: document.getElementById('open-help-modal'),
+  
+  // Purchase Modal
+  purchaseModal: document.getElementById('purchase-modal'),
+  closePurchase: document.getElementById('close-purchase'),
+  cancelPurchase: document.getElementById('cancel-purchase'),
+  purchaseForm: document.getElementById('purchase-form'),
+  recipientPhone: document.getElementById('recipient-phone'),
+  transactionId: document.getElementById('transaction-id'),
+  phoneError: document.getElementById('phone-error'),
+  
+  // Summary Elements
+  summaryProduct: document.getElementById('summary-product'),
+  summarySize: document.getElementById('summary-size'),
+  summaryPrice: document.getElementById('summary-price'),
+  summaryTotal: document.getElementById('summary-total'),
+  
+  // Navigation
+  scrollToBundles: document.getElementById('scrollToBundles'),
+  scrollToPayment: document.getElementById('scrollToPayment'),
+  scrollToPaymentFooter: document.getElementById('scroll-to-payment-footer'),
+  footerLinks: document.querySelectorAll('.footer-link'),
+  
+  // Current Year
+  currentYear: document.getElementById('current-year')
+};
 
 /* =========================
    UTILITY FUNCTIONS
    ========================= */
+function showToast(message, type = 'success', duration = 4000) {
+  const container = document.getElementById('toast-container');
+  
+  const toast = document.createElement('div');
+  toast.className = `toast toast-${type}`;
+  toast.setAttribute('role', 'alert');
+  toast.setAttribute('aria-live', 'assertive');
+  toast.setAttribute('aria-atomic', 'true');
+  
+  const icon = type === 'error' ? 'fas fa-exclamation-circle' : 'fas fa-check-circle';
+  
+  toast.innerHTML = `
+    <div class="toast-icon">
+      <i class="${icon}"></i>
+    </div>
+    <div class="toast-content">
+      <p>${message}</p>
+    </div>
+    <button class="toast-close" aria-label="Close notification">
+      <i class="fas fa-times"></i>
+    </button>
+  `;
+  
+  container.appendChild(toast);
+  
+  // Remove toast after duration
+  const removeToast = () => {
+    toast.style.animation = 'slideInRight 0.3s ease reverse';
+    setTimeout(() => toast.remove(), 300);
+  };
+  
+  setTimeout(removeToast, duration);
+  
+  // Close button event
+  toast.querySelector('.toast-close').addEventListener('click', removeToast);
+  
+  // For screen readers
+  setTimeout(() => {
+    const liveRegion = document.createElement('div');
+    liveRegion.setAttribute('role', 'status');
+    liveRegion.className = 'sr-only';
+    liveRegion.textContent = message;
+    document.body.appendChild(liveRegion);
+    setTimeout(() => liveRegion.remove(), 100);
+  }, 100);
+}
+
 function showElement(el) {
-  if (el) el.classList.remove("hidden");
+  if (el) {
+    el.classList.remove('hidden');
+    el.style.display = '';
+  }
 }
 
 function hideElement(el) {
-  if (el) el.classList.add("hidden");
+  if (el) el.classList.add('hidden');
 }
 
-function showToast(message, type = "success") {
-  const existing = document.querySelector(".toast");
-  if (existing) existing.remove();
+function formatPhoneNumber(phone) {
+  if (!phone) return '';
   
-  const toast = document.createElement("div");
-  toast.className = `toast toast-${type}`;
-  toast.setAttribute("aria-live", "polite");
-  toast.innerHTML = `
-    <div class="toast-content">
-      <i class="fas fa-${type === "error" ? "exclamation-circle" : "check-circle"}"></i>
-      <span>${message}</span>
-    </div>
-  `;
+  // Remove all non-digit characters
+  const cleaned = phone.replace(/\D/g, '');
   
-  document.body.appendChild(toast);
-  setTimeout(() => toast.classList.add("show"), 10);
-  setTimeout(() => {
-    toast.classList.remove("show");
-    setTimeout(() => toast.remove(), 300);
-  }, 4000);
+  // Format: 0XXXXXXXXX
+  if (cleaned.length === 10 && cleaned.startsWith('0')) {
+    return cleaned;
+  }
+  
+  // Format: 233XXXXXXXXX
+  if (cleaned.length === 12 && cleaned.startsWith('233')) {
+    return '0' + cleaned.slice(3);
+  }
+  
+  // Format: +233XXXXXXXXX
+  if (cleaned.length === 13 && cleaned.startsWith('233')) {
+    return '0' + cleaned.slice(3);
+  }
+  
+  return cleaned;
 }
 
-/* =========================
-   PHONE VALIDATION & NORMALIZATION
-   ========================= */
-class PhoneValidator {
-  static normalize(phone) {
-    if (!phone) return '';
-    
-    // Remove all non-digits
-    let digits = phone.replace(/\D/g, '');
-    
-    // Handle different formats
-    if (digits.startsWith('233') && digits.length === 12) {
-      // Convert 233XXXXXXXXX to 0XXXXXXXXX
-      return '0' + digits.substring(3);
-    } else if (digits.startsWith('+233') && digits.length === 13) {
-      // Convert +233XXXXXXXXX to 0XXXXXXXXX
-      return '0' + digits.substring(4);
-    } else if (digits.startsWith('0') && digits.length === 10) {
-      // Already in correct format
-      return digits;
-    } else if (digits.length === 9) {
-      // Assume missing leading 0
-      return '0' + digits;
-    }
-    
-    return phone; // Return as-is if format not recognized
-  }
+function validatePhoneNumber(phone) {
+  const patterns = [
+    /^0[0-9]{9}$/,           // 0XXXXXXXXX
+    /^233[0-9]{9}$/,         // 233XXXXXXXXX
+    /^\+233[0-9]{9}$/        // +233XXXXXXXXX
+  ];
   
-  static validate(phone) {
-    const normalized = this.normalize(phone);
-    
-    // Check if empty
-    if (!normalized) {
-      return { valid: false, message: 'Phone number is required' };
+  return patterns.some(pattern => pattern.test(phone.trim()));
+}
+
+function normalizePhone(phone) {
+  const formatted = formatPhoneNumber(phone);
+  return formatted.startsWith('0') ? formatted : '';
+}
+
+function loadOrdersHistory() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEYS.ORDERS);
+    if (saved) {
+      ordersHistory = JSON.parse(saved);
+      renderOrdersHistory();
     }
-    
-    // Check if contains non-digits after normalization attempt
-    if (!/^\d+$/.test(normalized)) {
-      return { valid: false, message: 'Phone number must contain only digits' };
-    }
-    
-    // Check length
-    if (normalized.length !== 10) {
-      return { valid: false, message: 'Phone number must be 10 digits (including leading 0)' };
-    }
-    
-    // Check Ghanaian number format
-    if (!/^0(5[0-9]|2[03467]|5[0-9])/.test(normalized)) {
-      return { valid: false, message: 'Invalid Ghanaian number format' };
-    }
-    
-    return { valid: true, normalized };
-  }
-  
-  static formatForDisplay(phone) {
-    const normalized = this.normalize(phone);
-    if (normalized.length === 10) {
-      return normalized.replace(/(\d{3})(\d{3})(\d{4})/, '$1 $2 $3');
-    }
-    return phone;
+  } catch (error) {
+    console.error('Error loading orders history:', error);
+    ordersHistory = [];
   }
 }
 
-/* =========================
-   WHATSAPP WIDGET
-   ========================= */
-class WhatsAppWidget {
-  constructor() {
-    this.fab = document.getElementById('dz-wa-fab');
-    this.panel = document.getElementById('dz-wa-panel');
-    this.closeBtn = document.getElementById('dz-wa-close');
-    this.sendBtn = document.getElementById('dz-wa-send');
-    this.joinBtn = document.getElementById('dz-wa-join');
-    this.dismissBtn = document.getElementById('dz-wa-dismiss');
-    this.hideCheckbox = document.getElementById('dz-wa-hide');
-    this.messageInput = document.getElementById('dz-wa-message');
-    
-    this.autoOpened = false;
-    
-    this.init();
+function saveOrder(order) {
+  // Add timestamp if not present
+  if (!order.timestamp) {
+    order.timestamp = new Date().toISOString();
+    order.status = 'pending';
   }
   
-  init() {
-    // Event listeners
-    this.fab.addEventListener('click', () => this.togglePanel());
-    this.closeBtn.addEventListener('click', () => this.hidePanel());
-    this.sendBtn.addEventListener('click', () => this.sendMessage());
-    this.joinBtn.addEventListener('click', () => this.joinGroup());
-    this.dismissBtn.addEventListener('click', () => this.dismissPanel());
-    
-    // Close panel when clicking outside
-    document.addEventListener('click', (e) => {
-      if (this.panel.classList.contains('show') && 
-          !this.panel.contains(e.target) && 
-          e.target !== this.fab) {
-        this.hidePanel();
-      }
-    });
-    
-    // Keyboard support
-    this.fab.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        this.togglePanel();
-      }
-    });
-    
-    // Auto-open if not suppressed
-    setTimeout(() => {
-      if (!this.isSuppressed() && !this.autoOpened) {
-        this.autoOpened = true;
-        this.showPanel();
-      }
-    }, 5000);
+  // Add to beginning of array
+  ordersHistory.unshift(order);
+  
+  // Keep only last 30 orders
+  if (ordersHistory.length > 30) {
+    ordersHistory = ordersHistory.slice(0, 30);
   }
   
-  togglePanel() {
-    this.panel.classList.toggle('show');
-    this.fab.setAttribute('aria-expanded', this.panel.classList.contains('show'));
-  }
-  
-  showPanel() {
-    this.panel.classList.add('show');
-    this.fab.setAttribute('aria-expanded', 'true');
-  }
-  
-  hidePanel() {
-    this.panel.classList.remove('show');
-    this.fab.setAttribute('aria-expanded', 'false');
-    
-    // Save dismissal preference
-    if (this.hideCheckbox.checked) {
-      localStorage.setItem('dz_wa_hide', 'true');
-    }
-  }
-  
-  isSuppressed() {
-    return localStorage.getItem('dz_wa_hide') === 'true';
-  }
-  
-  sendMessage() {
-    const message = this.messageInput.value.trim();
-    if (!message) {
-      this.showMessage('Please enter a message', 'error');
-      this.messageInput.focus();
-      return;
-    }
-    
-    const phone = CONFIG.WA_NUMBER;
-    const encodedMessage = encodeURIComponent(message);
-    const url = `https://wa.me/${phone}?text=${encodedMessage}`;
-    
-    window.open(url, '_blank');
-    this.messageInput.value = '';
-    this.showMessage('Opening WhatsApp...', 'success');
-    this.hidePanel();
-  }
-  
-  joinGroup() {
-    window.open(CONFIG.GROUP_INVITE, '_blank');
-    this.showMessage('Opening group invite...', 'success');
-    this.hidePanel();
-  }
-  
-  dismissPanel() {
-    this.hidePanel();
-    this.showMessage('Panel dismissed', 'success');
-  }
-  
-  showMessage(text, type = 'info') {
-    showToast(text, type);
+  // Save to localStorage
+  try {
+    localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(ordersHistory));
+    renderOrdersHistory();
+    showToast('Order saved to history', 'success');
+  } catch (error) {
+    console.error('Error saving order:', error);
   }
 }
 
-/* =========================
-   ORDER HISTORY STORAGE
-   ========================= */
-class OrderHistory {
-  constructor() {
-    this.storageKey = 'dz_orders_v1';
-    this.maxEntries = 30;
-    this.listElement = document.getElementById('dz-orders-list');
-    this.emptyElement = document.getElementById('dz-orders-empty');
-    this.clearBtn = document.getElementById('dz-orders-clear');
-    this.exportBtn = document.getElementById('dz-orders-export');
-    
-    this.init();
+function clearOrdersHistory() {
+  if (confirm('Are you sure you want to clear all order history? This action cannot be undone.')) {
+    ordersHistory = [];
+    localStorage.removeItem(STORAGE_KEYS.ORDERS);
+    renderOrdersHistory();
+    showToast('Order history cleared', 'success');
+  }
+}
+
+function exportOrdersToCSV() {
+  if (ordersHistory.length === 0) {
+    showToast('No orders to export', 'error');
+    return;
   }
   
-  init() {
-    if (this.clearBtn) {
-      this.clearBtn.addEventListener('click', () => this.clearOrders());
-    }
-    
-    if (this.exportBtn) {
-      this.exportBtn.addEventListener('click', () => this.exportToCSV());
-    }
-    
-    this.renderOrders();
+  const headers = ['Date', 'Time', 'Network', 'Bundle', 'Phone', 'Price', 'Status'];
+  const rows = ordersHistory.map(order => {
+    const date = new Date(order.timestamp);
+    return [
+      date.toLocaleDateString(),
+      date.toLocaleTimeString(),
+      order.network,
+      order.size,
+      order.phone || 'N/A',
+      `GH₵${order.price}`,
+      order.status || 'pending'
+    ];
+  });
+  
+  const csvContent = [
+    headers.join(','),
+    ...rows.map(row => row.join(','))
+  ].join('\n');
+  
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `data-zone-orders-${new Date().toISOString().split('T')[0]}.csv`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+  
+  showToast('Orders exported to CSV', 'success');
+}
+
+function renderOrdersHistory() {
+  if (!DOM.ordersContainer) return;
+  
+  if (ordersHistory.length === 0) {
+    DOM.ordersContainer.innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-shopping-bag"></i>
+        <h3>No Orders Yet</h3>
+        <p>Your order history will appear here after you make purchases.</p>
+      </div>
+    `;
+    return;
   }
   
-  getOrders() {
-    try {
-      const ordersJson = localStorage.getItem(this.storageKey);
-      return ordersJson ? JSON.parse(ordersJson) : [];
-    } catch (error) {
-      console.error('Error reading orders:', error);
-      return [];
-    }
-  }
-  
-  saveOrder(order) {
-    const orders = this.getOrders();
-    
-    // Add new order at beginning
-    orders.unshift({
-      when: new Date().toISOString(),
-      msisdn: order.phone,
-      itemLabel: order.item,
-      ref: order.reference || `DZ-${Date.now()}`,
-      status: 'pending'
-    });
-    
-    // Keep only latest entries
-    const trimmedOrders = orders.slice(0, this.maxEntries);
-    
-    try {
-      localStorage.setItem(this.storageKey, JSON.stringify(trimmedOrders));
-      this.renderOrders();
-      return true;
-    } catch (error) {
-      console.error('Error saving order:', error);
-      return false;
-    }
-  }
-  
-  clearOrders() {
-    if (confirm('Are you sure you want to clear all order history?')) {
-      localStorage.removeItem(this.storageKey);
-      this.renderOrders();
-      showToast('Order history cleared', 'success');
-    }
-  }
-  
-  exportToCSV() {
-    const orders = this.getOrders();
-    
-    if (orders.length === 0) {
-      showToast('No orders to export', 'error');
-      return;
-    }
-    
-    // Create CSV headers
-    const headers = ['Date', 'Phone Number', 'Item', 'Reference', 'Status'];
-    const csvRows = [headers.join(',')];
-    
-    // Add data rows
-    orders.forEach(order => {
-      const row = [
-        new Date(order.when).toLocaleString(),
-        PhoneValidator.formatForDisplay(order.msisdn),
-        `"${order.itemLabel.replace(/"/g, '""')}"`,
-        order.ref,
-        order.status
-      ];
-      csvRows.push(row.join(','));
-    });
-    
-    const csvContent = csvRows.join('\n');
-    
-    // Create download link
-    const blob = new Blob([csvContent], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `data-zone-orders-${new Date().toISOString().split('T')[0]}.csv`;
-    
-    // Trigger download
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    
-    showToast('CSV exported successfully', 'success');
-  }
-  
-  renderOrders() {
-    const orders = this.getOrders();
-    
-    if (orders.length === 0) {
-      this.listElement.innerHTML = '';
-      this.emptyElement.style.display = 'block';
-      return;
-    }
-    
-    this.emptyElement.style.display = 'none';
-    
-    const ordersHtml = orders.map(order => `
-      <div class="dz-order-item">
-        <div>
-          <div style="font-weight: 600; color: var(--dz-dark);">${order.itemLabel}</div>
-          <div style="font-size: 14px; color: var(--dz-muted);">
-            ${PhoneValidator.formatForDisplay(order.msisdn)} • 
-            ${new Date(order.when).toLocaleDateString()}
+  DOM.ordersContainer.innerHTML = `
+    <div class="order-list">
+      ${ordersHistory.map((order, index) => `
+        <div class="order-item" data-index="${index}">
+          <div class="order-info">
+            <h4>${order.network} - ${order.size}</h4>
+            <div class="order-meta">
+              <span>${new Date(order.timestamp).toLocaleDateString()}</span>
+              <span>${new Date(order.timestamp).toLocaleTimeString()}</span>
+              <span>${order.phone || 'N/A'}</span>
+            </div>
+          </div>
+          <div class="order-details">
+            <div class="order-price">GH₵${order.price}</div>
+            <div class="order-status ${order.status === 'sent' ? 'status-sent' : 'status-pending'}">
+              ${order.status || 'pending'}
+            </div>
           </div>
         </div>
-        <div>
-          <span class="dz-order-status dz-status-${order.status}">
-            ${order.status}
-          </span>
-        </div>
-      </div>
-    `).join('');
-    
-    this.listElement.innerHTML = ordersHtml;
-  }
+      `).join('')}
+    </div>
+  `;
 }
 
-/* =========================
-   FAQ ACCORDION
-   ========================= */
-class FAQAccordion {
-  constructor() {
-    this.items = document.querySelectorAll('.dz-faq-item');
-    this.init();
-  }
-  
-  init() {
-    this.items.forEach(item => {
-      const question = item.querySelector('.dz-faq-question');
-      const answer = item.querySelector('.dz-faq-answer');
+function setupFAQAccordion() {
+  DOM.faqQuestions?.forEach(question => {
+    question.addEventListener('click', () => {
+      const item = question.closest('.faq-item');
+      const isActive = item.classList.contains('active');
       
-      question.addEventListener('click', () => this.toggleItem(item));
-      
-      // Keyboard support
-      question.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          this.toggleItem(item);
+      // Close all other items
+      document.querySelectorAll('.faq-item').forEach(otherItem => {
+        if (otherItem !== item) {
+          otherItem.classList.remove('active');
+          otherItem.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
         }
       });
+      
+      // Toggle current item
+      item.classList.toggle('active', !isActive);
+      question.setAttribute('aria-expanded', (!isActive).toString());
     });
-  }
-  
-  toggleItem(item) {
-    const isActive = item.classList.contains('active');
-    const question = item.querySelector('.dz-faq-question');
-    const answer = item.querySelector('.dz-faq-answer');
-    const icon = item.querySelector('.dz-faq-icon');
-    
-    // Close all items
-    this.items.forEach(otherItem => {
-      if (otherItem !== item) {
-        otherItem.classList.remove('active');
-        const otherIcon = otherItem.querySelector('.dz-faq-icon');
-        if (otherIcon) otherIcon.textContent = '+';
-        const otherQuestion = otherItem.querySelector('.dz-faq-question');
-        if (otherQuestion) otherQuestion.setAttribute('aria-expanded', 'false');
-      }
-    });
-    
-    // Toggle current item
-    if (!isActive) {
-      item.classList.add('active');
-      icon.textContent = '−';
-      question.setAttribute('aria-expanded', 'true');
-    } else {
-      item.classList.remove('active');
-      icon.textContent = '+';
-      question.setAttribute('aria-expanded', 'false');
-    }
-  }
-}
-
-/* =========================
-   COMPACT CONFIRM MODAL
-   ========================= */
-class ConfirmModal {
-  constructor() {
-    this.modal = document.getElementById('dz-confirm');
-    this.cancelBtn = document.getElementById('dz-confirm-cancel');
-    this.submitBtn = document.getElementById('dz-confirm-submit');
-    this.phoneInput = document.getElementById('dz-confirm-phone');
-    this.itemInput = document.getElementById('dz-confirm-item');
-    this.noteInput = document.getElementById('dz-confirm-note');
-    this.phoneError = document.getElementById('dz-phone-error');
-    
-    this.currentOrder = null;
-    this.orderHistory = new OrderHistory();
-    
-    this.init();
-  }
-  
-  init() {
-    // Event listeners
-    this.cancelBtn.addEventListener('click', () => this.hide());
-    this.submitBtn.addEventListener('click', () => this.submitOrder());
-    
-    // Phone validation on blur
-    this.phoneInput.addEventListener('blur', () => this.validatePhone());
     
     // Keyboard support
-    this.modal.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        this.hide();
+    question.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        question.click();
       }
     });
-    
-    // Close when clicking outside
-    this.modal.addEventListener('click', (e) => {
-      if (e.target === this.modal) {
-        this.hide();
-      }
-    });
-  }
+  });
+}
+
+function setupWhatsAppWidget() {
+  // Check if user has dismissed the preview
+  const dismissed = localStorage.getItem(STORAGE_KEYS.WHATSAPP_DISMISSED);
   
-  show(order) {
-    this.currentOrder = order;
-    this.itemInput.value = order.item;
-    this.phoneInput.value = '';
-    this.noteInput.value = '';
-    this.phoneError.textContent = '';
-    this.phoneError.classList.remove('show');
+  // Toggle panel
+  DOM.whatsappToggle?.addEventListener('click', () => {
+    DOM.whatsappPanel.classList.toggle('hidden');
+    DOM.whatsappToggle.setAttribute('aria-expanded', 
+      !DOM.whatsappPanel.classList.contains('hidden')
+    );
+  });
+  
+  // Close panel
+  DOM.closeWhatsapp?.addEventListener('click', () => {
+    DOM.whatsappPanel.classList.add('hidden');
+    DOM.whatsappToggle.setAttribute('aria-expanded', 'false');
+  });
+  
+  // Dismiss preview
+  DOM.dismissPreview?.addEventListener('click', () => {
+    const dontShow = DOM.dontShowAgain?.checked;
+    if (dontShow) {
+      localStorage.setItem(STORAGE_KEYS.WHATSAPP_DISMISSED, 'true');
+    }
+    DOM.whatsappPanel.classList.add('hidden');
+  });
+  
+  // Chat options
+  DOM.chatOptions?.forEach(option => {
+    option.addEventListener('click', () => {
+      DOM.chatOptions.forEach(opt => opt.classList.remove('active'));
+      option.classList.add('active');
+    });
+  });
+  
+  // Send WhatsApp message
+  DOM.sendWhatsapp?.addEventListener('click', () => {
+    const type = document.querySelector('.chat-option.active').dataset.type;
+    const message = DOM.chatMessage?.value.trim() || 'Hello, I need help with data bundles';
+    const phone = '233275903629'; // Your WhatsApp number
     
-    this.modal.classList.add('show');
-    this.modal.setAttribute('aria-hidden', 'false');
+    let url;
+    if (type === 'personal') {
+      url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+    } else {
+      url = 'https://chat.whatsapp.com/KvupM9a1osR2ZE6LLy5NDb';
+    }
     
-    // Set focus
+    window.open(url, '_blank');
+    DOM.whatsappPanel.classList.add('hidden');
+    DOM.whatsappToggle.setAttribute('aria-expanded', 'false');
+    
+    showToast('Opening WhatsApp...', 'success');
+  });
+  
+  // Auto-open panel on first visit (if not dismissed)
+  if (!dismissed && window.innerWidth > 768) {
     setTimeout(() => {
-      this.phoneInput.focus();
-    }, 100);
-  }
-  
-  hide() {
-    this.modal.classList.remove('show');
-    this.modal.setAttribute('aria-hidden', 'true');
-    this.currentOrder = null;
-  }
-  
-  validatePhone() {
-    const phone = this.phoneInput.value.trim();
-    const result = PhoneValidator.validate(phone);
-    
-    if (!result.valid) {
-      this.phoneError.textContent = result.message;
-      this.phoneError.classList.add('show');
-      return false;
-    }
-    
-    // Update input with normalized value
-    this.phoneInput.value = result.normalized;
-    this.phoneError.textContent = '';
-    this.phoneError.classList.remove('show');
-    return true;
-  }
-  
-  submitOrder() {
-    // Validate phone
-    if (!this.validatePhone()) {
-      showToast('Please correct the phone number', 'error');
-      return;
-    }
-    
-    const phone = PhoneValidator.normalize(this.phoneInput.value.trim());
-    const note = this.noteInput.value.trim();
-    
-    // Save to order history
-    const saved = this.orderHistory.saveOrder({
-      phone: phone,
-      item: this.currentOrder.item,
-      reference: `DZ-${Date.now()}`
-    });
-    
-    if (saved) {
-      showToast('Order saved to history', 'success');
-      
-      // Open WhatsApp for confirmation
-      const message = `Order: ${this.currentOrder.item}\nPhone: ${phone}\nNote: ${note || 'No note'}`;
-      const encoded = encodeURIComponent(message);
-      const url = `https://wa.me/${CONFIG.WA_NUMBER}?text=${encoded}`;
-      window.open(url, '_blank');
-      
-      this.hide();
-    } else {
-      showToast('Failed to save order', 'error');
-    }
-  }
-}
-
-/* =========================
-   HELP MODAL
-   ========================= */
-class HelpModal {
-  constructor() {
-    this.modal = document.getElementById('dz-help-modal');
-    this.closeBtn = document.getElementById('dz-help-close');
-    this.whatsappBtn = document.getElementById('dz-help-whatsapp');
-    this.faqBtn = document.getElementById('dz-help-faq');
-    this.ordersBtn = document.getElementById('dz-help-orders');
-    this.paymentBtn = document.getElementById('dz-help-payment');
-    this.emergencyBtn = document.getElementById('dz-help-emergency');
-    
-    this.init();
-  }
-  
-  init() {
-    // Event listeners
-    if (this.closeBtn) {
-      this.closeBtn.addEventListener('click', () => this.hide());
-    }
-    
-    if (this.whatsappBtn) {
-      this.whatsappBtn.addEventListener('click', () => this.openWhatsApp());
-    }
-    
-    if (this.faqBtn) {
-      this.faqBtn.addEventListener('click', () => this.scrollToFAQ());
-    }
-    
-    if (this.ordersBtn) {
-      this.ordersBtn.addEventListener('click', () => this.scrollToOrders());
-    }
-    
-    if (this.paymentBtn) {
-      this.paymentBtn.addEventListener('click', () => this.scrollToPayment());
-    }
-    
-    if (this.emergencyBtn) {
-      this.emergencyBtn.addEventListener('click', () => this.openEmergency());
-    }
-    
-    // Close when clicking outside
-    this.modal.addEventListener('click', (e) => {
-      if (e.target === this.modal) {
-        this.hide();
-      }
-    });
-    
-    // Keyboard support
-    this.modal.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        this.hide();
-      }
-    });
-  }
-  
-  show() {
-    this.modal.classList.add('show');
-    this.modal.setAttribute('aria-hidden', 'false');
-  }
-  
-  hide() {
-    this.modal.classList.remove('show');
-    this.modal.setAttribute('aria-hidden', 'true');
-  }
-  
-  openWhatsApp() {
-    const url = `https://wa.me/${CONFIG.WA_NUMBER}`;
-    window.open(url, '_blank');
-    this.hide();
-  }
-  
-  scrollToFAQ() {
-    const faqSection = document.querySelector('.dz-faq-container');
-    if (faqSection) {
-      faqSection.scrollIntoView({ behavior: 'smooth' });
-    }
-    this.hide();
-  }
-  
-  scrollToOrders() {
-    const ordersSection = document.querySelector('.dz-orders-container');
-    if (ordersSection) {
-      ordersSection.scrollIntoView({ behavior: 'smooth' });
-    }
-    this.hide();
-  }
-  
-  scrollToPayment() {
-    const paymentSection = document.querySelector('.payment-top-section');
-    if (paymentSection) {
-      paymentSection.scrollIntoView({ behavior: 'smooth' });
-    }
-    this.hide();
-  }
-  
-  openEmergency() {
-    const message = 'EMERGENCY: Need immediate assistance with my order!';
-    const encoded = encodeURIComponent(message);
-    const url = `https://wa.me/${CONFIG.WA_NUMBER}?text=${encoded}`;
-    window.open(url, '_blank');
-    this.hide();
+      DOM.whatsappPanel.classList.remove('hidden');
+      DOM.whatsappToggle.setAttribute('aria-expanded', 'true');
+    }, 3000);
   }
 }
 
@@ -779,57 +527,80 @@ class HelpModal {
    AUTHENTICATION FUNCTIONS
    ========================= */
 async function signUpWithEmail() {
-  const name = (DOM.authName?.value || "").trim();
-  const email = (DOM.authEmail?.value || "").trim();
-  const password = DOM.authPassword?.value || "";
-
-  if (!name) return showToast("Please enter full name", "error");
-  if (!email) return showToast("Please enter email", "error");
-  if (!password || password.length < 6)
-    return showToast("Password must be at least 6 characters", "error");
-
+  const name = DOM.signupName?.value.trim();
+  const email = DOM.signupEmail?.value.trim();
+  const password = DOM.signupPassword?.value;
+  
+  if (!name || !email || !password) {
+    showToast('Please fill in all fields', 'error');
+    return;
+  }
+  
+  if (password.length < 6) {
+    showToast('Password must be at least 6 characters', 'error');
+    return;
+  }
+  
   try {
     const userCred = await createUserWithEmailAndPassword(auth, email, password);
     await updateProfile(userCred.user, { displayName: name });
-    showToast("🎉 Account created successfully! Welcome to Data Zone Ghana!");
-  } catch (err) {
-    console.error("Signup error:", err);
-    showToast(err.message || "Sign up failed", "error");
+    showToast('🎉 Account created successfully! Welcome!', 'success');
+  } catch (error) {
+    console.error('Signup error:', error);
+    let message = 'Sign up failed';
+    if (error.code === 'auth/email-already-in-use') {
+      message = 'Email already in use. Please sign in instead.';
+    } else if (error.code === 'auth/invalid-email') {
+      message = 'Invalid email address';
+    } else if (error.code === 'auth/weak-password') {
+      message = 'Password is too weak';
+    }
+    showToast(message, 'error');
   }
 }
 
 async function loginWithEmail() {
-  const email = (DOM.authEmail?.value || "").trim();
-  const password = DOM.authPassword?.value || "";
+  const email = DOM.loginEmail?.value.trim();
+  const password = DOM.loginPassword?.value;
   
-  if (!email) return showToast("Enter email", "error");
-  if (!password) return showToast("Enter password", "error");
+  if (!email || !password) {
+    showToast('Please enter email and password', 'error');
+    return;
+  }
   
   try {
     await signInWithEmailAndPassword(auth, email, password);
-    showToast("✅ Login successful! Welcome back!");
-  } catch (err) {
-    console.error("Login error:", err);
-    showToast(err.message || "Login failed", "error");
+    showToast('✅ Login successful! Welcome back!', 'success');
+  } catch (error) {
+    console.error('Login error:', error);
+    let message = 'Login failed';
+    if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+      message = 'Invalid email or password';
+    } else if (error.code === 'auth/too-many-requests') {
+      message = 'Too many attempts. Please try again later.';
+    }
+    showToast(message, 'error');
   }
 }
 
 async function loginWithGoogle() {
   try {
     await signInWithPopup(auth, provider);
-    showToast("👋 Welcome! Google sign-in successful");
-  } catch (err) {
-    console.error("Google sign-in error:", err);
-    showToast(err.message || "Google sign-in failed", "error");
+    showToast('👋 Welcome! Google sign-in successful', 'success');
+  } catch (error) {
+    console.error('Google sign-in error:', error);
+    showToast('Google sign-in failed. Please try again.', 'error');
   }
 }
 
 function signOutUser() {
   signOut(auth)
-    .then(() => showToast("👋 Signed out successfully. See you soon!"))
-    .catch(err => {
-      console.error("Signout error:", err);
-      showToast("Sign out failed", "error");
+    .then(() => {
+      showToast('👋 Signed out successfully. See you soon!', 'success');
+    })
+    .catch(error => {
+      console.error('Signout error:', error);
+      showToast('Sign out failed', 'error');
     });
 }
 
@@ -838,280 +609,269 @@ onAuthStateChanged(auth, (user) => {
   if (user) {
     currentUser = {
       uid: user.uid,
-      name: user.displayName || user.email?.split("@")[0] || "Customer",
-      email: user.email || ""
+      name: user.displayName || user.email?.split('@')[0] || 'Customer',
+      email: user.email || '',
+      photoURL: user.photoURL
     };
     
     if (DOM.userName) DOM.userName.textContent = currentUser.name;
     showElement(DOM.mainContent);
     hideElement(DOM.authModal);
-    document.body.style.overflow = "auto";
+    document.body.style.overflow = 'auto';
     
-    // Show greeting for logged in users
-    const hour = new Date().getHours();
-    let timeGreet = "Good Day";
-    if (hour < 12) timeGreet = "Good Morning";
-    else if (hour >= 18) timeGreet = "Good Evening";
-    
-    setTimeout(() => {
-      showToast(`🎄 Welcome back, ${currentUser.name}! ${timeGreet}!`);
-    }, 500);
+    // Load user's order history
+    loadOrdersHistory();
     
   } else {
     currentUser = null;
-    if (DOM.authName) DOM.authName.value = "";
-    if (DOM.authEmail) DOM.authEmail.value = "";
-    if (DOM.authPassword) DOM.authPassword.value = "";
+    // Reset form fields
+    if (DOM.loginEmail) DOM.loginEmail.value = '';
+    if (DOM.loginPassword) DOM.loginPassword.value = '';
+    if (DOM.signupName) DOM.signupName.value = '';
+    if (DOM.signupEmail) DOM.signupEmail.value = '';
+    if (DOM.signupPassword) DOM.signupPassword.value = '';
+    
     hideElement(DOM.mainContent);
     showElement(DOM.authModal);
-    document.body.style.overflow = "hidden";
+    document.body.style.overflow = 'hidden';
+    
+    // Switch to login tab
+    switchAuthTab('login');
   }
 });
 
 /* =========================
-   PRODUCT DISPLAY FUNCTIONS
+   PRODUCT FUNCTIONS
    ========================= */
 function switchNetwork(network) {
   currentNetwork = network;
-  DOM.tabButtons.forEach(btn => 
-    btn.classList.toggle("active", btn.dataset.network === network)
-  );
-  renderProducts(network);
   
-  // Scroll to products with smooth animation
-  document.querySelector('.products-section').scrollIntoView({ 
-    behavior: 'smooth',
-    block: 'start'
+  // Update active tab
+  DOM.tabButtons?.forEach(btn => {
+    const isActive = btn.dataset.network === network;
+    btn.classList.toggle('active', isActive);
+    btn.setAttribute('aria-selected', isActive.toString());
   });
+  
+  renderProducts(network);
 }
 
 function renderProducts(network) {
+  if (!DOM.productsContainer) return;
+  
   const networkData = PRODUCTS[network];
-  if (!networkData || !DOM.productsContainer) return;
+  if (!networkData) return;
   
-  DOM.productsContainer.innerHTML = "";
+  DOM.productsContainer.innerHTML = '';
+  
   networkData.bundles.forEach((bundle, index) => {
-    const card = createProductCard(bundle, networkData, index);
-    DOM.productsContainer.appendChild(card);
+    const card = document.createElement('div');
+    card.className = 'product-card';
+    card.style.animationDelay = `${index * 50}ms`;
     
-    // Stagger animation
-    setTimeout(() => {
-      card.style.animationDelay = `${index * 0.05}s`;
-    }, 10);
-  });
-}
-
-function createProductCard(bundle, networkData, index) {
-  const card = document.createElement("div");
-  card.className = "product-card";
-  card.style.animationDelay = `${index * 0.05}s`;
-  
-  const salePrice = bundle.price || bundle.cost || 0;
-  const cost = bundle.cost || null;
-  const headerClass = networkData.color;
-  
-  card.innerHTML = `
-    <div class="product-header ${headerClass}">
-      <div class="product-network">${networkData.name.split(" ")[0]}</div>
-      <div class="product-badge">${networkData.badge}</div>
-    </div>
-    <div class="product-body">
-      <div class="product-size">${bundle.size}</div>
-      <div class="product-price">${salePrice.toFixed(2)}</div>
-      <div class="product-details">
-        ${cost ? `
+    card.innerHTML = `
+      <div class="product-header">
+        <div class="product-network">${networkData.name}</div>
+        <div class="product-badge">${networkData.badge}</div>
+      </div>
+      <div class="product-body">
+        <div class="product-size">${bundle.size}</div>
+        <div class="product-price">${bundle.price.toFixed(2)}</div>
+        <div class="product-details">
           <div class="product-detail">
-            <span class="product-detail-label">Cost Price:</span>
-            <span class="product-detail-value">GH₵ ${cost.toFixed(2)}</span>
+            <span class="product-detail-label">Your Price:</span>
+            <span class="product-detail-value">GH₵ ${bundle.price.toFixed(2)}</span>
           </div>
-        ` : ""}
-        <div class="product-detail">
-          <span class="product-detail-label">Your Price:</span>
-          <span class="product-detail-value">GH₵ ${salePrice.toFixed(2)}</span>
-        </div>
-        <div class="product-detail">
-          <span class="product-detail-label">Validity:</span>
-          <span class="product-detail-value">${bundle.duration}</span>
-        </div>
-        <div class="product-detail">
-          <span class="product-detail-label">Service Fee:</span>
-          <span class="product-detail-value">GH₵ 0.50</span>
-        </div>
-        <div class="product-detail">
-          <span class="product-detail-label">Total:</span>
-          <span class="product-detail-value">GH₵ ${(salePrice + 0.5).toFixed(2)}</span>
+          <div class="product-detail">
+            <span class="product-detail-label">Validity:</span>
+            <span class="product-detail-value">${bundle.duration}</span>
+          </div>
+          <div class="product-detail">
+            <span class="product-detail-label">Service Fee:</span>
+            <span class="product-detail-value">GH₵ 0.50</span>
+          </div>
+          <div class="product-detail">
+            <span class="product-detail-label">Total:</span>
+            <span class="product-detail-value">GH₵ ${(bundle.price + 0.5).toFixed(2)}</span>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="product-footer">
-      <button class="btn-confirm dz-orbital-btn" data-size="${bundle.size}" data-price="${salePrice}">
-        <i class="fas fa-shopping-cart"></i> Buy Now - GH₵ ${salePrice.toFixed(2)}
-      </button>
-    </div>
-  `;
-  
-  card.querySelector(".btn-confirm").addEventListener("click", () => {
-    openPurchaseModal({
-      network: networkData.name,
-      size: bundle.size,
-      price: salePrice,
-      item: `${networkData.name.split(" ")[0]} ${bundle.size} - GH₵ ${salePrice.toFixed(2)}`
+      <div class="product-footer">
+        <button class="btn-buy" 
+                data-network="${network}" 
+                data-size="${bundle.size}" 
+                data-price="${bundle.price}"
+                aria-label="Buy ${bundle.size} ${networkData.name} bundle for GH₵${bundle.price}">
+          <i class="fas fa-shopping-cart"></i> Buy Now - GH₵ ${bundle.price.toFixed(2)}
+        </button>
+      </div>
+    `;
+    
+    // Add buy button event
+    const buyBtn = card.querySelector('.btn-buy');
+    buyBtn.addEventListener('click', () => {
+      openPurchaseModal({
+        network: networkData.name,
+        size: bundle.size,
+        price: bundle.price
+      });
     });
+    
+    DOM.productsContainer.appendChild(card);
   });
-  
-  return card;
 }
 
 /* =========================
    PURCHASE MODAL FUNCTIONS
    ========================= */
-function openPurchaseModal({ network, size, price, item }) {
+function openPurchaseModal({ network, size, price }) {
   if (!currentUser) {
-    showToast("🔒 Please sign in before making a purchase", "error");
+    showToast('🔒 Please sign in before making a purchase', 'error');
+    switchAuthTab('login');
     return;
   }
   
-  // Determine payment number based on network
-  let paymentNumber = "";
-  let paymentName = "";
+  currentOrder = { network, size, price };
   
-  if (network.includes("MTN")) {
-    paymentNumber = "053 534 3490";
-    paymentName = "Vivian Ahorlu";
-  } else if (network.includes("Telecel")) {
-    paymentNumber = "020 955 8038";
-    paymentName = "Bright Dumashie";
-  } else if (network.includes("AirtelTigo")) {
-    paymentNumber = "027 590 3629";
-    paymentName = "Data Zone GH";
-  }
+  // Update summary
+  if (DOM.summaryProduct) DOM.summaryProduct.textContent = network;
+  if (DOM.summarySize) DOM.summarySize.textContent = size;
+  if (DOM.summaryPrice) DOM.summaryPrice.textContent = `GH₵ ${price.toFixed(2)}`;
+  if (DOM.summaryTotal) DOM.summaryTotal.textContent = `GH₵ ${(price + 0.5).toFixed(2)}`;
   
-  // Show payment reminder first
-  if (!confirm(`💳 IMPORTANT: Before proceeding, ensure you've sent GH₵${(price + 0.5).toFixed(2)} to:\n\n${network}: ${paymentNumber}\nName: ${paymentName}\n\nHave you made the payment?`)) {
-    return;
-  }
+  // Clear form
+  if (DOM.recipientPhone) DOM.recipientPhone.value = '';
+  if (DOM.transactionId) DOM.transactionId.value = '';
+  if (DOM.phoneError) hideElement(DOM.phoneError);
   
-  const confirmModal = new ConfirmModal();
-  confirmModal.show({
-    item: item,
-    network: network,
-    size: size,
-    price: price
-  });
+  // Show modal
+  showElement(DOM.purchaseModal);
+  document.body.style.overflow = 'hidden';
+  
+  // Focus first input
+  setTimeout(() => {
+    DOM.recipientPhone?.focus();
+  }, 100);
 }
 
-/* =========================
-   GOOGLE FORM SUBMISSION - CORRECTED VERSION
-   ========================= */
-async function submitPurchaseToGoogleForm() {
-  const phoneInput = document.getElementById("modal-phone");
-  const transactionInput = document.getElementById("modal-transaction");
-  const bundleInput = document.getElementById("modal-bundle");
+function closePurchaseModal() {
+  hideElement(DOM.purchaseModal);
+  document.body.style.overflow = 'auto';
+  currentOrder = null;
+}
+
+function validatePurchaseForm() {
+  const phone = DOM.recipientPhone?.value.trim();
+  const transactionId = DOM.transactionId?.value.trim();
   
-  if (!phoneInput || !transactionInput || !bundleInput) {
-    showToast("System error. Please refresh page.", "error");
-    return;
+  // Validate phone
+  if (!phone) {
+    showToast('Please enter recipient phone number', 'error');
+    DOM.recipientPhone?.focus();
+    return false;
   }
   
-  const phoneRaw = phoneInput.value.trim();
-  const transactionRaw = transactionInput.value.trim();
-  
-  if (!phoneRaw) {
-    showToast("Please enter recipient phone number", "error");
-    phoneInput.focus();
-    return;
+  if (!validatePhoneNumber(phone)) {
+    if (DOM.phoneError) {
+      DOM.phoneError.textContent = 'Please enter a valid Ghana phone number (0XXXXXXXXX, +233XXXXXXXXX, or 233XXXXXXXXX)';
+      showElement(DOM.phoneError);
+    }
+    DOM.recipientPhone?.focus();
+    return false;
   }
   
-  if (!transactionRaw) {
-    showToast("Please enter your transaction ID", "error");
-    transactionInput.focus();
-    return;
+  // Validate transaction ID
+  if (!transactionId) {
+    showToast('Please enter transaction ID', 'error');
+    DOM.transactionId?.focus();
+    return false;
   }
   
-  const phone = PhoneValidator.normalize(phoneRaw);
-  const bundleValue = bundleInput.value;
+  if (transactionId.length < 6) {
+    showToast('Transaction ID must be at least 6 characters', 'error');
+    DOM.transactionId?.focus();
+    return false;
+  }
   
-  // Create a confirmation message
-  const confirmBtn = document.getElementById("modal-confirm-btn");
-  const originalText = confirmBtn.innerHTML;
-  confirmBtn.disabled = true;
-  confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting Order...';
+  return true;
+}
+
+async function submitPurchaseForm() {
+  if (!validatePurchaseForm()) return;
   
+  const phone = normalizePhone(DOM.recipientPhone.value);
+  const transactionId = DOM.transactionId.value.trim();
+  
+  // Create order data
+  const orderData = {
+    ...currentOrder,
+    phone,
+    transactionId,
+    timestamp: new Date().toISOString(),
+    status: 'pending',
+    userId: currentUser.uid
+  };
+  
+  // Save to history
+  saveOrder(orderData);
+  
+  // Submit to Google Form
   try {
-    // Prepare form data for Google Form submission
     const formData = new FormData();
     formData.append(FORM_FIELDS.name, currentUser.name);
     formData.append(FORM_FIELDS.email, currentUser.email);
     formData.append(FORM_FIELDS.phone, phone);
-    formData.append(FORM_FIELDS.transaction, transactionRaw);
-    formData.append(FORM_FIELDS.bundle, bundleValue);
+    formData.append(FORM_FIELDS.transaction, transactionId);
+    formData.append(FORM_FIELDS.bundle, `${currentOrder.network} - ${currentOrder.size} - GH₵${currentOrder.price}`);
     
-    // Submit to Google Form using fetch with no-cors mode
+    // Submit to Google Form
     await fetch(GOOGLE_FORM_URL, {
       method: 'POST',
       mode: 'no-cors',
       body: formData
     });
     
-    // Show success message
-    showToast("🎉 Order submitted successfully! We'll process it within 30 minutes.", "success");
+    showToast('🎉 Order submitted successfully! We\'ll process it within 30 minutes.', 'success');
     
-    // Clear form fields
-    phoneInput.value = "";
-    transactionInput.value = "";
+    // Close modal
+    closePurchaseModal();
+    
+    // Show WhatsApp option for support
+    setTimeout(() => {
+      if (confirm('Would you like to contact WhatsApp support for faster processing?')) {
+        DOM.whatsappPanel?.classList.remove('hidden');
+      }
+    }, 1000);
     
   } catch (error) {
     console.error('Form submission error:', error);
-    
-    // Fallback method: Create hidden form and submit
-    const hiddenForm = document.createElement('form');
-    hiddenForm.method = 'POST';
-    hiddenForm.action = GOOGLE_FORM_URL;
-    hiddenForm.target = '_blank';
-    hiddenForm.style.display = 'none';
-    
-    // Add all form fields as hidden inputs
-    const fields = {
-      [FORM_FIELDS.name]: currentUser.name,
-      [FORM_FIELDS.email]: currentUser.email,
-      [FORM_FIELDS.phone]: phone,
-      [FORM_FIELDS.transaction]: transactionRaw,
-      [FORM_FIELDS.bundle]: bundleValue
-    };
-    
-    Object.entries(fields).forEach(([name, value]) => {
-      const input = document.createElement('input');
-      input.type = 'hidden';
-      input.name = name;
-      input.value = value;
-      hiddenForm.appendChild(input);
-    });
-    
-    document.body.appendChild(hiddenForm);
-    hiddenForm.submit();
-    
-    // Remove form after submission
-    setTimeout(() => {
-      document.body.removeChild(hiddenForm);
-    }, 1000);
-    
-    showToast("✅ Order submitted! Check your email for confirmation.", "success");
-    
-    // Clear form fields
-    phoneInput.value = "";
-    transactionInput.value = "";
-    
-  } finally {
-    // Reset button state
-    setTimeout(() => {
-      confirmBtn.disabled = false;
-      confirmBtn.innerHTML = originalText;
-    }, 1000);
-    
-    // Show follow-up message
-    setTimeout(() => {
-      showToast("📱 Data will be delivered within 30 minutes. Keep your transaction ID handy!", "success");
-    }, 2000);
+    showToast('Order submitted! You may contact WhatsApp support if you don\'t receive confirmation.', 'success');
+    closePurchaseModal();
+  }
+}
+
+/* =========================
+   AUTH TAB MANAGEMENT
+   ========================= */
+function switchAuthTab(tab) {
+  // Update tabs
+  DOM.authTabs?.forEach(tabBtn => {
+    const isActive = tabBtn.dataset.tab === tab;
+    tabBtn.classList.toggle('active', isActive);
+    tabBtn.setAttribute('aria-selected', isActive.toString());
+  });
+  
+  // Show active form
+  if (tab === 'login') {
+    showElement(DOM.loginForm);
+    hideElement(DOM.signupForm);
+    DOM.loginForm?.classList.add('active');
+    DOM.signupForm?.classList.remove('active');
+  } else {
+    hideElement(DOM.loginForm);
+    showElement(DOM.signupForm);
+    DOM.loginForm?.classList.remove('active');
+    DOM.signupForm?.classList.add('active');
   }
 }
 
@@ -1124,160 +884,157 @@ function init() {
     DOM.currentYear.textContent = new Date().getFullYear();
   }
   
-  // Set dynamic time greeting
+  // Set up time greeting
   function updateGreeting() {
     if (!DOM.timeGreeting) return;
-    const hour = new Date().getHours();
-    let greeting = "Good Afternoon! 🌤️";
-    if (hour < 5) greeting = "Good Night! 🌙";
-    else if (hour < 12) greeting = "Good Morning! ☀️";
-    else if (hour >= 18) greeting = "Good Evening! 🌆";
     
-    // Add Christmas emoji during December
-    const month = new Date().getMonth();
-    if (month === 11) { // December
-      greeting = greeting.replace('!', '! 🎄');
+    const hour = new Date().getHours();
+    let greeting;
+    
+    if (hour < 5) {
+      greeting = 'Good Night! 🌙';
+    } else if (hour < 12) {
+      greeting = 'Good Morning! ☀️';
+    } else if (hour < 18) {
+      greeting = 'Good Afternoon! 🌤️';
+    } else {
+      greeting = 'Good Evening! 🌆';
     }
     
     DOM.timeGreeting.textContent = greeting;
   }
+  
   updateGreeting();
   setInterval(updateGreeting, 60000);
   
-  // Setup network tabs
-  DOM.tabButtons.forEach(btn => {
-    btn.addEventListener("click", () => switchNetwork(btn.dataset.network));
+  // Auth tab switching
+  DOM.authTabs?.forEach(tab => {
+    tab.addEventListener('click', () => {
+      switchAuthTab(tab.dataset.tab);
+    });
   });
   
-  // Setup footer links
-  DOM.footerLinks.forEach(link => {
-    link.addEventListener("click", (e) => {
-      e.preventDefault();
+  // Auth buttons
+  DOM.emailLoginBtn?.addEventListener('click', loginWithEmail);
+  DOM.emailSignUpBtn?.addEventListener('click', signUpWithEmail);
+  DOM.googleSignInBtn?.addEventListener('click', loginWithGoogle);
+  DOM.logoutBtn?.addEventListener('click', signOutUser);
+  
+  // Network tabs
+  DOM.tabButtons?.forEach(btn => {
+    btn.addEventListener('click', () => {
+      switchNetwork(btn.dataset.network);
+    });
+  });
+  
+  // Order history
+  DOM.ordersBtn?.addEventListener('click', () => {
+    DOM.orderHistorySection?.classList.toggle('hidden');
+    if (!DOM.orderHistorySection?.classList.contains('hidden')) {
+      DOM.orderHistorySection.scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+  
+  DOM.clearHistoryBtn?.addEventListener('click', clearOrdersHistory);
+  DOM.exportHistoryBtn?.addEventListener('click', exportOrdersToCSV);
+  
+  // Help modal
+  DOM.helpBtn?.addEventListener('click', () => {
+    showElement(DOM.helpModal);
+  });
+  
+  DOM.closeHelp?.addEventListener('click', () => {
+    hideElement(DOM.helpModal);
+  });
+  
+  DOM.openHelpModal?.addEventListener('click', () => {
+    showElement(DOM.helpModal);
+  });
+  
+  // Profile button
+  DOM.profileBtn?.addEventListener('click', () => {
+    showToast(`Welcome ${currentUser?.name || 'User'}! Profile features coming soon.`, 'success');
+  });
+  
+  // Purchase modal
+  DOM.closePurchase?.addEventListener('click', closePurchaseModal);
+  DOM.cancelPurchase?.addEventListener('click', closePurchaseModal);
+  
+  DOM.purchaseForm?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    submitPurchaseForm();
+  });
+  
+  // Phone validation
+  DOM.recipientPhone?.addEventListener('input', (e) => {
+    if (DOM.phoneError) hideElement(DOM.phoneError);
+    
+    // Auto-format as user types
+    const value = e.target.value;
+    if (value.length === 3 && value.startsWith('233')) {
+      e.target.value = '+233 ';
+    }
+  });
+  
+  DOM.recipientPhone?.addEventListener('blur', (e) => {
+    const phone = e.target.value.trim();
+    if (phone && !validatePhoneNumber(phone)) {
+      if (DOM.phoneError) {
+        DOM.phoneError.textContent = 'Please enter a valid Ghana phone number';
+        showElement(DOM.phoneError);
+      }
+    }
+  });
+  
+  // Navigation scrolling
+  DOM.scrollToBundles?.addEventListener('click', () => {
+    document.querySelector('.products-section').scrollIntoView({ 
+      behavior: 'smooth' 
+    });
+  });
+  
+  DOM.scrollToPayment?.addEventListener('click', () => {
+    document.querySelector('.payment-section').scrollIntoView({ 
+      behavior: 'smooth' 
+    });
+  });
+  
+  DOM.scrollToPaymentFooter?.addEventListener('click', (e) => {
+    e.preventDefault();
+    document.querySelector('.payment-section').scrollIntoView({ 
+      behavior: 'smooth' 
+    });
+  });
+  
+  // Footer links
+  DOM.footerLinks?.forEach(link => {
+    link.addEventListener('click', (e) => {
       const network = link.dataset.network;
       if (network) {
+        e.preventDefault();
         switchNetwork(network);
-      } else if (link.id === 'scroll-to-payment') {
-        document.querySelector('.payment-top-section').scrollIntoView({ behavior: 'smooth' });
-      } else if (link.id === 'scroll-to-instructions') {
-        document.querySelector('.order-guide').scrollIntoView({ behavior: 'smooth' });
-      } else if (link.id === 'dz-help-link') {
-        const helpModal = new HelpModal();
-        helpModal.show();
+        document.querySelector('.products-section').scrollIntoView({ 
+          behavior: 'smooth' 
+        });
       }
     });
   });
   
-  // Setup auth button listeners
-  if (DOM.emailSignUpBtn) DOM.emailSignUpBtn.addEventListener("click", signUpWithEmail);
-  if (DOM.emailLoginBtn) DOM.emailLoginBtn.addEventListener("click", loginWithEmail);
-  if (DOM.googleSignInBtn) DOM.googleSignInBtn.addEventListener("click", loginWithGoogle);
-  if (DOM.logoutBtn) DOM.logoutBtn.addEventListener("click", signOutUser);
-  
-  // Setup profile button
-  if (document.getElementById("profileBtn")) {
-    document.getElementById("profileBtn").addEventListener("click", () => {
-      showToast(`👋 Welcome ${currentUser?.name || 'User'}! Profile features coming soon.`);
-    });
-  }
+  // Setup components
+  setupFAQAccordion();
+  setupWhatsAppWidget();
   
   // Initial products render
   renderProducts(currentNetwork);
   
-  // Initialize Data Zone features
-  initializeDZFeatures();
-  
   // Log initialization
-  console.log("🚀 Data Zone Ghana initialized successfully!");
-  console.log("📱 MTN, Telecel & AirtelTigo bundles ready for orders!");
-  console.log("🎄 Season's greetings from Data Zone Ghana!");
-  console.log("✅ WhatsApp integration configured:");
-  console.log(`   - Personal: https://wa.me/${CONFIG.WA_NUMBER}`);
-  console.log(`   - Group: ${CONFIG.GROUP_INVITE}`);
+  console.log('🚀 Data Zone Ghana initialized successfully!');
+  console.log('📱 MTN, Telecel & AirtelTigo bundles ready');
+  console.log('🔐 Authentication system active');
+  console.log('💬 WhatsApp widget initialized');
 }
 
-/* =========================
-   DATA ZONE FEATURES INITIALIZATION
-   ========================= */
-function initializeDZFeatures() {
-  console.log('🚀 Initializing Data Zone features...');
-  
-  // Initialize all components
-  const whatsappWidget = new WhatsAppWidget();
-  const orderHistory = new OrderHistory();
-  const faqAccordion = new FAQAccordion();
-  const helpModal = new HelpModal();
-  
-  // Setup orbital animation for primary buttons
-  document.querySelectorAll('.btn-primary, .dz-btn-primary').forEach(btn => {
-    if (!btn.classList.contains('dz-orbital-btn')) {
-      btn.classList.add('dz-orbital-btn');
-    }
-  });
-  
-  // Setup orbital animation for input wrappers
-  document.querySelectorAll('.form-group, .dz-form-group').forEach(group => {
-    if (!group.classList.contains('dz-orbital')) {
-      group.classList.add('dz-orbital');
-    }
-  });
-  
-  // Setup accessibility
-  document.querySelectorAll('button, input, select, textarea').forEach(el => {
-    if (!el.classList.contains('dz-focus-visible')) {
-      el.classList.add('dz-focus-visible');
-    }
-  });
-  
-  console.log('✅ Data Zone features initialized successfully!');
-  
-  // Test note: Replace these config values if needed
-  if (CONFIG.WA_NUMBER === "233XXXXXXXXX") {
-    console.warn('⚠️ REPLACE CONFIG.WA_NUMBER with actual WhatsApp number (format: 233XXXXXXXXX, no plus)');
-  }
-  if (CONFIG.GROUP_INVITE === "https://chat.whatsapp.com/XXXXXXXXXXXXX") {
-    console.warn('⚠️ REPLACE CONFIG.GROUP_INVITE with actual WhatsApp group invite link');
-  }
-}
-
-/* =========================
-   TESTING & QA STEPS
-   ========================= */
-/*
-TESTING CHECKLIST:
-1. Keyboard navigation (Tab, Enter/Space) for all widgets ✓
-2. Focus ring visibility on forms and modals ✓
-3. Test on iOS Safari, Chrome Android, Desktop Chrome ✓
-4. Test prefers-reduced-motion ✓
-5. Test localStorage persistence and export CSV ✓
-6. Phone normalization (0XXXXXXXXX, +233XXXXXXXXX, 233XXXXXXXXX) ✓
-7. WhatsApp panel auto-open and suppression ✓
-8. Order history storage (30 entries max) ✓
-9. FAQ accordion accessibility ✓
-10. Responsive design (≤420px, ≤760px, >760px) ✓
-
-CONFIG VALUES CONFIGURED:
-1. CONFIG.WA_NUMBER = "233275903629" ✓
-2. CONFIG.GROUP_INVITE = "https://chat.whatsapp.com/KvupM9a1osR2ZE6LLy5NDb?mode=wwt" ✓
-3. CONFIG.BACKEND_ENDPOINT - Placeholder for future backend
-
-ACCESSIBILITY FEATURES:
-- Semantic HTML elements ✓
-- ARIA attributes ✓
-- Keyboard navigation ✓
-- Focus management ✓
-- Reduced motion support ✓
-
-RESPONSIVE RULES:
-- Mobile-first breakpoints ✓
-- Touch targets ≥44px ✓
-- No horizontal scrolling ✓
-
-NON-USSD COMPLIANT:
-- No USSD references in code ✓
-- Purchase flow opens WhatsApp ✓
-*/
-
-// Start application when DOM is loaded
+// Start application
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', init);
 } else {
@@ -1285,4 +1042,4 @@ if (document.readyState === 'loading') {
 }
 
 // Export for module usage
-export { auth, currentUser };
+export { auth, currentUser, showToast };
