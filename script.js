@@ -808,7 +808,7 @@ async function submitPurchaseForm() {
     phone,
     transactionId,
     timestamp: new Date().toISOString(),
-    status: 'sucessful',
+    status: 'pending',
     userId: currentUser.uid
   };
   
