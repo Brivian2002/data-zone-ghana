@@ -10,246 +10,83 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
   <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Montserrat:wght@700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   
   <!-- Favicon -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📱</text></svg>">
   
   <!-- Styles -->
   <link rel="stylesheet" href="style.css">
-  
-  <style>
-    /* Animated WiFi Logo */
-    .wifi-logo {
-      width: 56px;
-      height: 56px;
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    
-    .wifi-waves {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-    }
-    
-    .wifi-wave {
-      position: absolute;
-      border: 3px solid transparent;
-      border-top-color: #4299e1;
-      border-radius: 50%;
-      animation: wifiPulse 2s infinite;
-    }
-    
-    .wifi-wave:nth-child(1) {
-      width: 100%;
-      height: 100%;
-      animation-delay: 0s;
-    }
-    
-    .wifi-wave:nth-child(2) {
-      width: 75%;
-      height: 75%;
-      animation-delay: 0.3s;
-    }
-    
-    .wifi-wave:nth-child(3) {
-      width: 50%;
-      height: 50%;
-      animation-delay: 0.6s;
-    }
-    
-    .wifi-dot {
-      width: 12px;
-      height: 12px;
-      background: #4299e1;
-      border-radius: 50%;
-      position: relative;
-      z-index: 2;
-      box-shadow: 0 0 20px rgba(66, 153, 225, 0.7);
-    }
-    
-    @keyframes wifiPulse {
-      0% {
-        border-top-color: rgba(66, 153, 225, 0.3);
-        transform: scale(0.8);
-      }
-      50% {
-        border-top-color: rgba(66, 153, 225, 0.8);
-        transform: scale(1);
-      }
-      100% {
-        border-top-color: rgba(66, 153, 225, 0.3);
-        transform: scale(0.8);
-      }
-    }
-    
-    .hidden {
-      display: none !important;
-    }
-    
-    .modal {
-      z-index: 2000;
-    }
-    
-    .payment-reminder {
-      background: rgba(245, 158, 11, 0.1);
-      border-left: 4px solid #f59e0b;
-      padding: 12px;
-      border-radius: 6px;
-      margin: 16px 0;
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-    }
-    
-    .payment-reminder i {
-      color: #f59e0b;
-      font-size: 1.2rem;
-      margin-top: 2px;
-    }
-    
-    .payment-reminder small {
-      color: rgba(255, 255, 255, 0.9);
-      font-size: 0.9rem;
-      line-height: 1.4;
-    }
-
-    /* New Data Zone CSS Variables */
-    :root {
-      --dz-primary: #1FA971;
-      --dz-dark: #071412;
-      --dz-panel: #F6FBF8;
-      --dz-accent: #F4C430;
-      --dz-teal: #0E858A;
-      --dz-muted: #7B8C84;
-      --dz-line: #E6EFEA;
-      --dz-error: #E44C4C;
-      --dz-success: #119A52;
-      --dz-focus-ring: rgba(31,169,113,0.12);
-      --dz-radius: 10px;
-      --dz-maxform: 420px;
-    }
-
-    /* Header/Nav overrides */
-    .top-nav {
-      background: var(--dz-dark) !important;
-    }
-
-    .nav-brand h1 {
-      color: white !important;
-    }
-
-    .brand-ghana {
-      color: var(--dz-primary) !important;
-      -webkit-text-fill-color: var(--dz-primary) !important;
-    }
-
-    /* Hero/Top CTA */
-    .hero-banner {
-      background: var(--dz-panel) !important;
-    }
-
-    /* Primary buttons */
-    .btn-primary {
-      background: var(--dz-primary) !important;
-      color: white !important;
-      min-height: 44px;
-      box-shadow: 0 2px 8px rgba(31, 169, 113, 0.2);
-    }
-
-    /* Secondary buttons */
-    .btn-outline {
-      border: 1px solid var(--dz-line) !important;
-      background: transparent !important;
-      color: var(--dz-teal) !important;
-    }
-
-    /* Placeholder styles */
-    ::placeholder {
-      opacity: 1 !important;
-      color: var(--dz-muted) !important;
-      font-size: 0.95em !important;
-    }
-
-    :-ms-input-placeholder {
-      color: var(--dz-muted) !important;
-      font-size: 0.95em !important;
-    }
-
-    ::-ms-input-placeholder {
-      color: var(--dz-muted) !important;
-      font-size: 0.95em !important;
-    }
-  </style>
 </head>
 <body>
-  <!-- Christmas Message Bar -->
-  <div class="christmas-bar">
-    <div class="container">
-      <div class="christmas-content">
-        <i class="fas fa-gift"></i>
-        <span class="christmas-text">
-          🎄 <strong>Merry Christmas!</strong> Enjoy our special holiday data bundles. May your connection be as joyful as the season! 🎅
-        </span>
-        <i class="fas fa-star"></i>
-      </div>
-    </div>
-  </div>
-
   <!-- Auth Modal -->
   <div id="auth-modal" class="modal">
-    <div class="modal-content">
+    <div class="modal-content auth-modal">
       <div class="modal-header">
         <div class="modal-logo">
-          <div class="wifi-logo">
-            <div class="wifi-waves">
-              <div class="wifi-wave"></div>
-              <div class="wifi-wave"></div>
-              <div class="wifi-wave"></div>
-            </div>
-            <div class="wifi-dot"></div>
+          <div class="logo-icon">
+            <i class="fas fa-signal"></i>
           </div>
           <h2>DATA ZONE GHANA</h2>
         </div>
-        <p class="modal-subtitle">Sign in to continue — Google or Email</p>
+        <p class="modal-subtitle">Sign in to continue — Secure access to your data bundles</p>
       </div>
 
-      <form id="auth-form" style="padding:24px;">
-        <div class="form-group">
-          <label for="auth-name"><i class="fas fa-user"></i> Full Name</label>
-          <input id="auth-name" type="text" placeholder="Your full name" required>
-        </div>
+      <div class="auth-tabs">
+        <button class="auth-tab active" data-tab="login">Sign In</button>
+        <button class="auth-tab" data-tab="signup">Create Account</button>
+      </div>
 
-        <div class="form-group">
-          <label for="auth-email"><i class="fas fa-envelope"></i> Email</label>
-          <input id="auth-email" type="email" placeholder="your@email.com" required>
-        </div>
+      <form id="auth-form" class="auth-form">
+        <div id="login-form" class="auth-form-content active">
+          <div class="form-group">
+            <label for="login-email"><i class="fas fa-envelope"></i> Email</label>
+            <input id="login-email" type="email" placeholder="your@email.com" required autocomplete="email">
+          </div>
 
-        <div class="form-group">
-          <label for="auth-password"><i class="fas fa-lock"></i> Password</label>
-          <input id="auth-password" type="password" placeholder="Minimum 6 characters" required minlength="6">
-        </div>
+          <div class="form-group">
+            <label for="login-password"><i class="fas fa-lock"></i> Password</label>
+            <input id="login-password" type="password" placeholder="Enter your password" required minlength="6" autocomplete="current-password">
+          </div>
 
-        <div style="display:flex;gap:12px;align-items:center;margin-top:8px;">
-          <button type="button" id="emailSignUpBtn" class="btn-primary btn-full">Create Account</button>
-          <button type="button" id="emailLoginBtn" class="btn-outline btn-full">Login</button>
-        </div>
+          <button type="button" id="emailLoginBtn" class="btn-primary btn-full">
+            <i class="fas fa-sign-in-alt"></i> Sign In
+          </button>
 
-        <hr style="margin:18px 0;">
+          <div class="form-divider">
+            <span>or continue with</span>
+          </div>
 
-        <div style="display:flex;gap:12px;">
-          <button id="googleSignInBtn" type="button" class="btn-network btn-at" style="flex:1;">
+          <button id="googleSignInBtn" type="button" class="btn-google btn-full">
             <i class="fab fa-google"></i> Sign in with Google
           </button>
         </div>
 
-        <p class="form-note" style="margin-top:16px;">
+        <div id="signup-form" class="auth-form-content">
+          <div class="form-group">
+            <label for="signup-name"><i class="fas fa-user"></i> Full Name</label>
+            <input id="signup-name" type="text" placeholder="Your full name" required autocomplete="name">
+          </div>
+
+          <div class="form-group">
+            <label for="signup-email"><i class="fas fa-envelope"></i> Email</label>
+            <input id="signup-email" type="email" placeholder="your@email.com" required autocomplete="email">
+          </div>
+
+          <div class="form-group">
+            <label for="signup-password"><i class="fas fa-lock"></i> Password</label>
+            <input id="signup-password" type="password" placeholder="Minimum 6 characters" required minlength="6" autocomplete="new-password">
+          </div>
+
+          <button type="button" id="emailSignUpBtn" class="btn-primary btn-full">
+            <i class="fas fa-user-plus"></i> Create Account
+          </button>
+        </div>
+
+        <div class="form-note">
           <i class="fas fa-shield-alt"></i>
-          Secure authentication. By signing in you agree to our terms.
-        </p>
+          <span>Secure authentication. Your data is protected.</span>
+        </div>
       </form>
     </div>
   </div>
@@ -261,59 +98,94 @@
       <div class="container">
         <div class="nav-content">
           <div class="nav-brand">
-            <div class="wifi-logo">
-              <div class="wifi-waves">
-                <div class="wifi-wave"></div>
-                <div class="wifi-wave"></div>
-                <div class="wifi-wave"></div>
-              </div>
-              <div class="wifi-dot"></div>
+            <div class="logo">
+              <i class="fas fa-signal"></i>
             </div>
             <div>
               <h1>DATA ZONE <span class="brand-ghana">GHANA</span></h1>
-              <p class="tagline">Your Premium Data Connection</p>
+              <p class="tagline">Premium Data Bundles Delivered Fast</p>
             </div>
           </div>
 
           <div class="user-section">
             <div class="user-greeting">
-              <span class="akwaaba">Akwaaba, <span id="user-name">User</span>!</span>
+              <span class="welcome-text">Welcome, <span id="user-name">User</span>!</span>
               <span id="time-greeting" class="time-greeting">Good Day!</span>
             </div>
             <div class="nav-controls">
-              <div class="live-indicator">
-                <div class="live-dot"></div>
-                <span>Live Support</span>
-              </div>
-              <div style="display:flex; gap:12px; align-items:center;">
-                <button id="profileBtn" class="btn-outline" title="Profile"><i class="fas fa-user"></i></button>
-                <button id="logoutBtn" class="btn-outline"><i class="fas fa-sign-out-alt"></i> Logout</button>
-              </div>
+              <button id="ordersBtn" class="btn-nav" title="Order History">
+                <i class="fas fa-history"></i>
+                <span class="nav-label">Orders</span>
+              </button>
+              <button id="helpBtn" class="btn-nav" title="Help & FAQ">
+                <i class="fas fa-question-circle"></i>
+                <span class="nav-label">Help</span>
+              </button>
+              <button id="profileBtn" class="btn-nav" title="Profile">
+                <i class="fas fa-user-circle"></i>
+                <span class="nav-label">Profile</span>
+              </button>
+              <button id="logoutBtn" class="btn-outline btn-sm">
+                <i class="fas fa-sign-out-alt"></i> Logout
+              </button>
             </div>
           </div>
         </div>
       </div>
     </nav>
 
-    <!-- Hero Section (Section A) -->
+    <!-- Hero Section -->
     <section class="hero-banner">
       <div class="container">
         <div class="hero-content">
-          <h2 class="hero-title"><span class="hero-highlight">Premium Data Bundles</span><br>For MTN & Telecel</h2>
-          <p class="hero-subtitle">Lightning-fast delivery of mobile data bundles at unbeatable prices. Your connection, our priority.</p>
+          <h1 class="hero-title">Premium Data Bundles<br>For <span class="hero-highlight">MTN, Telecel & AirtelTigo</span></h1>
+          <p class="hero-subtitle">Lightning-fast delivery of mobile data bundles at unbeatable prices. Stay connected with Ghana's most reliable data service.</p>
+          
+          <div class="hero-cta">
+            <button id="scrollToBundles" class="btn-primary btn-lg">
+              <i class="fas fa-shopping-cart"></i> View All Bundles
+            </button>
+            <button id="scrollToPayment" class="btn-outline btn-lg">
+              <i class="fas fa-credit-card"></i> Payment Details
+            </button>
+          </div>
 
           <div class="hero-features">
-            <div class="feature"><i class="fas fa-bolt"></i><span>Instant Delivery</span></div>
-            <div class="feature"><i class="fas fa-shield-alt"></i><span>100% Secure</span></div>
-            <div class="feature"><i class="fas fa-headset"></i><span>24/7 Support</span></div>
-            <div class="feature"><i class="fas fa-tags"></i><span>Best Prices</span></div>
+            <div class="feature">
+              <i class="fas fa-bolt"></i>
+              <div>
+                <h4>Instant Delivery</h4>
+                <p>Data delivered within 30 minutes</p>
+              </div>
+            </div>
+            <div class="feature">
+              <i class="fas fa-shield-alt"></i>
+              <div>
+                <h4>100% Secure</h4>
+                <p>Protected transactions</p>
+              </div>
+            </div>
+            <div class="feature">
+              <i class="fas fa-headset"></i>
+              <div>
+                <h4>24/7 Support</h4>
+                <p>Always here to help</p>
+              </div>
+            </div>
+            <div class="feature">
+              <i class="fas fa-tags"></i>
+              <div>
+                <h4>Best Prices</h4>
+                <p>Lowest rates guaranteed</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Payment Instructions (Section B) -->
-    <section class="payment-top-section">
+    <!-- Payment Instructions -->
+    <section class="payment-section">
       <div class="container">
         <div class="section-header">
           <i class="fas fa-credit-card section-icon"></i>
@@ -322,44 +194,103 @@
         </div>
 
         <div class="payment-methods">
-          <div class="payment-method mtn-payment">
-            <div class="payment-method-header">
+          <div class="payment-card mtn-payment">
+            <div class="payment-card-header">
               <div class="network-badge mtn-badge">MTN</div>
-              <h4>Mobile Money Payment</h4>
+              <h3>Mobile Money Payment</h3>
             </div>
             <div class="payment-details">
-              <p><strong><i class="fas fa-phone"></i> Number:</strong> 053 534 3490</p>
-              <p><strong><i class="fas fa-user"></i> Name:</strong> Vivian Ahorlu</p>
-              <p><strong><i class="fas fa-hashtag"></i> Reference:</strong> Your Phone Number</p>
-              <p class="payment-note"><i class="fas fa-info-circle"></i> Send exact bundle price + GH₵0.50 service fee</p>
+              <div class="detail-item">
+                <i class="fas fa-phone"></i>
+                <div>
+                  <span class="detail-label">Number:</span>
+                  <span class="detail-value">053 534 3490</span>
+                </div>
+              </div>
+              <div class="detail-item">
+                <i class="fas fa-user"></i>
+                <div>
+                  <span class="detail-label">Name:</span>
+                  <span class="detail-value">Vivian Ahorlu</span>
+                </div>
+              </div>
+              <div class="detail-item">
+                <i class="fas fa-hashtag"></i>
+                <div>
+                  <span class="detail-label">Reference:</span>
+                  <span class="detail-value">Your Phone Number</span>
+                </div>
+              </div>
+            </div>
+            <div class="payment-note">
+              <i class="fas fa-info-circle"></i>
+              <span>Send exact bundle price + GH₵0.50 service fee</span>
             </div>
           </div>
 
-          <div class="payment-method telecel-payment">
-            <div class="payment-method-header">
+          <div class="payment-card telecel-payment">
+            <div class="payment-card-header">
               <div class="network-badge telecel-badge">Telecel</div>
-              <h4>Mobile Money Payment</h4>
+              <h3>Mobile Money Payment</h3>
             </div>
             <div class="payment-details">
-              <p><strong><i class="fas fa-phone"></i> Number:</strong> 020 955 8038</p>
-              <p><strong><i class="fas fa-user"></i> Name:</strong> Bright Dumashie</p>
-              <p><strong><i class="fas fa-hashtag"></i> Reference:</strong> Your Phone Number</p>
-              <p class="payment-note"><i class="fas fa-info-circle"></i> Send exact bundle price + GH₵0.50 service fee</p>
+              <div class="detail-item">
+                <i class="fas fa-phone"></i>
+                <div>
+                  <span class="detail-label">Number:</span>
+                  <span class="detail-value">020 955 8038</span>
+                </div>
+              </div>
+              <div class="detail-item">
+                <i class="fas fa-user"></i>
+                <div>
+                  <span class="detail-label">Name:</span>
+                  <span class="detail-value">Bright Dumashie</span>
+                </div>
+              </div>
+              <div class="detail-item">
+                <i class="fas fa-hashtag"></i>
+                <div>
+                  <span class="detail-label">Reference:</span>
+                  <span class="detail-value">Your Phone Number</span>
+                </div>
+              </div>
+            </div>
+            <div class="payment-note">
+              <i class="fas fa-info-circle"></i>
+              <span>Send exact bundle price + GH₵0.50 service fee</span>
             </div>
           </div>
         </div>
 
         <div class="important-notice">
-          <i class="fas fa-exclamation-triangle"></i>
-          <div>
+          <div class="notice-header">
+            <i class="fas fa-exclamation-triangle"></i>
             <h4>Important Notice</h4>
-            <p><strong>Step 1:</strong> Make payment to the correct number above. <strong>Step 2:</strong> Click "Buy" on your selected bundle. <strong>Step 3:</strong> Fill confirmation form. Data delivers within 30 minutes.</p>
+          </div>
+          <div class="notice-steps">
+            <div class="step">
+              <span class="step-number">1</span>
+              <span class="step-text">Make payment to the correct number above</span>
+            </div>
+            <div class="step">
+              <span class="step-number">2</span>
+              <span class="step-text">Click "Buy" on your selected bundle</span>
+            </div>
+            <div class="step">
+              <span class="step-number">3</span>
+              <span class="step-text">Fill confirmation form with transaction details</span>
+            </div>
+            <div class="step">
+              <span class="step-number">4</span>
+              <span class="step-text">Receive data within 30 minutes</span>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Order Guide (Section C) -->
+    <!-- Order Guide -->
     <section class="order-guide">
       <div class="container">
         <div class="section-header">
@@ -368,76 +299,70 @@
           <p class="section-subtitle">Simple steps to get your data bundle</p>
         </div>
 
-        <div class="steps-container">
-          <div class="step">
-            <div class="step-number">1</div>
-            <div class="step-content">
-              <h3>Make Payment First</h3>
-              <p>Send money to the payment number shown above for your chosen network.</p>
+        <div class="guide-steps">
+          <div class="guide-step">
+            <div class="step-icon">
+              <i class="fas fa-money-bill-wave"></i>
             </div>
+            <h3>Make Payment First</h3>
+            <p>Send money to the payment number for your chosen network (MTN or Telecel).</p>
           </div>
-          <div class="step">
-            <div class="step-number">2</div>
-            <div class="step-content">
-              <h3>Select Bundle</h3>
-              <p>Choose MTN, Telecel or AirtelTigo and the exact bundle you paid for.</p>
+          <div class="guide-step">
+            <div class="step-icon">
+              <i class="fas fa-sim-card"></i>
             </div>
+            <h3>Select Bundle</h3>
+            <p>Choose MTN, Telecel or AirtelTigo and the exact bundle you paid for.</p>
           </div>
-          <div class="step">
-            <div class="step-number">3</div>
-            <div class="step-content">
-              <h3>Quick Confirm</h3>
-              <p>Click Buy button, enter recipient phone and transaction details.</p>
+          <div class="guide-step">
+            <div class="step-icon">
+              <i class="fas fa-file-invoice"></i>
             </div>
+            <h3>Quick Confirm</h3>
+            <p>Click Buy button, enter recipient phone and transaction details.</p>
           </div>
-          <div class="step">
-            <div class="step-number">4</div>
-            <div class="step-content">
-              <h3>Receive Data</h3>
-              <p>Data delivers within 30 mins (max 1 hour if issues).</p>
+          <div class="guide-step">
+            <div class="step-icon">
+              <i class="fas fa-check-circle"></i>
             </div>
+            <h3>Receive Data</h3>
+            <p>Data delivers within 30 minutes (maximum 1 hour if issues).</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Products Section (Section D) -->
+    <!-- Products Section -->
     <section class="products-section">
       <div class="container">
         <div class="section-header">
-          <i class="fas fa-sim-card section-icon"></i>
+          <i class="fas fa-database section-icon"></i>
           <h2>Available Data Bundles</h2>
           <p class="section-subtitle">Select your preferred network and bundle size</p>
         </div>
 
         <div class="network-tabs">
-          <div class="tabs-container">
+          <div class="tabs">
             <button class="tab-btn active" data-network="mtn">
-              <div class="tab-content">
-                <div class="tab-icon mtn-tab"><span>MTN</span></div>
-                <div class="tab-info">
-                  <h4>MTN Non-Expiry</h4>
-                  <p>No expiry data bundles</p>
-                </div>
+              <div class="tab-icon mtn-tab">
+                <i class="fas fa-bolt"></i>
               </div>
+              <span>MTN</span>
+              <small>Non-Expiry</small>
             </button>
             <button class="tab-btn" data-network="telecel">
-              <div class="tab-content">
-                <div class="tab-icon telecel-tab"><span>TELECEL</span></div>
-                <div class="tab-info">
-                  <h4>Telecel Non-Expiry</h4>
-                  <p>Premium no expiry data</p>
-                </div>
+              <div class="tab-icon telecel-tab">
+                <i class="fas fa-fire"></i>
               </div>
+              <span>Telecel</span>
+              <small>Non-Expiry</small>
             </button>
             <button class="tab-btn" data-network="airteltigo">
-              <div class="tab-content">
-                <div class="tab-icon at-tab"><span>AT</span></div>
-                <div class="tab-info">
-                  <h4>AirtelTigo Premium</h4>
-                  <p>30 days validity</p>
-                </div>
+              <div class="tab-icon at-tab">
+                <i class="fas fa-wifi"></i>
               </div>
+              <span>AirtelTigo</span>
+              <small>30 Days</small>
             </button>
           </div>
         </div>
@@ -447,58 +372,92 @@
     </section>
 
     <!-- Order History -->
-    <section class="dz-orders-container">
-      <div class="dz-orders-header">
-        <h3>Order History</h3>
-        <div style="display: flex; gap: 10px;">
-          <button id="dz-orders-clear" class="dz-btn-ghost">Clear</button>
-          <button id="dz-orders-export" class="dz-btn-primary">Export CSV</button>
+    <section id="order-history-section" class="order-history hidden">
+      <div class="container">
+        <div class="section-header">
+          <i class="fas fa-history section-icon"></i>
+          <h2>Order History</h2>
+          <p class="section-subtitle">Your recent purchases</p>
         </div>
-      </div>
-      <div id="dz-orders-list" class="dz-orders-list">
-        <!-- Orders will be loaded here -->
-      </div>
-      <div id="dz-orders-empty" style="text-align: center; padding: 40px; color: var(--dz-muted);">
-        No orders yet. Your purchase history will appear here.
+
+        <div class="order-actions">
+          <button id="clearHistoryBtn" class="btn-outline">
+            <i class="fas fa-trash"></i> Clear History
+          </button>
+          <button id="exportHistoryBtn" class="btn-outline">
+            <i class="fas fa-download"></i> Export CSV
+          </button>
+        </div>
+
+        <div id="orders-container" class="orders-container">
+          <div class="empty-state">
+            <i class="fas fa-shopping-bag"></i>
+            <h3>No Orders Yet</h3>
+            <p>Your order history will appear here after you make purchases.</p>
+          </div>
+        </div>
       </div>
     </section>
 
-    <!-- FAQ Accordion -->
-    <section class="dz-faq-container">
-      <div class="dz-faq-item">
-        <button class="dz-faq-question dz-focus-visible" aria-expanded="false">
-          How long does delivery take?
-          <span class="dz-faq-icon">+</span>
-        </button>
-        <div class="dz-faq-answer">
-          <p>Data bundles are typically delivered within 30 minutes after confirmation. During peak hours, it may take up to 1 hour.</p>
+    <!-- FAQ Section -->
+    <section class="faq-section">
+      <div class="container">
+        <div class="section-header">
+          <i class="fas fa-question-circle section-icon"></i>
+          <h2>Frequently Asked Questions</h2>
+          <p class="section-subtitle">Find answers to common questions</p>
         </div>
-      </div>
-      <div class="dz-faq-item">
-        <button class="dz-faq-question dz-focus-visible" aria-expanded="false">
-          What payment methods do you accept?
-          <span class="dz-faq-icon">+</span>
-        </button>
-        <div class="dz-faq-answer">
-          <p>We accept Mobile Money payments only. Please use the payment numbers displayed on our platform.</p>
-        </div>
-      </div>
-      <div class="dz-faq-item">
-        <button class="dz-faq-question dz-focus-visible" aria-expanded="false">
-          Can I buy for someone else?
-          <span class="dz-faq-icon">+</span>
-        </button>
-        <div class="dz-faq-answer">
-          <p>Yes, you can purchase data for any Ghanaian number. Just enter the recipient's phone number during checkout.</p>
-        </div>
-      </div>
-      <div class="dz-faq-item">
-        <button class="dz-faq-question dz-focus-visible" aria-expanded="false">
-          What if my data doesn't arrive?
-          <span class="dz-faq-icon">+</span>
-        </button>
-        <div class="dz-faq-answer">
-          <p>Contact our WhatsApp support immediately with your transaction ID. We'll resolve the issue within 2 hours.</p>
+
+        <div class="faq-container">
+          <div class="faq-item">
+            <button class="faq-question">
+              <span>How long does delivery take?</span>
+              <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="faq-answer">
+              <p>Data is typically delivered within 30 minutes after order confirmation. In rare cases of network issues, it may take up to 1 hour.</p>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question">
+              <span>What payment methods do you accept?</span>
+              <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="faq-answer">
+              <p>We accept Mobile Money payments only. MTN Mobile Money for MTN bundles and Vodafone Cash for Telecel bundles.</p>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question">
+              <span>What if my data doesn't deliver?</span>
+              <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="faq-answer">
+              <p>If you don't receive your data within 1 hour, please contact our WhatsApp support with your transaction ID for immediate assistance.</p>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question">
+              <span>Can I buy for someone else?</span>
+              <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="faq-answer">
+              <p>Yes! When placing your order, simply enter the recipient's phone number. The data will be sent to their number instead of yours.</p>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question">
+              <span>Are there any hidden fees?</span>
+              <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="faq-answer">
+              <p>No hidden fees. The price you see is what you pay plus a GH₵0.50 service fee for all transactions.</p>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -509,40 +468,64 @@
         <div class="footer-content">
           <div class="footer-brand">
             <div class="footer-logo">
-              <div class="wifi-logo" style="width: 40px; height: 40px;">
-                <div class="wifi-waves">
-                  <div class="wifi-wave"></div>
-                  <div class="wifi-wave"></div>
-                  <div class="wifi-wave"></div>
-                </div>
-                <div class="wifi-dot"></div>
-              </div>
+              <i class="fas fa-signal"></i>
               <div>
                 <h3>DATA ZONE GHANA</h3>
-                <p>Your reliable data connection hub</p>
+                <p>Your Reliable Data Connection</p>
               </div>
             </div>
             <p class="footer-description">We provide fast and reliable delivery of mobile data bundles for MTN, Telecel and AirtelTigo networks at competitive prices.</p>
+            <div class="footer-social">
+              <a href="#" class="social-link" aria-label="Facebook">
+                <i class="fab fa-facebook-f"></i>
+              </a>
+              <a href="#" class="social-link" aria-label="Twitter">
+                <i class="fab fa-twitter"></i>
+              </a>
+              <a href="#" class="social-link" aria-label="Instagram">
+                <i class="fab fa-instagram"></i>
+              </a>
+            </div>
           </div>
 
           <div class="footer-links">
             <h4>Quick Links</h4>
-            <a href="#" class="footer-link" data-network="mtn">MTN Bundles</a>
-            <a href="#" class="footer-link" data-network="telecel">Telecel Bundles</a>
-            <a href="#" class="footer-link" data-network="airteltigo">AirtelTigo Bundles</a>
-            <a href="#" class="footer-link" id="scroll-to-payment">Payment Details</a>
-            <a href="#" class="footer-link" id="scroll-to-instructions">How to Order</a>
-            <a href="#" class="footer-link" id="dz-help-link">Help & Support</a>
+            <a href="#" class="footer-link" data-network="mtn">
+              <i class="fas fa-chevron-right"></i> MTN Bundles
+            </a>
+            <a href="#" class="footer-link" data-network="telecel">
+              <i class="fas fa-chevron-right"></i> Telecel Bundles
+            </a>
+            <a href="#" class="footer-link" data-network="airteltigo">
+              <i class="fas fa-chevron-right"></i> AirtelTigo Bundles
+            </a>
+            <a href="#" class="footer-link" id="scroll-to-payment-footer">
+              <i class="fas fa-chevron-right"></i> Payment Details
+            </a>
+            <button class="footer-link" id="open-help-modal">
+              <i class="fas fa-chevron-right"></i> Help & Support
+            </button>
           </div>
 
           <div class="footer-contact">
             <h4>Contact & Support</h4>
             <p>For orders or inquiries, contact us directly:</p>
-            <div class="footer-whatsapp">
-              <i class="fab fa-whatsapp"></i>
-              <div>
-                <p><strong>WhatsApp:</strong> +233 27 590 3629</p>
-                <p><strong>Hours:</strong> 24/7 Support</p>
+            <div class="contact-methods">
+              <div class="contact-method">
+                <i class="fab fa-whatsapp"></i>
+                <div>
+                  <p><strong>WhatsApp Support</strong></p>
+                  <p>+233 27 590 3629</p>
+                  <small>24/7 Customer Support</small>
+                </div>
+              </div>
+              <div class="contact-method">
+                <i class="fas fa-envelope"></i>
+                <div>
+                  <p><strong>Email</strong></p>
+                  <p>support@datazonegh.com</p>
+                  <small>Response within 2 hours</small>
+                </div>
               </div>
             </div>
           </div>
@@ -550,144 +533,232 @@
 
         <div class="footer-bottom">
           <p>&copy; <span id="current-year">2024</span> Data Zone Ghana. All rights reserved.</p>
-          <p class="disclaimer">Secure data bundle delivery service.</p>
+          <div class="footer-legal">
+            <a href="#" class="legal-link">Terms of Service</a>
+            <a href="#" class="legal-link">Privacy Policy</a>
+            <a href="#" class="legal-link">Refund Policy</a>
+          </div>
         </div>
       </div>
     </footer>
   </div>
 
-  <!-- Floating Buttons -->
-  <div class="floating-buttons">
-    <a href="https://chat.whatsapp.com/KvupM9a1osR2ZE6LLy5NDb?mode=wwt" target="_blank" class="float-btn whatsapp-group" aria-label="Join WhatsApp Group">
-      <i class="fas fa-users"></i>
-      <span class="btn-tooltip">Join WhatsApp Group</span>
-    </a>
-    <a href="https://wa.me/233275903629" target="_blank" class="float-btn whatsapp-support" aria-label="WhatsApp Support">
+  <!-- Floating WhatsApp Widget -->
+  <div class="whatsapp-widget">
+    <button id="whatsapp-toggle" class="whatsapp-button" aria-label="Open WhatsApp support">
       <i class="fab fa-whatsapp"></i>
-      <span class="btn-tooltip">WhatsApp Support</span>
-    </a>
-  </div>
-
-  <!-- WhatsApp Widget -->
-  <button id="dz-wa-fab" aria-label="WhatsApp Support">
-    <i class="fab fa-whatsapp"></i>
-  </button>
-
-  <div id="dz-wa-panel" class="dz-wa-panel" role="dialog" aria-label="WhatsApp Options">
-    <div class="dz-wa-header">
-      <h3>Contact Support</h3>
-      <button id="dz-wa-close" aria-label="Close WhatsApp panel">×</button>
-    </div>
-    <div class="dz-wa-body">
-      <div class="dz-wa-input-group">
-        <input type="text" id="dz-wa-message" class="dz-wa-input" 
-               placeholder="Type your message here..." 
-               aria-label="WhatsApp message">
-      </div>
-      <button id="dz-wa-send" class="dz-btn-primary dz-orbital-btn">
-        <i class="fab fa-whatsapp"></i> Send Message
-      </button>
-      
-      <div class="dz-group-card">
-        <h4>Join Our Community</h4>
-        <p>Get updates and support in our WhatsApp group</p>
-        <button id="dz-wa-join" class="dz-btn-ghost" style="margin-top: 10px;">
-          Join Group
+      <span class="notification-badge">1</span>
+    </button>
+    
+    <div id="whatsapp-panel" class="whatsapp-panel hidden">
+      <div class="whatsapp-header">
+        <h4>WhatsApp Support</h4>
+        <button id="close-whatsapp" class="close-btn" aria-label="Close WhatsApp panel">
+          <i class="fas fa-times"></i>
         </button>
       </div>
       
-      <div class="dz-checkbox-group">
-        <input type="checkbox" id="dz-wa-hide">
-        <label for="dz-wa-hide">Don't show this again</label>
-      </div>
-      
-      <button id="dz-wa-dismiss" class="dz-btn-ghost" style="width: 100%; margin-top: 10px;">
-        Dismiss
-      </button>
-    </div>
-  </div>
-
-  <!-- Compact Confirm Modal -->
-  <div id="dz-confirm" role="dialog" aria-modal="true" aria-labelledby="dz-confirm-title">
-    <div class="dz-confirm-modal">
-      <div class="dz-confirm-header">
-        <h3 id="dz-confirm-title">Confirm Purchase</h3>
-      </div>
-      <div class="dz-confirm-body">
-        <div class="dz-confirm-field">
-          <input type="text" id="dz-confirm-item" class="dz-input" readonly 
-                 placeholder="Selected bundle">
+      <div class="whatsapp-content">
+        <!-- Group Preview -->
+        <div class="group-preview">
+          <div class="preview-header">
+            <i class="fas fa-users"></i>
+            <div>
+              <h5>Data Zone GH Community</h5>
+              <small>2.4k members • Active now</small>
+            </div>
+          </div>
+          <div class="preview-messages">
+            <div class="message">
+              <strong>Admin:</strong> New MTN bundles added! 🎉
+            </div>
+            <div class="message">
+              <strong>User:</strong> Fast delivery! Thanks team! ⚡
+            </div>
+          </div>
+          <div class="preview-actions">
+            <a href="https://chat.whatsapp.com/KvupM9a1osR2ZE6LLy5NDb" target="_blank" class="btn-primary btn-sm">
+              <i class="fas fa-users"></i> Join Group
+            </a>
+            <button id="dismiss-preview" class="btn-outline btn-sm">
+              <i class="fas fa-times"></i> Dismiss
+            </button>
+          </div>
+          <div class="preview-option">
+            <input type="checkbox" id="dont-show-again">
+            <label for="dont-show-again">Don't show this again</label>
+          </div>
         </div>
-        <div class="dz-confirm-field dz-orbital">
-          <input type="tel" id="dz-confirm-phone" class="dz-input" 
-                 placeholder="Phone number (0XXXXXXXXX)"
-                 aria-label="Recipient phone number">
-          <div id="dz-phone-error" class="dz-error-message"></div>
-        </div>
-        <div class="dz-confirm-field">
-          <input type="text" id="dz-confirm-note" class="dz-input" 
-                 placeholder="Optional note"
-                 maxlength="50">
-        </div>
-        <div class="dz-confirm-buttons">
-          <button id="dz-confirm-cancel" class="dz-btn-ghost">Cancel</button>
-          <button id="dz-confirm-submit" class="dz-btn-primary dz-orbital-btn">Confirm</button>
+        
+        <!-- Chat Interface -->
+        <div class="chat-interface">
+          <div class="chat-options">
+            <button class="chat-option active" data-type="personal">
+              <i class="fas fa-user"></i> Personal Chat
+            </button>
+            <button class="chat-option" data-type="group">
+              <i class="fas fa-users"></i> Join Group
+            </button>
+          </div>
+          
+          <div class="chat-form">
+            <div class="form-group">
+              <label for="chat-message">Your Message (optional)</label>
+              <textarea id="chat-message" placeholder="Type your message here..." rows="3"></textarea>
+            </div>
+            <button id="send-whatsapp" class="btn-primary btn-full">
+              <i class="fab fa-whatsapp"></i> Open WhatsApp
+            </button>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
   <!-- Help Modal -->
-  <div id="dz-help-modal" role="dialog" aria-modal="true" aria-labelledby="dz-help-title">
-    <div class="dz-help-modal">
-      <div style="padding: 30px;">
-        <h2 id="dz-help-title">Help & Support</h2>
-        
-        <div style="margin: 30px 0;">
-          <h3>Contact Methods</h3>
-          <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 15px;">
-            <div class="dz-card" style="flex: 1; min-width: 200px;">
-              <h4><i class="fab fa-whatsapp" style="color: #25D366;"></i> WhatsApp</h4>
-              <p>Fast response for order issues</p>
-              <button class="dz-btn-primary" id="dz-help-whatsapp" style="margin-top: 10px;">
-                Open Chat
-              </button>
+  <div id="help-modal" class="modal hidden">
+    <div class="modal-content help-modal">
+      <div class="modal-header">
+        <h2>Help & Support</h2>
+        <button id="close-help" class="close-btn" aria-label="Close help modal">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      
+      <div class="help-content">
+        <div class="help-section">
+          <h3><i class="fas fa-phone-alt"></i> Contact Information</h3>
+          <div class="contact-info">
+            <div class="contact-item">
+              <i class="fab fa-whatsapp"></i>
+              <div>
+                <h4>WhatsApp Support</h4>
+                <p>+233 27 590 3629</p>
+                <small>Quickest response - 24/7</small>
+              </div>
             </div>
-            
-            <div class="dz-card" style="flex: 1; min-width: 200px;">
-              <h4><i class="fas fa-envelope" style="color: var(--dz-teal);"></i> Email</h4>
-              <p>For detailed inquiries</p>
-              <a href="mailto:support@datazoneghana.com" class="dz-btn-ghost" style="margin-top: 10px; display: inline-block;">
-                Send Email
-              </a>
+            <div class="contact-item">
+              <i class="fas fa-envelope"></i>
+              <div>
+                <h4>Email Support</h4>
+                <p>support@datazonegh.com</p>
+                <small>Response within 2 hours</small>
+              </div>
             </div>
           </div>
         </div>
         
-        <div style="margin-top: 30px;">
-          <h3>Quick Links</h3>
-          <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
-            <button class="dz-btn-ghost" id="dz-help-faq" style="text-align: left;">
-              View FAQ
-            </button>
-            <button class="dz-btn-ghost" id="dz-help-orders" style="text-align: left;">
-              Check Order Status
-            </button>
-            <button class="dz-btn-ghost" id="dz-help-payment" style="text-align: left;">
-              Payment Instructions
-            </button>
+        <div class="help-section">
+          <h3><i class="fas fa-clock"></i> Operating Hours</h3>
+          <div class="hours-info">
+            <div class="hours-item">
+              <strong>Customer Support:</strong> 24/7
+            </div>
+            <div class="hours-item">
+              <strong>Order Processing:</strong> 6:00 AM - 12:00 AM
+            </div>
           </div>
         </div>
         
-        <div style="margin-top: 30px; display: flex; justify-content: space-between;">
-          <button id="dz-help-close" class="dz-btn-ghost">Close</button>
-          <button id="dz-help-emergency" class="dz-btn-primary" style="background: var(--dz-error);">
-            Emergency Support
-          </button>
+        <div class="help-section">
+          <h3><i class="fas fa-question-circle"></i> Common Issues</h3>
+          <div class="issues-list">
+            <div class="issue">
+              <strong>Q:</strong> Payment made but no confirmation?
+            </div>
+            <div class="issue">
+              <strong>A:</strong> Please send transaction ID to WhatsApp support.
+            </div>
+            <div class="issue">
+              <strong>Q:</strong> Wrong bundle received?
+            </div>
+            <div class="issue">
+              <strong>A:</strong> Contact us immediately with order details.
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- Purchase Confirmation Modal -->
+  <div id="purchase-modal" class="modal hidden">
+    <div class="modal-content purchase-modal">
+      <div class="modal-header">
+        <h2>Confirm Purchase</h2>
+        <button id="close-purchase" class="close-btn" aria-label="Close purchase modal">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      
+      <div class="purchase-summary">
+        <div class="summary-item">
+          <span class="label">Product:</span>
+          <span class="value" id="summary-product">-</span>
+        </div>
+        <div class="summary-item">
+          <span class="label">Bundle Size:</span>
+          <span class="value" id="summary-size">-</span>
+        </div>
+        <div class="summary-item">
+          <span class="label">Price:</span>
+          <span class="value" id="summary-price">-</span>
+        </div>
+        <div class="summary-item">
+          <span class="label">Service Fee:</span>
+          <span class="value">GH₵ 0.50</span>
+        </div>
+        <div class="summary-item total">
+          <span class="label">Total:</span>
+          <span class="value" id="summary-total">-</span>
+        </div>
+      </div>
+      
+      <form id="purchase-form" class="purchase-form">
+        <div class="form-group">
+          <label for="recipient-phone">
+            <i class="fas fa-mobile-alt"></i> Recipient Phone Number *
+          </label>
+          <input 
+            type="tel" 
+            id="recipient-phone" 
+            placeholder="024XXXXXXX or +233XXXXXXXXX" 
+            required
+            pattern="^(0[0-9]{9}|233[0-9]{9}|\+233[0-9]{9})$"
+            title="Enter a valid Ghana phone number"
+          >
+          <small class="hint">Enter the phone number that will receive the data</small>
+          <div id="phone-error" class="error-message hidden"></div>
+        </div>
+        
+        <div class="form-group">
+          <label for="transaction-id">
+            <i class="fas fa-receipt"></i> Transaction ID *
+          </label>
+          <input 
+            type="text" 
+            id="transaction-id" 
+            placeholder="Your Mobile Money transaction ID" 
+            required
+            minlength="6"
+          >
+          <small class="hint">Find this in your Mobile Money transaction history</small>
+        </div>
+        
+        <div class="form-actions">
+          <button type="submit" class="btn-primary btn-full">
+            <i class="fas fa-check-circle"></i> Confirm Purchase
+          </button>
+          <button type="button" id="cancel-purchase" class="btn-outline btn-full">
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notifications -->
+  <div id="toast-container"></div>
 
   <!-- JavaScript -->
   <script type="module" src="script.js"></script>
